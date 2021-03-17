@@ -1,12 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Generator : MonoBehaviour
+public class CubeGenerator : MonoBehaviour
 {
-    [SerializeField] Material quadMaterial;
-    private Mesh _quadMesh;
+    public enum CubeSide { Top, Bottom, Front, Back, Right, Left }
 
+    [SerializeField] private Material dirtMaterial;
+
+    
     // Mesh data
     private Vector3[] _vertices;
     private Vector3[] _normals;
@@ -29,15 +32,28 @@ public class Generator : MonoBehaviour
     private Vector3 _vertice6;
     private Vector3 _vertice7;
 
+    private int _currentQuad;
     private GameObject _quadObject;
+    private Mesh _quadMesh;
+    private MeshFilter _quadMeshFilter;
+    private MeshRenderer _quadMeshRenderer;
+    private CombineInstance[] _combineInstance;
+
+    private GameObject _cubeObject;
+    private MeshFilter _cubeMeshFilter;
+    private MeshRenderer _cubeMeshRenderer;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
+        SetupMeshData();
+
         CreateCube();
+
+        Destroy(_quadObject);
     }
 
-    private void CreateCube()
+    private void SetupMeshData()
     {
         // Create data required by mesh filter
         _vertices = new Vector3[4];
@@ -61,13 +77,31 @@ public class Generator : MonoBehaviour
         _vertice6 = new Vector3(0.5f, 0.5f, -0.5f);
         _vertice7 = new Vector3(-0.5f, 0.5f, -0.5f);
 
+        // Create temporary object
+        _quadObject = new GameObject("Quad");
+        _quadObject.transform.parent = transform;
+        _quadMeshFilter = _quadObject.AddComponent<MeshFilter>();
+        _quadMeshRenderer = _quadObject.AddComponent<MeshRenderer>();
+
+    }
+
+    private void CreateCube()
+    {
+        // Create new cube object
+        _cubeObject = new GameObject("Cube");
+        _cubeObject.transform.parent = transform;
+
         // Generate each side of the cube
+        _combineInstance = new CombineInstance[6];
+        _currentQuad = 0;
+        
         CreateQuad(CubeSide.Front);
         CreateQuad(CubeSide.Back);
         CreateQuad(CubeSide.Right);
         CreateQuad(CubeSide.Left);
         CreateQuad(CubeSide.Top);
         CreateQuad(CubeSide.Bottom);
+        CombineQuadsIntoCube();
     }
 
     private void CreateQuad(CubeSide cubeSide)
@@ -115,11 +149,25 @@ public class Generator : MonoBehaviour
         // Recalculate bounding box for rendering so that it is ocluded correctly
         _quadMesh.RecalculateBounds();
 
-        _quadObject = new GameObject("QuadMesh " + cubeSide.ToString());
-        _quadObject.transform.parent = transform;
-        _quadObject.AddComponent<MeshFilter>().mesh = _quadMesh;
-        _quadObject.AddComponent<MeshRenderer>().material = quadMaterial;
+        // Add new created mesh to the stack
+        _quadMeshFilter.mesh = _quadMesh;
+        _quadMeshRenderer.material = dirtMaterial;
+
+        // Combine all quads into single instance
+        _combineInstance[_currentQuad].mesh = _quadMeshFilter.sharedMesh;
+        _combineInstance[_currentQuad].transform = _quadMeshFilter.transform.localToWorldMatrix;
+        _currentQuad++;
+    }
+
+    private void CombineQuadsIntoCube()
+    {
+        // Add combined mesh to the cube
+        _cubeMeshFilter = _cubeObject.AddComponent<MeshFilter>();
+        _cubeMeshFilter.mesh = new Mesh();
+        _cubeMeshFilter.mesh.CombineMeshes(_combineInstance);
+
+        // Add renderer to the cube
+        _cubeMeshRenderer = _cubeObject.AddComponent<MeshRenderer>();
+        _cubeMeshRenderer.material = dirtMaterial;
     }
 }
-
-public enum CubeSide { Top, Bottom, Front, Back, Right, Left }
