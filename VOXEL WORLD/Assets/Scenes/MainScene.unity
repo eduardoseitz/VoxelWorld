@@ -200,7 +200,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   atlasMaterial: {fileID: 2100000, guid: 05170b4ec04a2ec4ab46674b4ff5a290, type: 2}
-  blockType: {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
+  blockType: {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
+  chunkSize: {x: 16, y: 8, z: 16}
+  buildDelay: 0.1
 --- !u!4 &678850215
 Transform:
   m_ObjectHideFlags: 0

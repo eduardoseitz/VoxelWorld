@@ -8,6 +8,7 @@ public class WorldGenerator : MonoBehaviour
     [SerializeField] private Material atlasMaterial;
     [SerializeField] private BlockType blockType;
     [SerializeField] private Vector3 chunkSize = new Vector3( 16, 8, 16);
+    [SerializeField] private float buildDelay = 0.1f;
     
     // Mesh data
     private Vector3[] _vertices;
@@ -33,21 +34,14 @@ public class WorldGenerator : MonoBehaviour
     private CombineInstance[] _combineInstance;
 
     private GameObject _cubeObject;
-    private Vector3 _newCubePosition;
     private MeshFilter _cubeMeshFilter;
     private MeshRenderer _cubeMeshRenderer;
 
     // Start is called before the first frame update
     private void Start()
     {
-        // Create a quad which will serve as a template mesh
-        SetupQuadMeshData();
-
         // Generate world
         StartCoroutine(GenerateWorld());
-
-        // Destroy template quad
-        Destroy(_quadObject);
     }
 
     private void SetupQuadMeshData()
@@ -66,21 +60,44 @@ public class WorldGenerator : MonoBehaviour
         _quadObject = new GameObject("Quad");
         _quadObject.transform.parent = transform;
         _quadMeshFilter = _quadObject.AddComponent<MeshFilter>();
-        _quadMeshRenderer = _quadObject.AddComponent<MeshRenderer>();
+        _quadMeshRenderer = _quadObject.AddComponent<MeshRenderer>(); // For debug purposes, remove it later
     }
 
     private IEnumerator GenerateWorld()
     {
-        CreateCube();
+        // Create a quad which will serve as a template mesh
+        SetupQuadMeshData();
+
+        // Generate blocks
+        for (int z = 0; z < chunkSize.z; z++)
+        {
+            for (int y = 0; y < chunkSize.y; y++)
+            {
+                for (int x = 0; x < chunkSize.x; x++)
+                {
+                    GenerateCube();
+                    _cubeObject.transform.SetPositionAndRotation(new Vector3(x,y,z), Quaternion.identity);
+
+                    // Uncoment to see the world getting slowly built
+                    //yield return new WaitForSeconds(buildDelay);
+                }
+            }
+        }
+
+        // Combine meshes
+
+
+        // Destroy template quad
+        Destroy(_quadObject);
+
         yield return null;
     }
     
-    private void CreateCube()
+    private void GenerateCube()
     {
         // Create new cube object
         _cubeObject = new GameObject("Cube");
         _cubeObject.transform.parent = transform;
-        _cubeObject.transform.SetPositionAndRotation(_newCubePosition, Quaternion.identity);
 
         // Generate each side of the cube
         _combineInstance = new CombineInstance[6];
@@ -147,7 +164,7 @@ public class WorldGenerator : MonoBehaviour
 
         // Add new created mesh to the stack
         _quadMeshFilter.mesh = _quadMesh;
-        _quadMeshRenderer.material = atlasMaterial;
+        _quadMeshRenderer.material = atlasMaterial; // For debug purposes, remove it later
 
         // Combine all quads into single instance
         _combineInstance[_currentQuad].mesh = _quadMeshFilter.sharedMesh;
