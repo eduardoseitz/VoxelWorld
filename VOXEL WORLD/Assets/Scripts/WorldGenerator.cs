@@ -4,14 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WorldGenerator : MonoBehaviour
-{
-    public enum CubeSide { Top, Bottom, Front, Back, Right, Left }
-    
-    //public enum BlockType { Grass, Dirt, Stone}
-
+{   
     [SerializeField] private Material atlasMaterial;
-
-    [SerializeField] private BlockType blockType; 
+    [SerializeField] private BlockType blockType;
+    [SerializeField] private Vector3 chunkSize = new Vector3( 16, 8, 16);
     
     // Mesh data
     private Vector3[] _vertices;
@@ -37,27 +33,25 @@ public class WorldGenerator : MonoBehaviour
     private CombineInstance[] _combineInstance;
 
     private GameObject _cubeObject;
+    private Vector3 _newCubePosition;
     private MeshFilter _cubeMeshFilter;
     private MeshRenderer _cubeMeshRenderer;
 
     // Start is called before the first frame update
     private void Start()
     {
-        SetupMeshData();
+        // Create a quad which will serve as a template mesh
+        SetupQuadMeshData();
 
-        CreateCube();
+        // Generate world
+        StartCoroutine(GenerateWorld());
 
+        // Destroy template quad
         Destroy(_quadObject);
     }
 
-    private void SetupMeshData()
+    private void SetupQuadMeshData()
     {
-        // Create data required by mesh filter
-        _vertices = new Vector3[4];
-        _normals = new Vector3[4];
-        _uvs = new Vector2[4];
-        _triangles = new int[6];
-
         // All possible vertices
         _vertice0 = new Vector3(-0.5f, -0.5f, 0.5f);
         _vertice1 = new Vector3(0.5f, -0.5f, 0.5f);
@@ -73,14 +67,20 @@ public class WorldGenerator : MonoBehaviour
         _quadObject.transform.parent = transform;
         _quadMeshFilter = _quadObject.AddComponent<MeshFilter>();
         _quadMeshRenderer = _quadObject.AddComponent<MeshRenderer>();
-
     }
 
+    private IEnumerator GenerateWorld()
+    {
+        CreateCube();
+        yield return null;
+    }
+    
     private void CreateCube()
     {
         // Create new cube object
         _cubeObject = new GameObject("Cube");
         _cubeObject.transform.parent = transform;
+        _cubeObject.transform.SetPositionAndRotation(_newCubePosition, Quaternion.identity);
 
         // Generate each side of the cube
         _combineInstance = new CombineInstance[6];
@@ -167,3 +167,5 @@ public class WorldGenerator : MonoBehaviour
         _cubeMeshRenderer.material = atlasMaterial;
     }
 }
+
+public enum CubeSide { Top, Bottom, Front, Back, Right, Left }
