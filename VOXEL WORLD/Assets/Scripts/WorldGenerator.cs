@@ -3,24 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CubeGenerator : MonoBehaviour
+public class WorldGenerator : MonoBehaviour
 {
     public enum CubeSide { Top, Bottom, Front, Back, Right, Left }
+    
+    //public enum BlockType { Grass, Dirt, Stone}
 
-    [SerializeField] private Material dirtMaterial;
+    [SerializeField] private Material atlasMaterial;
 
+    [SerializeField] private BlockType blockType; 
     
     // Mesh data
     private Vector3[] _vertices;
     private Vector3[] _normals;
     private Vector2[] _uvs;
     private int[] _triangles;
-
-    // UV vectors
-    private Vector2 _uv00;
-    private Vector2 _uv01;
-    private Vector2 _uv10;
-    private Vector2 _uv11;
 
     // Vertice points vectors
     private Vector3 _vertice0;
@@ -60,12 +57,6 @@ public class CubeGenerator : MonoBehaviour
         _normals = new Vector3[4];
         _uvs = new Vector2[4];
         _triangles = new int[6];
-
-        // All possible UVs
-        _uv00 = new Vector2(0f, 0f);
-        _uv10 = new Vector2(1f, 0f);
-        _uv01 = new Vector2(0f, 1f);
-        _uv11 = new Vector2(1f, 1f);
 
         // All possible vertices
         _vertice0 = new Vector3(-0.5f, -0.5f, 0.5f);
@@ -115,29 +106,34 @@ public class CubeGenerator : MonoBehaviour
             case CubeSide.Bottom:
                 _vertices = new Vector3[] { _vertice0, _vertice1, _vertice2, _vertice3 };
                 _normals = new Vector3[] { Vector3.down, Vector3.down, Vector3.down, Vector3.down };
+                _uvs = blockType.bottomUVs;
                 break;
             case CubeSide.Top:
                 _vertices = new Vector3[] { _vertice7, _vertice6, _vertice5, _vertice4 };
                 _normals = new Vector3[] { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
+                _uvs = blockType.topUVs;
                 break;
             case CubeSide.Left:
                 _vertices = new Vector3[] { _vertice7, _vertice4, _vertice0, _vertice3 };
                 _normals = new Vector3[] { Vector3.left, Vector3.left, Vector3.left, Vector3.left };
+                _uvs = blockType.sideUVs;
                 break;
             case CubeSide.Right:
                 _vertices = new Vector3[] { _vertice5, _vertice6, _vertice2, _vertice1 };
                 _normals = new Vector3[] { Vector3.right, Vector3.right, Vector3.right, Vector3.right };
+                _uvs = blockType.sideUVs;
                 break;
             case CubeSide.Front:
                 _vertices = new Vector3[] { _vertice4, _vertice5, _vertice1, _vertice0 };
                 _normals = new Vector3[] { Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward };
+                _uvs = blockType.sideUVs;
                 break;
             case CubeSide.Back:
                 _vertices = new Vector3[] { _vertice6, _vertice7, _vertice3, _vertice2 };
                 _normals = new Vector3[] { Vector3.back, Vector3.back, Vector3.back, Vector3.back };
+                _uvs = blockType.sideUVs;
                 break;
         }
-        _uvs = new Vector2[] { _uv11, _uv01, _uv00, _uv10 };
         _triangles = new int[] { 3, 1, 0, 3, 2, 1 };
 
         // Put data into the mesh itself
@@ -151,7 +147,7 @@ public class CubeGenerator : MonoBehaviour
 
         // Add new created mesh to the stack
         _quadMeshFilter.mesh = _quadMesh;
-        _quadMeshRenderer.material = dirtMaterial;
+        _quadMeshRenderer.material = atlasMaterial;
 
         // Combine all quads into single instance
         _combineInstance[_currentQuad].mesh = _quadMeshFilter.sharedMesh;
@@ -168,6 +164,6 @@ public class CubeGenerator : MonoBehaviour
 
         // Add renderer to the cube
         _cubeMeshRenderer = _cubeObject.AddComponent<MeshRenderer>();
-        _cubeMeshRenderer.material = dirtMaterial;
+        _cubeMeshRenderer.material = atlasMaterial;
     }
 }
