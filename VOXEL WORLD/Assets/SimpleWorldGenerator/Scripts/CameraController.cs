@@ -63,7 +63,7 @@ public class CameraController : MonoBehaviour
             desiredDistance -= Input.GetAxis("Mouse Y") * Time.deltaTime * zoomRate*0.125f * Mathf.Abs(desiredDistance);
         }
         // If middle mouse and left alt are selected? ORBIT
-        else if (Input.GetMouseButton(0) && Input.GetKey(KeyCode.LeftAlt))
+        else if (Input.GetMouseButton(0))
         {
             xDeg += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
             yDeg -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
@@ -80,7 +80,7 @@ public class CameraController : MonoBehaviour
             transform.rotation = rotation;
         }
         // left mouse button and Q key, we pan by way of transforming the target in screenspace
-        else if (Input.GetMouseButton(0) && Input.GetKey(KeyCode.Q))
+        else if (Input.GetMouseButton(1))
         {
             //grab the rotation of the camera so we can move in a psuedo local XY space
             target.rotation = transform.rotation;

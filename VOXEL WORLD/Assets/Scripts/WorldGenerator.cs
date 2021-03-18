@@ -28,20 +28,21 @@ public class WorldGenerator : MonoBehaviour
 
     private int _currentQuad;
     private GameObject _quadObject;
+    private Vector3 _newQuadPos;
     private Mesh _quadMesh;
     private MeshFilter _quadMeshFilter;
     private MeshRenderer _quadMeshRenderer;
     private CombineInstance[] _combineInstance;
 
-    private GameObject _cubeObject;
-    private MeshFilter _cubeMeshFilter;
-    private MeshRenderer _cubeMeshRenderer;
+    private GameObject _chunckObject;
+    private MeshFilter _chunckMeshFilter;
+    private MeshRenderer _chunckMeshRenderer;
 
     // Start is called before the first frame update
     private void Start()
     {
         // Generate world
-        StartCoroutine(GenerateWorld());
+        StartCoroutine(GenerateChunck());
     }
 
     private void SetupQuadMeshData()
@@ -61,9 +62,16 @@ public class WorldGenerator : MonoBehaviour
         _quadObject.transform.parent = transform;
         _quadMeshFilter = _quadObject.AddComponent<MeshFilter>();
         _quadMeshRenderer = _quadObject.AddComponent<MeshRenderer>(); // For debug purposes, remove it later
+
+        _currentQuad = 0;
+        _combineInstance = new CombineInstance[(int)(chunkSize.x * chunkSize.y * chunkSize.z * 6)];
+
+        // Create new cube object
+        _chunckObject = new GameObject("Chunck");
+        _chunckObject.transform.parent = transform;
     }
 
-    private IEnumerator GenerateWorld()
+    private IEnumerator GenerateChunck()
     {
         // Create a quad which will serve as a template mesh
         SetupQuadMeshData();
@@ -75,8 +83,8 @@ public class WorldGenerator : MonoBehaviour
             {
                 for (int x = 0; x < chunkSize.x; x++)
                 {
+                    _newQuadPos = new Vector3(x, y, z);
                     GenerateCube();
-                    _cubeObject.transform.SetPositionAndRotation(new Vector3(x,y,z), Quaternion.identity);
 
                     // Uncoment to see the world getting slowly built
                     //yield return new WaitForSeconds(buildDelay);
@@ -85,7 +93,7 @@ public class WorldGenerator : MonoBehaviour
         }
 
         // Combine meshes
-
+        CombineQuadsIntoSingleMesh();
 
         // Destroy template quad
         Destroy(_quadObject);
@@ -95,21 +103,13 @@ public class WorldGenerator : MonoBehaviour
     
     private void GenerateCube()
     {
-        // Create new cube object
-        _cubeObject = new GameObject("Cube");
-        _cubeObject.transform.parent = transform;
-
         // Generate each side of the cube
-        _combineInstance = new CombineInstance[6];
-        _currentQuad = 0;
-        
         CreateQuad(CubeSide.Front);
         CreateQuad(CubeSide.Back);
         CreateQuad(CubeSide.Right);
         CreateQuad(CubeSide.Left);
         CreateQuad(CubeSide.Top);
         CreateQuad(CubeSide.Bottom);
-        CombineQuadsIntoCube();
     }
 
     private void CreateQuad(CubeSide cubeSide)
@@ -162,26 +162,31 @@ public class WorldGenerator : MonoBehaviour
         // Recalculate bounding box for rendering so that it is ocluded correctly
         _quadMesh.RecalculateBounds();
 
+        // Update position
+        _quadObject.transform.parent = _chunckObject.transform;
+        _quadObject.transform.SetPositionAndRotation(_newQuadPos, Quaternion.identity);
+
         // Add new created mesh to the stack
         _quadMeshFilter.mesh = _quadMesh;
         _quadMeshRenderer.material = atlasMaterial; // For debug purposes, remove it later
 
         // Combine all quads into single instance
+
         _combineInstance[_currentQuad].mesh = _quadMeshFilter.sharedMesh;
         _combineInstance[_currentQuad].transform = _quadMeshFilter.transform.localToWorldMatrix;
         _currentQuad++;
     }
 
-    private void CombineQuadsIntoCube()
+    private void CombineQuadsIntoSingleMesh()
     {
         // Add combined mesh to the cube
-        _cubeMeshFilter = _cubeObject.AddComponent<MeshFilter>();
-        _cubeMeshFilter.mesh = new Mesh();
-        _cubeMeshFilter.mesh.CombineMeshes(_combineInstance);
+        _chunckMeshFilter = _chunckObject.AddComponent<MeshFilter>();
+        _chunckMeshFilter.mesh = new Mesh();
+        _chunckMeshFilter.mesh.CombineMeshes(_combineInstance);
 
         // Add renderer to the cube
-        _cubeMeshRenderer = _cubeObject.AddComponent<MeshRenderer>();
-        _cubeMeshRenderer.material = atlasMaterial;
+        _chunckMeshRenderer = _chunckObject.AddComponent<MeshRenderer>();
+        _chunckMeshRenderer.material = atlasMaterial;
     }
 }
 
