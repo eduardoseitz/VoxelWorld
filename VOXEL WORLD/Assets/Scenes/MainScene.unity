@@ -137,7 +137,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &653260036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,10 +199,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a34cc1fb65100a4fb7591d6a48db273, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  chunkSize: {x: 16, y: 16, z: 16}
+  buildDelay: 0
   atlasMaterial: {fileID: 2100000, guid: 05170b4ec04a2ec4ab46674b4ff5a290, type: 2}
-  blockType: {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
-  chunkSize: {x: 16, y: 8, z: 16}
-  buildDelay: 0.1
+  currentBlockType: 2
+  blocks:
+  - {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
+  - {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
+  - {fileID: 11400000, guid: c53165cc36e2009459cc240f38fcad5a, type: 2}
 --- !u!4 &678850215
 Transform:
   m_ObjectHideFlags: 0
@@ -427,7 +431,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &2138677392
 Light:
   m_ObjectHideFlags: 0
