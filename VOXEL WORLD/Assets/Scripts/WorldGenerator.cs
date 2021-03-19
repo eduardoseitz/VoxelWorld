@@ -6,7 +6,6 @@ using UnityEngine;
 public class WorldGenerator : MonoBehaviour
 {
     [SerializeField] private Vector3 chunkSize = new Vector3(16, 8, 16);
-    [SerializeField] private float buildDelay = 0.1f;
     [SerializeField] private Material atlasMaterial;
     [SerializeField] private int currentBlockType;
     [SerializeField] private BlockType[] blocks;
@@ -27,19 +26,17 @@ public class WorldGenerator : MonoBehaviour
     private Vector3 _vertice6;
     private Vector3 _vertice7;
 
-    private int _currentQuad;
     private int[,,] _chunckBlockData; // Store what kind of block is in that position, being -1 an empty space
     private Vector3 _newQuadPos;
     private GameObject _quadObject;
     private Mesh _quadMesh;
     private MeshFilter _quadMeshFilter;
-    private MeshRenderer _quadMeshRenderer;
 
     private GameObject _chunckObject;
     private MeshFilter _chunckMeshFilter;
     private MeshRenderer _chunckMeshRenderer;
-    private CombineInstance[] _combineInstance;
-    
+    private List<CombineInstance> _combineInstanceList;
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -63,11 +60,9 @@ public class WorldGenerator : MonoBehaviour
         _quadObject = new GameObject("Quad");
         _quadObject.transform.parent = transform;
         _quadMeshFilter = _quadObject.AddComponent<MeshFilter>();
-        _quadMeshRenderer = _quadObject.AddComponent<MeshRenderer>(); // For debug purposes, remove it later
 
-        _currentQuad = 0;
-        _combineInstance = new CombineInstance[(int)(chunkSize.x * chunkSize.y * chunkSize.z * 6)]; // NOTE: Combine instance has a max memory lengh of 24565
-        Debug.Log(_combineInstance.Length);
+        // Instantiate mesh list
+        _combineInstanceList = new List<CombineInstance>();
 
         // Create new cube object
         _chunckObject = new GameObject("Chunck");
@@ -87,14 +82,14 @@ public class WorldGenerator : MonoBehaviour
             {
                 for (int x = 0; x < chunkSize.x; x++)
                 {
-                    _chunckBlockData[x, y, z] = currentBlockType;
+                    // Make some holes for debug only
+                    if (UnityEngine.Random.Range(0,100) < 20)
+                        _chunckBlockData[x, y, z] = -1;
+                    else
+                        _chunckBlockData[x, y, z] = currentBlockType;
                 }
             }
         }
-
-        // Make some holes for debug
-        _chunckBlockData[0, 1, 0] = -1;
-        _chunckBlockData[5, 0, 5] = -1;
 
         // Generate blocks meshes
         for (int z = 0; z < chunkSize.z; z++)
@@ -109,10 +104,6 @@ public class WorldGenerator : MonoBehaviour
                         // Generate a cube at the position
                         _newQuadPos = new Vector3(x, y, z);
                         GenerateCube(x, y, z);
-
-                        // Uncoment to see the world getting slowly built
-                        if (buildDelay > 0)
-                            yield return new WaitForSeconds(buildDelay);
                     }
                 }
             }
@@ -129,14 +120,6 @@ public class WorldGenerator : MonoBehaviour
     
     private void GenerateCube(int x, int y, int z)
     {
-        // UNOPMIZED: Generate each side of the cube no matter what
-        //CreateQuad(CubeSide.Front, _chunckBlockData[x, y, z]);
-        //CreateQuad(CubeSide.Back, _chunckBlockData[x, y, z]);
-        //CreateQuad(CubeSide.Right, _chunckBlockData[x, y, z]);
-        //CreateQuad(CubeSide.Left, _chunckBlockData[x, y, z]);
-        //CreateQuad(CubeSide.Top, _chunckBlockData[x, y, z]);
-        //CreateQuad(CubeSide.Bottom, _chunckBlockData[x, y, z]);
-
         // Generate the top of the cube
         if (y + 1 == _chunckBlockData.GetLength(1) || _chunckBlockData[x, y + 1, z] == -1)
         {
@@ -225,13 +208,12 @@ public class WorldGenerator : MonoBehaviour
 
         // Add new created mesh to the stack
         _quadMeshFilter.mesh = _quadMesh;
-        _quadMeshRenderer.material = atlasMaterial; // For debug purposes, remove it later
 
         // Combine all quads into single instance
-
-        _combineInstance[_currentQuad].mesh = _quadMeshFilter.sharedMesh;
-        _combineInstance[_currentQuad].transform = _quadMeshFilter.transform.localToWorldMatrix;
-        _currentQuad++;
+        CombineInstance _newCombineInstance = new CombineInstance();
+        _newCombineInstance.mesh = _quadMeshFilter.sharedMesh;
+        _newCombineInstance.transform = _quadMeshFilter.transform.localToWorldMatrix;
+        _combineInstanceList.Add(_newCombineInstance);
     }
 
     private void CombineQuadsIntoSingleMesh()
@@ -239,7 +221,7 @@ public class WorldGenerator : MonoBehaviour
         // Add combined mesh to the cube
         _chunckMeshFilter = _chunckObject.AddComponent<MeshFilter>();
         _chunckMeshFilter.mesh = new Mesh();
-        _chunckMeshFilter.mesh.CombineMeshes(_combineInstance);
+        _chunckMeshFilter.mesh.CombineMeshes(_combineInstanceList.ToArray());
 
         // Add renderer to the cube
         _chunckMeshRenderer = _chunckObject.AddComponent<MeshRenderer>();
