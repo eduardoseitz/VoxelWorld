@@ -15,9 +15,9 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
   m_Fog: 1
-  m_FogColor: {r: 0.65080994, g: 0.666729, b: 0.7075472, a: 1}
+  m_FogColor: {r: 0.5254902, g: 0.5568628, b: 0.6313726, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.02
+  m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -290,14 +290,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a34cc1fb65100a4fb7591d6a48db273, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkSize: {x: 16, y: 16, z: 16}
-  worldChuncksHeight: 2
+  chunkSize: {x: 8, y: 8, z: 8}
+  worldSize: {x: 2, y: 4, z: 2}
   atlasMaterial: {fileID: 2100000, guid: 05170b4ec04a2ec4ab46674b4ff5a290, type: 2}
   blocks:
   - {fileID: 11400000, guid: c53165cc36e2009459cc240f38fcad5a, type: 2}
   - {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
   - {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
-  holesChance: 10
+  holesChance: 5
 --- !u!4 &678850215
 Transform:
   m_ObjectHideFlags: 0
@@ -449,7 +449,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 256
   field of view: 60
   orthographic: 0
   orthographic size: 5
