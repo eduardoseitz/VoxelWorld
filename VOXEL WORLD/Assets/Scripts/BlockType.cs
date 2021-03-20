@@ -5,7 +5,7 @@ public class BlockType : ScriptableObject
 {
     #region Declarations
     public string screenName;
-    // public enum Category{};
+    // public enum Category{Solid, Liquid, Prop, Door, etc};
     // public int id;
     public int minLayer = 0;
     public int maxLayer = 100;

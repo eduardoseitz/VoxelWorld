@@ -6,9 +6,9 @@ public class WorldGenerator : MonoBehaviour
 {
     #region Declarations
     [Header("World Setup")]
-    [SerializeField] private Vector3 chunkSize = new Vector3(16, 8, 16);
+    [SerializeField] private Vector3 chunkSize = new Vector3(16, 16, 16);
     [Tooltip("World heigh in chuncks")]
-    [SerializeField] private int worldChuncksHeight = 3;
+    [SerializeField] private Vector3 worldSize = new Vector3(3, 3, 3);
     [SerializeField] private Material atlasMaterial;
     [SerializeField] private BlockType[] blocks;
 
@@ -31,12 +31,17 @@ public class WorldGenerator : MonoBehaviour
     private Vector3 _vertice6;
     private Vector3 _vertice7;
 
-    [SerializeField] private int[,,] _blocksData; // Store what kind of block is in that position, being -1 an empty space
+    // Quads
     private Vector3 _newQuadPos;
     private GameObject _quadObject;
     private Mesh _quadMesh;
     private MeshFilter _quadMeshFilter;
 
+    // Blocks
+    //[SerializeField] private int[,,] _blocksData; // Store what kind of block is in that position, being -1 an empty space
+    [SerializeField] Dictionary<string, int> _blocksDataDictionary;
+
+    // Chunks
     private GameObject _chunckObject;
     private MeshFilter _chunckMeshFilter;
     private MeshRenderer _chunckMeshRenderer;
@@ -63,7 +68,7 @@ public class WorldGenerator : MonoBehaviour
         GenerateBlocksData();
 
         // Generate world
-        for (int c = 0; c < worldChuncksHeight; c++)
+        for (int c = 0; c < worldSize.y; c++)
         {
             GenerateChunck(c * (int)chunkSize.y);
         }
@@ -76,30 +81,59 @@ public class WorldGenerator : MonoBehaviour
     
     private void GenerateBlocksData()
     {
+        // Old
+        //_blocksData = new int[(int)(chunkSize.x), (int)(chunkSize.y)*worldChuncksHeight, (int)(chunkSize.z)];
+
+        //for (int x = 0; x < chunkSize.x; x++)
+        //{
+        //    for (int y = 0; y < chunkSize.y * worldChuncksHeight; y++)
+        //    {
+        //        for (int z = 0; z < chunkSize.z; z++)
+        //        {
+        //            // Set blocks as empty by default
+        //            _blocksData[x, y, z] = -1;
+
+        //            // Choose which block to use by layer rules
+        //            for (int b = 0; b < blocks.Length; b++)
+        //            {
+        //                if (y >= blocks[b].minLayer && y <= blocks[b].maxLayer)
+        //                {
+        //                    _blocksData[x, y, z] = b;
+        //                    //Debug.Log($"Created block data X:{x} Y:{y} Z:{z} Type:{blocks[b].screenName}");
+        //                }
+        //            }
+
+        //            // Make some holes for debug only
+        //            if (UnityEngine.Random.Range(0, 100) < holesChance)
+        //                _blocksData[x, y, z] = -1;
+        //        }
+        //    }
+        //}
+
         // Generate block dataset
-        _blocksData = new int[(int)(chunkSize.x), (int)(chunkSize.y)*worldChuncksHeight, (int)(chunkSize.z)];
-        for (int z = 0; z < chunkSize.z; z++)
+        _blocksDataDictionary = new Dictionary<string, int>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
+        for (int x = 0; x < chunkSize.x; x++)
         {
-            for (int y = 0; y < chunkSize.y * worldChuncksHeight; y++)
+            for (int y = 0; y < chunkSize.y * worldSize.y; y++)
             {
-                for (int x = 0; x < chunkSize.x; x++)
+                for (int z = 0; z < chunkSize.z; z++)
                 {
                     // Set blocks as empty by default
-                    _blocksData[x, y, z] = -1;
+                    _blocksDataDictionary.Add($"{x} {y} {z}", -1);
 
                     // Choose which block to use by layer rules
                     for (int b = 0; b < blocks.Length; b++)
                     {
                         if (y >= blocks[b].minLayer && y <= blocks[b].maxLayer)
                         {
-                            _blocksData[x, y, z] = b;
-                            //Debug.Log($"Created block data X:{x} Y:{y} Z:{z} Type:{blocks[b].screenName}");
+                            _blocksDataDictionary[$"{x} {y} {z}"] = b;
+                            Debug.Log($"Created block data X:{x} Y:{y} Z:{z} Type:{blocks[_blocksDataDictionary[$"{x} {y} {z}"]].screenName}");
                         }
                     }
 
                     // Make some holes for debug only
-                    if (UnityEngine.Random.Range(0, 100) < holesChance)
-                        _blocksData[x, y, z] = -1;
+                    if (UnityEngine.Random.Range(0, 100) < holesChance) //
+                        _blocksDataDictionary[$"{x} {y} {z}"] = -1; //
                 }
             }
         }
@@ -116,14 +150,14 @@ public class WorldGenerator : MonoBehaviour
         _combineInstanceList = new List<CombineInstance>();
 
         // Generate blocks meshes
-        for (int z = 0; z < chunkSize.z; z++)
+        for (int x = 0; x < chunkSize.x; x++)
         {
             for (int y = startY; y < (chunkSize.y + startY); y++)
             {
-                for (int x = 0; x < chunkSize.x; x++)
+                for (int z = 0; z < chunkSize.z; z++)
                 {
                     // If block is not empty
-                    if (_blocksData[x, y, z] > -1)
+                    if (_blocksDataDictionary[$"{x} {y} {z}"] > -1)
                     {
                         // Generate a cube at the position
                         _newQuadPos = new Vector3(x, y, z);
@@ -235,37 +269,37 @@ public class WorldGenerator : MonoBehaviour
 
     private void GenerateBlock(int x, int y, int z)
     {
-        //Debug.Log($"Created block x:{x} y:{y} z:{z}");
+        //Debug.Log($"Creating block mesh X:{x} Y:{y} Z:{z}");
 
         // Generate the top of the cube
-        if (y + 1 == _blocksData.GetLength(1) || _blocksData[x, y + 1, z] == -1)
+        if (y + 1 == worldSize.y * chunkSize.y || _blocksDataDictionary[$"{x} {y + 1} {z}"] == -1)
         {
-            CreateQuad(CubeSide.Top, (int)_blocksData[x, y, z]);
+            CreateQuad(CubeSide.Top, _blocksDataDictionary[$"{x} {y} {z}"]);
         }
         // Generate the bottom of the cube
-        if (y - 1 < 0 || _blocksData[x, y - 1, z] == -1)
+        if (y - 1 < 0 || _blocksDataDictionary[$"{x} {y - 1} {z}"] == -1)
         {
-            CreateQuad(CubeSide.Bottom, (int)_blocksData[x, y, z]);
+            CreateQuad(CubeSide.Bottom, _blocksDataDictionary[$"{x} {y} {z}"]);
         }
         // Generate the front of the cube
-        if (z + 1 == _blocksData.GetLength(2) || _blocksData[x, y, z + 1] == -1)
+        if (z + 1 == chunkSize.z || _blocksDataDictionary[$"{x} {y} {z + 1}"] == -1)
         {
-            CreateQuad(CubeSide.Front, (int)_blocksData[x, y, z]);
+            CreateQuad(CubeSide.Front, _blocksDataDictionary[$"{x} {y} {z}"]);
         }
         // Generate the back of the cube
-        if (z - 1 < 0 || _blocksData[x, y, z - 1] == -1)
+        if (z - 1 < 0 || _blocksDataDictionary[$"{x} {y} {z - 1}"] == -1)
         {
-            CreateQuad(CubeSide.Back, (int)_blocksData[x, y, z]);
+            CreateQuad(CubeSide.Back, _blocksDataDictionary[$"{x} {y} {z}"]);
         }
         // Generate the right side of the cube
-        if (x + 1 == _blocksData.GetLength(0) || _blocksData[x + 1, y, z] == -1)
+        if (x + 1 == chunkSize.x || _blocksDataDictionary[$"{x + 1} {y} {z}"] == -1)
         {
-            CreateQuad(CubeSide.Right, (int)_blocksData[x, y, z]);
+            CreateQuad(CubeSide.Right, _blocksDataDictionary[$"{x} {y} {z}"]);
         }
         // Generate the left side of the cube
-        if (x - 1 < 0 || _blocksData[x - 1, y, z] == -1)
+        if (x - 1 < 0 || _blocksDataDictionary[$"{x - 1} {y} {z}"] == -1)
         {
-            CreateQuad(CubeSide.Left, (int)_blocksData[x, y, z]);
+            CreateQuad(CubeSide.Left, _blocksDataDictionary[$"{x} {y} {z}"]);
         }
     }
     #endregion
