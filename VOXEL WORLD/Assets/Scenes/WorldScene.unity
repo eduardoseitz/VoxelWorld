@@ -44,7 +44,7 @@ RenderSettings:
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -293,11 +293,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chunkSize: {x: 16, y: 16, z: 16}
   atlasMaterial: {fileID: 2100000, guid: 05170b4ec04a2ec4ab46674b4ff5a290, type: 2}
-  currentBlockType: 2
   blocks:
+  - {fileID: 11400000, guid: c53165cc36e2009459cc240f38fcad5a, type: 2}
   - {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
   - {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
-  - {fileID: 11400000, guid: c53165cc36e2009459cc240f38fcad5a, type: 2}
+  holesChance: 10
 --- !u!4 &678850215
 Transform:
   m_ObjectHideFlags: 0
@@ -592,7 +592,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2138677391}
   m_LocalRotation: {x: 0.7064338, y: 0.47771442, z: 0.030843567, w: 0.5213338}
-  m_LocalPosition: {x: 0.24, y: 3, z: 4.18}
+  m_LocalPosition: {x: -50, y: 100, z: -50}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

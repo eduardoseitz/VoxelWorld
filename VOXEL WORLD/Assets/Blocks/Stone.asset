@@ -13,18 +13,8 @@ MonoBehaviour:
   m_Name: Stone
   m_EditorClassIdentifier: 
   screenName: Stone
-  topUVs:
-  - {x: 0.2, y: 0.05}
-  - {x: 0.15, y: 0.05}
-  - {x: 0.15, y: 0}
-  - {x: 0.2, y: 0}
-  bottomUVs:
-  - {x: 0.2, y: 0.05}
-  - {x: 0.15, y: 0.05}
-  - {x: 0.15, y: 0}
-  - {x: 0.2, y: 0}
-  sideUVs:
-  - {x: 0.2, y: 0.05}
-  - {x: 0.15, y: 0.05}
-  - {x: 0.15, y: 0}
-  - {x: 0.2, y: 0}
+  minLayer: 0
+  maxLayer: 9
+  topUVPosition: {x: 3, y: 0}
+  sideUVPosition: {x: 3, y: 0}
+  bottomUVPosition: {x: 3, y: 0}

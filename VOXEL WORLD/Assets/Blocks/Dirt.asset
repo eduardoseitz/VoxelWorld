@@ -13,18 +13,8 @@ MonoBehaviour:
   m_Name: Dirt
   m_EditorClassIdentifier: 
   screenName: Dirt
-  topUVs:
-  - {x: 0.05, y: 0.05}
-  - {x: 0, y: 0.05}
-  - {x: 0, y: 0}
-  - {x: 0.05, y: 0}
-  bottomUVs:
-  - {x: 0.05, y: 0.05}
-  - {x: 0, y: 0.05}
-  - {x: 0, y: 0}
-  - {x: 0.05, y: 0}
-  sideUVs:
-  - {x: 0.05, y: 0.05}
-  - {x: 0, y: 0.05}
-  - {x: 0, y: 0}
-  - {x: 0.05, y: 0}
+  minLayer: 9
+  maxLayer: 14
+  topUVPosition: {x: 0, y: 0}
+  sideUVPosition: {x: 0, y: 0}
+  bottomUVPosition: {x: 0, y: 0}

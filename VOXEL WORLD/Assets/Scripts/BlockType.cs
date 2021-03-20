@@ -4,28 +4,53 @@
 public class BlockType : ScriptableObject
 {
     public string screenName;
+    // public enum Category{};
+    // public int id;
+    public int minLayer = 0;
+    public int maxLayer = 100;
 
-    // Texture cordinates
-    
-    public Vector2[] topUVs = { new Vector2(0.05f, 0.05f), new Vector2(0.0f, 0.05f), new Vector2(0.0f, 0.0f), new Vector2(0.05f, 0.0f) };
-    public Vector2[] bottomUVs = { new Vector2(0.05f, 0.05f), new Vector2(0.0f, 0.05f), new Vector2(0.0f, 0.0f), new Vector2(0.05f, 0.0f) };
-    public Vector2[] sideUVs = { new Vector2(0.05f, 0.05f), new Vector2(0.0f, 0.05f), new Vector2(0.0f, 0.0f), new Vector2(0.05f, 0.0f) };
+    [SerializeField] private Vector2 topUVPosition = new Vector2(0, 0);
+    [SerializeField] private Vector2 sideUVPosition = new Vector2(0, 0);
+    [SerializeField] private Vector2 bottomUVPosition = new Vector2(0, 0);
 
-    
-    //private static int BLOCKS_IN_GRID = 20;
-    //[SerializeField] private Vector2 topUVPosition = new Vector2(0, 0);
+    private static int GRID_SIZE = 20;
+    private static float BORDER_WIDTH = 0.001f;
 
-    //private Vector2[] _uv;
+    private Vector2[] _uv;
 
-    //public Vector2[] GetTopUV()
-    //{
-    //    _uv = new Vector2[]{
-    //        new Vector2((topUVPosition[0]+1) / BLOCKS_IN_GRID , (topUVPosition[1]+1) / BLOCKS_IN_GRID),
-    //        new Vector2((topUVPosition[0]) / BLOCKS_IN_GRID, (topUVPosition[1]+1) / BLOCKS_IN_GRID),
-    //        new Vector2((topUVPosition[0]) / BLOCKS_IN_GRID, (topUVPosition[1]) / BLOCKS_IN_GRID),
-    //        new Vector2((topUVPosition[0]+1) / BLOCKS_IN_GRID, (topUVPosition[1]) / BLOCKS_IN_GRID)
-    //    };
+    public Vector2[] GetTopUV()
+    {
+        _uv = new Vector2[]{
+            new Vector2((topUVPosition[0]+1) / GRID_SIZE  - BORDER_WIDTH, (topUVPosition[1]+1) / GRID_SIZE - BORDER_WIDTH),
+            new Vector2((topUVPosition[0] / GRID_SIZE  + BORDER_WIDTH) , (topUVPosition[1]+1) / GRID_SIZE - BORDER_WIDTH),
+            new Vector2((topUVPosition[0]) / GRID_SIZE + BORDER_WIDTH, (topUVPosition[1]) / GRID_SIZE + BORDER_WIDTH),
+            new Vector2((topUVPosition[0]+1) / GRID_SIZE - BORDER_WIDTH, (topUVPosition[1]) / GRID_SIZE + BORDER_WIDTH)
+        };
 
-    //    return _uv;
-    //}
+        return _uv;
+    }
+
+    public Vector2[] GetBottomUV()
+    {
+        _uv = new Vector2[]{
+            new Vector2((bottomUVPosition[0]+1) / GRID_SIZE  - BORDER_WIDTH, (bottomUVPosition[1]+1) / GRID_SIZE - BORDER_WIDTH),
+            new Vector2((bottomUVPosition[0] / GRID_SIZE  + BORDER_WIDTH) , (bottomUVPosition[1]+1) / GRID_SIZE - BORDER_WIDTH),
+            new Vector2((bottomUVPosition[0]) / GRID_SIZE + BORDER_WIDTH, (bottomUVPosition[1]) / GRID_SIZE + BORDER_WIDTH),
+            new Vector2((bottomUVPosition[0]+1) / GRID_SIZE - BORDER_WIDTH, (bottomUVPosition[1]) / GRID_SIZE + BORDER_WIDTH)
+        };
+
+        return _uv;
+    }
+
+    public Vector2[] GetSideUV()
+    {
+        _uv = new Vector2[]{
+            new Vector2((sideUVPosition[0]+1) / GRID_SIZE  - BORDER_WIDTH, (sideUVPosition[1]+1) / GRID_SIZE - BORDER_WIDTH),
+            new Vector2((sideUVPosition[0] / GRID_SIZE  + BORDER_WIDTH) , (sideUVPosition[1]+1) / GRID_SIZE - BORDER_WIDTH),
+            new Vector2((sideUVPosition[0]) / GRID_SIZE + BORDER_WIDTH, (sideUVPosition[1]) / GRID_SIZE + BORDER_WIDTH),
+            new Vector2((sideUVPosition[0]+1) / GRID_SIZE - BORDER_WIDTH, (sideUVPosition[1]) / GRID_SIZE + BORDER_WIDTH)
+        };
+
+        return _uv;
+    }
 }

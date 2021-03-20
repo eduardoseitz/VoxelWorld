@@ -5,10 +5,13 @@ using UnityEngine;
 
 public class WorldGenerator : MonoBehaviour
 {
+    [Header("World Setup")]
     [SerializeField] private Vector3 chunkSize = new Vector3(16, 8, 16);
     [SerializeField] private Material atlasMaterial;
-    [SerializeField] private int currentBlockType;
     [SerializeField] private BlockType[] blocks;
+
+    [Header("Debug")]
+    [SerializeField] private int holesChance = 10;
 
     // Mesh data
     private Vector3[] _vertices;
@@ -26,7 +29,7 @@ public class WorldGenerator : MonoBehaviour
     private Vector3 _vertice6;
     private Vector3 _vertice7;
 
-    private int[,,] _chunckBlockData; // Store what kind of block is in that position, being -1 an empty space
+    private int[,,] _blocksData; // Store what kind of block is in that position, being -1 an empty space
     private Vector3 _newQuadPos;
     private GameObject _quadObject;
     private Mesh _quadMesh;
@@ -75,18 +78,28 @@ public class WorldGenerator : MonoBehaviour
         SetupQuadMeshData();
 
         // Generate block dataset
-        _chunckBlockData = new int[(int)(chunkSize.x), (int)(chunkSize.y), (int)(chunkSize.z)];
+        _blocksData = new int[(int)(chunkSize.x), (int)(chunkSize.y), (int)(chunkSize.z)];
         for (int z = 0; z < chunkSize.z; z++)
         {
             for (int y = 0; y < chunkSize.y; y++)
             {
                 for (int x = 0; x < chunkSize.x; x++)
                 {
+                    // Set blocks as empty by default
+                    _blocksData[x, y, z] = -1;
+                    
+                    // Choose which block to use by layer rules
+                    for (int b = 0; b < blocks.Length; b++)
+                    {
+                        if (y >= blocks[b].minLayer && y <= blocks[b].maxLayer)
+                        {
+                            _blocksData[x, y, z] = b;
+                        }
+                    }
+
                     // Make some holes for debug only
-                    if (UnityEngine.Random.Range(0,100) < 20)
-                        _chunckBlockData[x, y, z] = -1;
-                    else
-                        _chunckBlockData[x, y, z] = currentBlockType;
+                    if (UnityEngine.Random.Range(0, 100) < holesChance)
+                        _blocksData[x, y, z] = -1;
                 }
             }
         }
@@ -99,7 +112,7 @@ public class WorldGenerator : MonoBehaviour
                 for (int x = 0; x < chunkSize.x; x++)
                 {
                     // If block is not empty
-                    if (_chunckBlockData[x, y, z] > -1)
+                    if (_blocksData[x, y, z] > -1)
                     {
                         // Generate a cube at the position
                         _newQuadPos = new Vector3(x, y, z);
@@ -121,34 +134,34 @@ public class WorldGenerator : MonoBehaviour
     private void GenerateCube(int x, int y, int z)
     {
         // Generate the top of the cube
-        if (y + 1 == _chunckBlockData.GetLength(1) || _chunckBlockData[x, y + 1, z] == -1)
+        if (y + 1 == _blocksData.GetLength(1) || _blocksData[x, y + 1, z] == -1)
         {
-            CreateQuad(CubeSide.Top, (int)_chunckBlockData[x, y, z]);
+            CreateQuad(CubeSide.Top, (int)_blocksData[x, y, z]);
         }
         // Generate the bottom of the cube
-        if (y - 1 < 0 || _chunckBlockData[x, y - 1, z] == -1)
+        if (y - 1 < 0 || _blocksData[x, y - 1, z] == -1)
         {
-            CreateQuad(CubeSide.Bottom, (int)_chunckBlockData[x, y, z]);
+            CreateQuad(CubeSide.Bottom, (int)_blocksData[x, y, z]);
         }
         // Generate the front of the cube
-        if (z + 1 == _chunckBlockData.GetLength(2) || _chunckBlockData[x, y, z + 1] == -1)
+        if (z + 1 == _blocksData.GetLength(2) || _blocksData[x, y, z + 1] == -1)
         {
-            CreateQuad(CubeSide.Front, (int)_chunckBlockData[x, y, z]);
+            CreateQuad(CubeSide.Front, (int)_blocksData[x, y, z]);
         }
         // Generate the back of the cube
-        if (z - 1 < 0 || _chunckBlockData[x, y, z - 1] == -1)
+        if (z - 1 < 0 || _blocksData[x, y, z - 1] == -1)
         {
-            CreateQuad(CubeSide.Back, (int)_chunckBlockData[x, y, z]);
+            CreateQuad(CubeSide.Back, (int)_blocksData[x, y, z]);
         }
         // Generate the right side of the cube
-        if (x + 1 == _chunckBlockData.GetLength(0) || _chunckBlockData[x + 1, y, z] == -1)
+        if (x + 1 == _blocksData.GetLength(0) || _blocksData[x + 1, y, z] == -1)
         {
-            CreateQuad(CubeSide.Right, (int)_chunckBlockData[x, y, z]);
+            CreateQuad(CubeSide.Right, (int)_blocksData[x, y, z]);
         }
         // Generate the left side of the cube
-        if (x - 1 < 0 || _chunckBlockData[x - 1, y, z] == -1)
+        if (x - 1 < 0 || _blocksData[x - 1, y, z] == -1)
         {
-            CreateQuad(CubeSide.Left, (int)_chunckBlockData[x, y, z]);
+            CreateQuad(CubeSide.Left, (int)_blocksData[x, y, z]);
         }
     }
 
@@ -163,32 +176,32 @@ public class WorldGenerator : MonoBehaviour
             case CubeSide.Bottom:
                 _vertices = new Vector3[] { _vertice0, _vertice1, _vertice2, _vertice3 };
                 _normals = new Vector3[] { Vector3.down, Vector3.down, Vector3.down, Vector3.down };
-                _uvs = blocks[blockType].bottomUVs;
+                _uvs = blocks[blockType].GetBottomUV();
                 break;
             case CubeSide.Top:
                 _vertices = new Vector3[] { _vertice7, _vertice6, _vertice5, _vertice4 };
                 _normals = new Vector3[] { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
-                _uvs = blocks[blockType].topUVs;
+                _uvs = blocks[blockType].GetTopUV();
                 break;
             case CubeSide.Left:
                 _vertices = new Vector3[] { _vertice7, _vertice4, _vertice0, _vertice3 };
                 _normals = new Vector3[] { Vector3.left, Vector3.left, Vector3.left, Vector3.left };
-                _uvs = blocks[blockType].sideUVs; // right texture
+                _uvs = blocks[blockType].GetSideUV(); // right texture
                 break;
             case CubeSide.Right:
                 _vertices = new Vector3[] { _vertice5, _vertice6, _vertice2, _vertice1 };
                 _normals = new Vector3[] { Vector3.right, Vector3.right, Vector3.right, Vector3.right };
-                _uvs = blocks[blockType].sideUVs; // left texture
+                _uvs = blocks[blockType].GetSideUV(); // left texture
                 break;
             case CubeSide.Front:
                 _vertices = new Vector3[] { _vertice4, _vertice5, _vertice1, _vertice0 };
                 _normals = new Vector3[] { Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward };
-                _uvs = blocks[blockType].sideUVs; // back texture
+                _uvs = blocks[blockType].GetSideUV(); // back texture
                 break;
             case CubeSide.Back:
                 _vertices = new Vector3[] { _vertice6, _vertice7, _vertice3, _vertice2 };
                 _normals = new Vector3[] { Vector3.back, Vector3.back, Vector3.back, Vector3.back };
-                _uvs = blocks[blockType].sideUVs; // front texture
+                _uvs = blocks[blockType].GetSideUV(); // front texture
                 break;
         }
         _triangles = new int[] { 3, 1, 0, 3, 2, 1 };

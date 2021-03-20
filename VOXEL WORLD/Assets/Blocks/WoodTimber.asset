@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8c36d3902648074390dcdc5fe88dd28, type: 3}
-  m_Name: Grass
+  m_Name: WoodTimber
   m_EditorClassIdentifier: 
-  screenName: Grass
-  minLayer: 15
-  maxLayer: 15
-  topUVPosition: {x: 2, y: 0}
-  sideUVPosition: {x: 1, y: 0}
-  bottomUVPosition: {x: 0, y: 0}
+  screenName: Timber Wood
+  minLayer: 0
+  maxLayer: 100
+  topUVPosition: {x: 5, y: 0}
+  sideUVPosition: {x: 4, y: 0}
+  bottomUVPosition: {x: 5, y: 0}
