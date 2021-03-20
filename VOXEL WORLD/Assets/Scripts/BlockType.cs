@@ -3,6 +3,7 @@
 [CreateAssetMenu(fileName = "NewBlock", menuName = "VOXEL WORLD/BlockType")]
 public class BlockType : ScriptableObject
 {
+    #region Declarations
     public string screenName;
     // public enum Category{};
     // public int id;
@@ -17,7 +18,9 @@ public class BlockType : ScriptableObject
     private static float BORDER_WIDTH = 0.001f;
 
     private Vector2[] _uv;
+    #endregion
 
+    #region Helper Methods
     public Vector2[] GetTopUV()
     {
         _uv = new Vector2[]{
@@ -53,4 +56,5 @@ public class BlockType : ScriptableObject
 
         return _uv;
     }
+    #endregion
 }

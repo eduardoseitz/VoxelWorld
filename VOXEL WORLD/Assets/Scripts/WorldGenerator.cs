@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WorldGenerator : MonoBehaviour
 {
+    #region Declarations
     [Header("World Setup")]
     [SerializeField] private Vector3 chunkSize = new Vector3(16, 8, 16);
     [Tooltip("World heigh in chuncks")]
-    [SerializeField] private int worldHeight = 3;
+    [SerializeField] private int worldChuncksHeight = 3;
     [SerializeField] private Material atlasMaterial;
     [SerializeField] private BlockType[] blocks;
 
@@ -41,13 +41,19 @@ public class WorldGenerator : MonoBehaviour
     private MeshFilter _chunckMeshFilter;
     private MeshRenderer _chunckMeshRenderer;
     private List<CombineInstance> _combineInstanceList;
+    #endregion
 
+    #region Main Methods
     // Start is called before the first frame update
     private void Start()
     {
         StartCoroutine(GenerateWorld());
     }
+    #endregion
 
+    #region Helper Methods
+
+    #region World and Chunks
     private IEnumerator GenerateWorld()
     {
         // Create a quad which will serve as a template mesh
@@ -57,7 +63,7 @@ public class WorldGenerator : MonoBehaviour
         GenerateBlocksData();
 
         // Generate world
-        for (int c = 0; c < worldHeight; c++)
+        for (int c = 0; c < worldChuncksHeight; c++)
         {
             GenerateChunck(c * (int)chunkSize.y);
         }
@@ -67,32 +73,14 @@ public class WorldGenerator : MonoBehaviour
 
         yield return null;
     }
-
-    private void SetupQuadMeshData()
-    {
-        // All possible vertices
-        _vertice0 = new Vector3(-0.5f, -0.5f, 0.5f);
-        _vertice1 = new Vector3(0.5f, -0.5f, 0.5f);
-        _vertice2 = new Vector3(0.5f, -0.5f, -0.5f);
-        _vertice3 = new Vector3(-0.5f, -0.5f, -0.5f);
-        _vertice4 = new Vector3(-0.5f, 0.5f, 0.5f);
-        _vertice5 = new Vector3(0.5f, 0.5f, 0.5f);
-        _vertice6 = new Vector3(0.5f, 0.5f, -0.5f);
-        _vertice7 = new Vector3(-0.5f, 0.5f, -0.5f);
-
-        // Create temporary object
-        _quadObject = new GameObject("Quad");
-        _quadObject.transform.parent = transform;
-        _quadMeshFilter = _quadObject.AddComponent<MeshFilter>();
-    }
-
+    
     private void GenerateBlocksData()
     {
         // Generate block dataset
-        _blocksData = new int[(int)(chunkSize.x), (int)(chunkSize.y)*worldHeight, (int)(chunkSize.z)];
+        _blocksData = new int[(int)(chunkSize.x), (int)(chunkSize.y)*worldChuncksHeight, (int)(chunkSize.z)];
         for (int z = 0; z < chunkSize.z; z++)
         {
-            for (int y = 0; y < chunkSize.y * worldHeight; y++)
+            for (int y = 0; y < chunkSize.y * worldChuncksHeight; y++)
             {
                 for (int x = 0; x < chunkSize.x; x++)
                 {
@@ -105,7 +93,7 @@ public class WorldGenerator : MonoBehaviour
                         if (y >= blocks[b].minLayer && y <= blocks[b].maxLayer)
                         {
                             _blocksData[x, y, z] = b;
-                            Debug.Log($"Created block data X:{x} Y:{y} Z:{z} Type:{blocks[b].screenName}");
+                            //Debug.Log($"Created block data X:{x} Y:{y} Z:{z} Type:{blocks[b].screenName}");
                         }
                     }
 
@@ -120,7 +108,7 @@ public class WorldGenerator : MonoBehaviour
     private void GenerateChunck(int startY)
     {
         // Create new chunck object
-        _chunckObject = new GameObject("Chunck");
+        _chunckObject = new GameObject($"Chunck X{0} Y:{startY} Z:{0}");
         _chunckObject.transform.parent = transform;
         //_chunckObject.transform.SetPositionAndRotation(new Vector3(0, 0, 0), Quaternion.identity);
 
@@ -148,41 +136,25 @@ public class WorldGenerator : MonoBehaviour
         // Combine meshes
         CombineQuadsIntoSingleChunck();
     }
-    
-    private void GenerateBlock(int x, int y, int z)
-    {
-        //Debug.Log($"Created block x:{x} y:{y} z:{z}");
+    #endregion
 
-        // Generate the top of the cube
-        if (y + 1 == _blocksData.GetLength(1) || _blocksData[x, y + 1, z] == -1)
-        {
-            CreateQuad(CubeSide.Top, (int)_blocksData[x, y, z]);
-        }
-        // Generate the bottom of the cube
-        if (y - 1 < 0 || _blocksData[x, y - 1, z] == -1)
-        {
-            CreateQuad(CubeSide.Bottom, (int)_blocksData[x, y, z]);
-        }
-        // Generate the front of the cube
-        if (z + 1 == _blocksData.GetLength(2) || _blocksData[x, y, z + 1] == -1)
-        {
-            CreateQuad(CubeSide.Front, (int)_blocksData[x, y, z]);
-        }
-        // Generate the back of the cube
-        if (z - 1 < 0 || _blocksData[x, y, z - 1] == -1)
-        {
-            CreateQuad(CubeSide.Back, (int)_blocksData[x, y, z]);
-        }
-        // Generate the right side of the cube
-        if (x + 1 == _blocksData.GetLength(0) || _blocksData[x + 1, y, z] == -1)
-        {
-            CreateQuad(CubeSide.Right, (int)_blocksData[x, y, z]);
-        }
-        // Generate the left side of the cube
-        if (x - 1 < 0 || _blocksData[x - 1, y, z] == -1)
-        {
-            CreateQuad(CubeSide.Left, (int)_blocksData[x, y, z]);
-        }
+    #region Quads and Blocks
+    private void SetupQuadMeshData()
+    {
+        // All possible vertices
+        _vertice0 = new Vector3(-0.5f, -0.5f, 0.5f);
+        _vertice1 = new Vector3(0.5f, -0.5f, 0.5f);
+        _vertice2 = new Vector3(0.5f, -0.5f, -0.5f);
+        _vertice3 = new Vector3(-0.5f, -0.5f, -0.5f);
+        _vertice4 = new Vector3(-0.5f, 0.5f, 0.5f);
+        _vertice5 = new Vector3(0.5f, 0.5f, 0.5f);
+        _vertice6 = new Vector3(0.5f, 0.5f, -0.5f);
+        _vertice7 = new Vector3(-0.5f, 0.5f, -0.5f);
+
+        // Create temporary object
+        _quadObject = new GameObject("Quad");
+        _quadObject.transform.parent = transform;
+        _quadMeshFilter = _quadObject.AddComponent<MeshFilter>();
     }
 
     private void CreateQuad(CubeSide cubeSide, int blockType)
@@ -260,6 +232,45 @@ public class WorldGenerator : MonoBehaviour
         _chunckMeshRenderer = _chunckObject.AddComponent<MeshRenderer>();
         _chunckMeshRenderer.material = atlasMaterial;
     }
+
+    private void GenerateBlock(int x, int y, int z)
+    {
+        //Debug.Log($"Created block x:{x} y:{y} z:{z}");
+
+        // Generate the top of the cube
+        if (y + 1 == _blocksData.GetLength(1) || _blocksData[x, y + 1, z] == -1)
+        {
+            CreateQuad(CubeSide.Top, (int)_blocksData[x, y, z]);
+        }
+        // Generate the bottom of the cube
+        if (y - 1 < 0 || _blocksData[x, y - 1, z] == -1)
+        {
+            CreateQuad(CubeSide.Bottom, (int)_blocksData[x, y, z]);
+        }
+        // Generate the front of the cube
+        if (z + 1 == _blocksData.GetLength(2) || _blocksData[x, y, z + 1] == -1)
+        {
+            CreateQuad(CubeSide.Front, (int)_blocksData[x, y, z]);
+        }
+        // Generate the back of the cube
+        if (z - 1 < 0 || _blocksData[x, y, z - 1] == -1)
+        {
+            CreateQuad(CubeSide.Back, (int)_blocksData[x, y, z]);
+        }
+        // Generate the right side of the cube
+        if (x + 1 == _blocksData.GetLength(0) || _blocksData[x + 1, y, z] == -1)
+        {
+            CreateQuad(CubeSide.Right, (int)_blocksData[x, y, z]);
+        }
+        // Generate the left side of the cube
+        if (x - 1 < 0 || _blocksData[x - 1, y, z] == -1)
+        {
+            CreateQuad(CubeSide.Left, (int)_blocksData[x, y, z]);
+        }
+    }
+    #endregion
+
+    #endregion
 }
 
 public enum CubeSide { Top, Bottom, Front, Back, Right, Left }
