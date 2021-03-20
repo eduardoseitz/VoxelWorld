@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   screenName: Stone
   minLayer: 0
-  maxLayer: 9
+  maxLayer: 26
   topUVPosition: {x: 3, y: 0}
   sideUVPosition: {x: 3, y: 0}
   bottomUVPosition: {x: 3, y: 0}

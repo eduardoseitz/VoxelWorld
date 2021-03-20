@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Grass
   m_EditorClassIdentifier: 
   screenName: Grass
-  minLayer: 15
-  maxLayer: 15
+  minLayer: 31
+  maxLayer: 31
   topUVPosition: {x: 2, y: 0}
   sideUVPosition: {x: 1, y: 0}
   bottomUVPosition: {x: 0, y: 0}
