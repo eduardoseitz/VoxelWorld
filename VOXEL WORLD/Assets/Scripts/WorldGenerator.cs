@@ -294,6 +294,9 @@ public class WorldGenerator : MonoBehaviour
         // Add renderer to the cube
         _chunckMeshRenderer = _chunckObject.AddComponent<MeshRenderer>();
         _chunckMeshRenderer.material = atlasMaterial;
+
+        // Add mesh collider
+        _chunckObject.AddComponent<MeshCollider>();
     }
 
     #endregion

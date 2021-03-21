@@ -15,7 +15,7 @@ public class BlockType : ScriptableObject
     [SerializeField] private Vector2 bottomUVPosition = new Vector2(0, 0);
 
     private static int GRID_SIZE = 20;
-    private static float BORDER_WIDTH = 0.001f;
+    private static float BORDER_WIDTH = 0.002f;
 
     private Vector2[] _uv;
     #endregion
