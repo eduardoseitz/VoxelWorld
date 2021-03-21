@@ -6,8 +6,9 @@ public class WorldGenerator : MonoBehaviour
 {
     #region Declarations
     [Header("World Setup")]
+    [Tooltip("Chunk size in blocks")]
     [SerializeField] private Vector3 chunkSize = new Vector3(16, 16, 16);
-    [Tooltip("World heigh in chuncks")]
+    [Tooltip("World size in chunks")]
     [SerializeField] private Vector3 worldSize = new Vector3(3, 3, 3);
     [SerializeField] private Material atlasMaterial;
     [SerializeField] private BlockType[] blocks;
@@ -38,12 +39,13 @@ public class WorldGenerator : MonoBehaviour
     private MeshFilter _quadMeshFilter;
 
     // Blocks
-    [SerializeField] Dictionary<string, int> _blocksDataDictionary;
+    private Dictionary<string, int> _blocksDictionary;
 
     // Chunks
-    private GameObject _chunckObject;
-    private MeshFilter _chunckMeshFilter;
-    private MeshRenderer _chunckMeshRenderer;
+    private Dictionary<string, GameObject> _chunksDictionary;
+    private GameObject _chunkObject;
+    private MeshFilter _chunkMeshFilter;
+    private MeshRenderer _chunkMeshRenderer;
     private List<CombineInstance> _combineInstanceList;
     #endregion
 
@@ -64,7 +66,7 @@ public class WorldGenerator : MonoBehaviour
         SetupQuadMeshData();
 
         // Generate blocks dataset
-        _blocksDataDictionary = new Dictionary<string, int>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
+        _blocksDictionary = new Dictionary<string, int>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
         for (int x = -(int)worldSize.x; x <= worldSize.x; x++)
         {
             for (int y = 0; y < worldSize.y; y++)
@@ -78,13 +80,14 @@ public class WorldGenerator : MonoBehaviour
         //Debug.Log($"Generated {_blocksDataDictionary.Count} blocks data");
 
         // Generate world mesh
+        _chunksDictionary = new Dictionary<string, GameObject>(); // Holds current loaded chuncks for later use
         for (int x = -(int)worldSize.x; x <= worldSize.x; x++)
         {
             for (int y = 0; y < worldSize.y; y++)
             {
                 for (int z = -(int)worldSize.z; z <= worldSize.z; z++)
                 {
-                    GenerateChunck(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z);
+                    GenerateChunk(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z);
                 }
             }
         }
@@ -107,14 +110,14 @@ public class WorldGenerator : MonoBehaviour
                 for (int z = startZ; z < chunkSize.z + startZ; z++)
                 {
                     // Set blocks as empty by default
-                    _blocksDataDictionary.Add($"{x} {y} {z}", -1);
+                    _blocksDictionary.Add($"{x} {y} {z}", -1);
 
                     // Choose which block to use by layer rules
                     for (int b = 0; b < blocks.Length; b++)
                     {
                         if (y >= blocks[b].minLayer && y <= blocks[b].maxLayer)
                         {
-                            _blocksDataDictionary[$"{x} {y} {z}"] = b;
+                            _blocksDictionary[$"{x} {y} {z}"] = b;
 
                             //Debug.Log($"Created block data X:{x} Y:{y} Z:{z} Type:{blocks[_blocksDataDictionary[$"{x} {y} {z}"]].screenName}");
                         }
@@ -122,20 +125,21 @@ public class WorldGenerator : MonoBehaviour
 
                     // Make some holes for debug only
                     if (UnityEngine.Random.Range(0, 100) < holesChance) //
-                        _blocksDataDictionary[$"{x} {y} {z}"] = -1; //
+                        _blocksDictionary[$"{x} {y} {z}"] = -1; //
                 }
             }
         }
     }
 
-    private void GenerateChunck(int startX, int startY, int startZ)
+    private void GenerateChunk(int startX, int startY, int startZ)
     {
         //Debug.Log($"Generating mesh for chunk X:{startX} Y:{startY} Z:{startZ}");
 
-        // Create new chunck object
-        _chunckObject = new GameObject($"Chunck X:{startX} Y:{startY} Z:{startZ}");
-        _chunckObject.transform.parent = transform;
-        //_chunckObject.transform.SetPositionAndRotation(new Vector3(0, 0, 0), Quaternion.identity);
+        // Create new chunk object
+        _chunkObject = new GameObject($"Chunk {startX} {startY} {startZ}");
+        _chunkObject.transform.parent = transform;
+        _chunkObject.transform.SetPositionAndRotation(new Vector3(0, 0, 0), Quaternion.identity);
+        _chunksDictionary.Add($"{startX} {startY} {startZ}", _chunkObject);
 
         // Instantiate mesh list
         _combineInstanceList = new List<CombineInstance>();
@@ -150,18 +154,25 @@ public class WorldGenerator : MonoBehaviour
                     //Debug.Log(_blocksDataDictionary[$"{x} {y} {z}"]);
 
                     // If block is not empty
-                    if (_blocksDataDictionary[$"{x} {y} {z}"] > -1)
+                    try
                     {
-                        // Generate a cube at the position
-                        _newQuadPos = new Vector3(x, y, z);
-                        GenerateBlock(x, y, z);
+                        if (_blocksDictionary[$"{x} {y} {z}"] > -1)
+                        {
+                            // Generate a cube at the position
+                            _newQuadPos = new Vector3(x, y, z);
+                            GenerateBlock(x, y, z);
+                        }
+                    }
+                    catch
+                    {
+                        Debug.Log($"Could not get data from chunk {x} {y} {z}");
                     }
                 }
             }
         }
 
         // Combine meshes
-        CombineQuadsIntoSingleChunck();
+        CombineQuadsIntoSingleChunk();
     }
     #endregion
 
@@ -235,7 +246,7 @@ public class WorldGenerator : MonoBehaviour
         _quadMesh.RecalculateBounds();
 
         // Update position
-        _quadObject.transform.parent = _chunckObject.transform;
+        _quadObject.transform.parent = _chunkObject.transform;
         _quadObject.transform.SetPositionAndRotation(_newQuadPos, Quaternion.identity);
 
         // Add new created mesh to the stack
@@ -251,52 +262,60 @@ public class WorldGenerator : MonoBehaviour
     private void GenerateBlock(int x, int y, int z)
     {
         //Debug.Log($"Creating block mesh for block X:{x} Y:{y} Z:{z}");
-
-        // Generate the top of the cube
-        if (y + 1 == worldSize.y * chunkSize.y || _blocksDataDictionary[$"{x} {y + 1} {z}"] == -1)
+        
+        // Generate quads to the block faces needed
+        try
         {
-            CreateQuad(CubeSide.Top, _blocksDataDictionary[$"{x} {y} {z}"]);
+            // Generate the top of the cube
+            if (y + 1 == worldSize.y * chunkSize.y || _blocksDictionary[$"{x} {y + 1} {z}"] == -1)
+            {
+                CreateQuad(CubeSide.Top, _blocksDictionary[$"{x} {y} {z}"]);
+            }
+            // Generate the bottom of the cube
+            if (y - 1 < 0 || _blocksDictionary[$"{x} {y - 1} {z}"] == -1)
+            {
+                CreateQuad(CubeSide.Bottom, _blocksDictionary[$"{x} {y} {z}"]);
+            }
+            // Generate the front of the cube
+            if (z + 1 == chunkSize.z * (worldSize.z + 1) || _blocksDictionary[$"{x} {y} {z + 1}"] == -1)
+            {
+                CreateQuad(CubeSide.Front, _blocksDictionary[$"{x} {y} {z}"]);
+            }
+            // Generate the back of the cube
+            if (z - 1 < -chunkSize.z * worldSize.z || _blocksDictionary[$"{x} {y} {z - 1}"] == -1)
+            {
+                CreateQuad(CubeSide.Back, _blocksDictionary[$"{x} {y} {z}"]);
+            }
+            // Generate the right side of the cube
+            if (x + 1 == chunkSize.x * (worldSize.x + 1) || _blocksDictionary[$"{x + 1} {y} {z}"] == -1)
+            {
+                CreateQuad(CubeSide.Right, _blocksDictionary[$"{x} {y} {z}"]);
+            }
+            // Generate the left side of the cube
+            if (x - 1 < -chunkSize.x * worldSize.z || _blocksDictionary[$"{x - 1} {y} {z}"] == -1)
+            {
+                CreateQuad(CubeSide.Left, _blocksDictionary[$"{x} {y} {z}"]);
+            }
         }
-        // Generate the bottom of the cube
-        if (y - 1 < 0 || _blocksDataDictionary[$"{x} {y - 1} {z}"] == -1)
+        catch
         {
-            CreateQuad(CubeSide.Bottom, _blocksDataDictionary[$"{x} {y} {z}"]);
-        }
-        // Generate the front of the cube
-        if (z + 1 == chunkSize.z * (worldSize.z + 1) || _blocksDataDictionary[$"{x} {y} {z + 1}"] == -1)
-        {
-            CreateQuad(CubeSide.Front, _blocksDataDictionary[$"{x} {y} {z}"]);
-        }
-        // Generate the back of the cube
-        if (z - 1 < -chunkSize.z * worldSize.z || _blocksDataDictionary[$"{x} {y} {z - 1}"] == -1)
-        {
-            CreateQuad(CubeSide.Back, _blocksDataDictionary[$"{x} {y} {z}"]);
-        }
-        // Generate the right side of the cube
-        if (x + 1 == chunkSize.x * (worldSize.x + 1) || _blocksDataDictionary[$"{x + 1} {y} {z}"] == -1)
-        {
-            CreateQuad(CubeSide.Right, _blocksDataDictionary[$"{x} {y} {z}"]);
-        }
-        // Generate the left side of the cube
-        if (x - 1 < -chunkSize.x * worldSize.z || _blocksDataDictionary[$"{x - 1} {y} {z}"] == -1)
-        {
-            CreateQuad(CubeSide.Left, _blocksDataDictionary[$"{x} {y} {z}"]);
+            Debug.Log($"Could not generate mesh for block X:{x} Y:{y} Z:{z}");
         }
     }
 
-    private void CombineQuadsIntoSingleChunck()
+    private void CombineQuadsIntoSingleChunk()
     {
         // Add combined mesh to the cube
-        _chunckMeshFilter = _chunckObject.AddComponent<MeshFilter>();
-        _chunckMeshFilter.mesh = new Mesh();
-        _chunckMeshFilter.mesh.CombineMeshes(_combineInstanceList.ToArray());
+        _chunkMeshFilter = _chunkObject.AddComponent<MeshFilter>();
+        _chunkMeshFilter.mesh = new Mesh();
+        _chunkMeshFilter.mesh.CombineMeshes(_combineInstanceList.ToArray());
 
         // Add renderer to the cube
-        _chunckMeshRenderer = _chunckObject.AddComponent<MeshRenderer>();
-        _chunckMeshRenderer.material = atlasMaterial;
+        _chunkMeshRenderer = _chunkObject.AddComponent<MeshRenderer>();
+        _chunkMeshRenderer.material = atlasMaterial;
 
         // Add mesh collider
-        _chunckObject.AddComponent<MeshCollider>();
+        _chunkObject.AddComponent<MeshCollider>();
     }
 
     #endregion

@@ -4,6 +4,8 @@
 [Bb]uild/
 [Bb]uilds/
 Assets/AssetStoreTools*
+VOXEL WORLD/Assets/WIP/
+VOXEL WORLD/Assets/WIP.meta
 
 # Visual Studio cache directory
 .vs/

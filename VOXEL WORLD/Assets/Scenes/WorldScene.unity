@@ -271,7 +271,6 @@ GameObject:
   m_Component:
   - component: {fileID: 678850215}
   - component: {fileID: 678850214}
-  - component: {fileID: 678850216}
   m_Layer: 0
   m_Name: WorldGenerator
   m_TagString: Untagged
@@ -314,19 +313,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &678850216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 678850213}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9bcca3f9be0735e4d849431a8b43fafb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  textureAtlas: {fileID: 2100000, guid: 05170b4ec04a2ec4ab46674b4ff5a290, type: 2}
 --- !u!1 &1219688810
 GameObject:
   m_ObjectHideFlags: 0
@@ -372,7 +358,7 @@ GameObject:
   - component: {fileID: 1687258586}
   - component: {fileID: 1687258587}
   m_Layer: 0
-  m_Name: CinematicCamera
+  m_Name: MainCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
