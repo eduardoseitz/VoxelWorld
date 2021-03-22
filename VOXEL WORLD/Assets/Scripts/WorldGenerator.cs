@@ -47,6 +47,8 @@ public class WorldGenerator : MonoBehaviour
     private MeshFilter _chunkMeshFilter;
     private MeshRenderer _chunkMeshRenderer;
     private List<CombineInstance> _combineInstanceList;
+
+    private float _startTime;
     #endregion
 
     #region Main Methods
@@ -62,6 +64,8 @@ public class WorldGenerator : MonoBehaviour
     #region World and Chunks
     private IEnumerator GenerateWorld()
     {
+        _startTime = Time.realtimeSinceStartup;
+
         // Generate blocks dataset
         _blocksDictionary = new Dictionary<string, BlockData>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
         for (int x = -(int)worldSize.x; x < worldSize.x; x++)
@@ -74,7 +78,6 @@ public class WorldGenerator : MonoBehaviour
                 }
             }
         }
-        //Debug.Log($"Generated {_blocksDictionary.Count} blocks data");
 
         // Create a quad which will serve as a template mesh
         SetupQuadMeshData();
@@ -95,12 +98,15 @@ public class WorldGenerator : MonoBehaviour
         // Destroy template quad
         Destroy(_quadObject);
 
+        // Debug
+        Debug.Log($"Generated {_chunksDictionary.Count} chunks with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString()} seconds");
+
         yield return null;
     }
     
     private void GenerateBlocksData(int startX, int startY, int startZ)
     {
-        Debug.Log($"Generating block data for chunk X:{startX} Y:{startY} Z:{startZ}");
+        //Debug.Log($"Generating block data for chunk X:{startX} Y:{startY} Z:{startZ}");
 
         // Generate block dataset
         for (int x = startX; x < chunkSize.x + startX; x++)
@@ -289,7 +295,6 @@ public class WorldGenerator : MonoBehaviour
                 CreateQuad(CubeSide.Back, _blocksDictionary[$"{x} {y} {z}"].blockType);
             }
             // Generate the right side of the cube
-            // 15 > 16 * 1 
             if (x + 2 > (chunkSize.x * worldSize.x) || _blocksDictionary[$"{x + 1} {y} {z}"].blockType == -1)
             {
                 CreateQuad(CubeSide.Right, _blocksDictionary[$"{x} {y} {z}"].blockType);
