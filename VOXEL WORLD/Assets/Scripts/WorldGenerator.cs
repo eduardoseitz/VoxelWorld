@@ -39,7 +39,7 @@ public class WorldGenerator : MonoBehaviour
     private MeshFilter _quadMeshFilter;
 
     // Blocks
-    private Dictionary<string, int> _blocksDictionary;
+    private Dictionary<string, BlockData> _blocksDictionary;
 
     // Chunks
     private Dictionary<string, GameObject> _chunksDictionary;
@@ -66,7 +66,7 @@ public class WorldGenerator : MonoBehaviour
         SetupQuadMeshData();
 
         // Generate blocks dataset
-        _blocksDictionary = new Dictionary<string, int>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
+        _blocksDictionary = new Dictionary<string, BlockData>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
         for (int x = -(int)worldSize.x; x <= worldSize.x; x++)
         {
             for (int y = 0; y < worldSize.y; y++)
@@ -110,14 +110,16 @@ public class WorldGenerator : MonoBehaviour
                 for (int z = startZ; z < chunkSize.z + startZ; z++)
                 {
                     // Set blocks as empty by default
-                    _blocksDictionary.Add($"{x} {y} {z}", -1);
+                    _blocksDictionary.Add($"{x} {y} {z}", new BlockData());
+                    _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
+
 
                     // Choose which block to use by layer rules
                     for (int b = 0; b < blocks.Length; b++)
                     {
                         if (y >= blocks[b].minLayer && y <= blocks[b].maxLayer)
                         {
-                            _blocksDictionary[$"{x} {y} {z}"] = b;
+                            _blocksDictionary[$"{x} {y} {z}"].blockType = b;
 
                             //Debug.Log($"Created block data X:{x} Y:{y} Z:{z} Type:{blocks[_blocksDataDictionary[$"{x} {y} {z}"]].screenName}");
                         }
@@ -125,7 +127,7 @@ public class WorldGenerator : MonoBehaviour
 
                     // Make some holes for debug only
                     if (UnityEngine.Random.Range(0, 100) < holesChance) //
-                        _blocksDictionary[$"{x} {y} {z}"] = -1; //
+                        _blocksDictionary[$"{x} {y} {z}"].blockType = -1; //
                 }
             }
         }
@@ -156,7 +158,7 @@ public class WorldGenerator : MonoBehaviour
                     // If block is not empty
                     try
                     {
-                        if (_blocksDictionary[$"{x} {y} {z}"] > -1)
+                        if (_blocksDictionary[$"{x} {y} {z}"].blockType > -1)
                         {
                             // Generate a cube at the position
                             _newQuadPos = new Vector3(x, y, z);
@@ -267,34 +269,34 @@ public class WorldGenerator : MonoBehaviour
         try
         {
             // Generate the top of the cube
-            if (y + 1 == worldSize.y * chunkSize.y || _blocksDictionary[$"{x} {y + 1} {z}"] == -1)
+            if (y + 1 == worldSize.y * chunkSize.y || _blocksDictionary[$"{x} {y + 1} {z}"].blockType == -1)
             {
-                CreateQuad(CubeSide.Top, _blocksDictionary[$"{x} {y} {z}"]);
+                CreateQuad(CubeSide.Top, _blocksDictionary[$"{x} {y} {z}"].blockType);
             }
             // Generate the bottom of the cube
-            if (y - 1 < 0 || _blocksDictionary[$"{x} {y - 1} {z}"] == -1)
+            if (y - 1 < 0 || _blocksDictionary[$"{x} {y - 1} {z}"].blockType == -1)
             {
-                CreateQuad(CubeSide.Bottom, _blocksDictionary[$"{x} {y} {z}"]);
+                CreateQuad(CubeSide.Bottom, _blocksDictionary[$"{x} {y} {z}"].blockType);
             }
             // Generate the front of the cube
-            if (z + 1 == chunkSize.z * (worldSize.z + 1) || _blocksDictionary[$"{x} {y} {z + 1}"] == -1)
+            if (z + 1 == chunkSize.z * (worldSize.z + 1) || _blocksDictionary[$"{x} {y} {z + 1}"].blockType == -1)
             {
-                CreateQuad(CubeSide.Front, _blocksDictionary[$"{x} {y} {z}"]);
+                CreateQuad(CubeSide.Front, _blocksDictionary[$"{x} {y} {z}"].blockType);
             }
             // Generate the back of the cube
-            if (z - 1 < -chunkSize.z * worldSize.z || _blocksDictionary[$"{x} {y} {z - 1}"] == -1)
+            if (z - 1 < -chunkSize.z * worldSize.z || _blocksDictionary[$"{x} {y} {z - 1}"].blockType == -1)
             {
-                CreateQuad(CubeSide.Back, _blocksDictionary[$"{x} {y} {z}"]);
+                CreateQuad(CubeSide.Back, _blocksDictionary[$"{x} {y} {z}"].blockType);
             }
             // Generate the right side of the cube
-            if (x + 1 == chunkSize.x * (worldSize.x + 1) || _blocksDictionary[$"{x + 1} {y} {z}"] == -1)
+            if (x + 1 == chunkSize.x * (worldSize.x + 1) || _blocksDictionary[$"{x + 1} {y} {z}"].blockType == -1)
             {
-                CreateQuad(CubeSide.Right, _blocksDictionary[$"{x} {y} {z}"]);
+                CreateQuad(CubeSide.Right, _blocksDictionary[$"{x} {y} {z}"].blockType);
             }
             // Generate the left side of the cube
-            if (x - 1 < -chunkSize.x * worldSize.z || _blocksDictionary[$"{x - 1} {y} {z}"] == -1)
+            if (x - 1 < -chunkSize.x * worldSize.z || _blocksDictionary[$"{x - 1} {y} {z}"].blockType == -1)
             {
-                CreateQuad(CubeSide.Left, _blocksDictionary[$"{x} {y} {z}"]);
+                CreateQuad(CubeSide.Left, _blocksDictionary[$"{x} {y} {z}"].blockType);
             }
         }
         catch
