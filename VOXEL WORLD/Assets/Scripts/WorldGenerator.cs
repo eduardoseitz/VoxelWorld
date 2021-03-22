@@ -62,30 +62,30 @@ public class WorldGenerator : MonoBehaviour
     #region World and Chunks
     private IEnumerator GenerateWorld()
     {
-        // Create a quad which will serve as a template mesh
-        SetupQuadMeshData();
-
         // Generate blocks dataset
         _blocksDictionary = new Dictionary<string, BlockData>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
-        for (int x = -(int)worldSize.x; x <= worldSize.x; x++)
+        for (int x = -(int)worldSize.x; x < worldSize.x; x++)
         {
             for (int y = 0; y < worldSize.y; y++)
             {
-                for (int z = -(int)worldSize.z; z <= worldSize.z; z++)
+                for (int z = -(int)worldSize.z; z < worldSize.z; z++)
                 {
                     GenerateBlocksData(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z);
                 }
             }
         }
-        //Debug.Log($"Generated {_blocksDataDictionary.Count} blocks data");
+        //Debug.Log($"Generated {_blocksDictionary.Count} blocks data");
+
+        // Create a quad which will serve as a template mesh
+        SetupQuadMeshData();
 
         // Generate world mesh
         _chunksDictionary = new Dictionary<string, GameObject>(); // Holds current loaded chuncks for later use
-        for (int x = -(int)worldSize.x; x <= worldSize.x; x++)
+        for (int x = -(int)worldSize.x; x < worldSize.x; x++)
         {
             for (int y = 0; y < worldSize.y; y++)
             {
-                for (int z = -(int)worldSize.z; z <= worldSize.z; z++)
+                for (int z = -(int)worldSize.z; z < worldSize.z; z++)
                 {
                     GenerateChunk(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z);
                 }
@@ -100,7 +100,7 @@ public class WorldGenerator : MonoBehaviour
     
     private void GenerateBlocksData(int startX, int startY, int startZ)
     {
-        //Debug.Log($"Generating block data for chunk X:{startX} Y:{startY} Z:{startZ}");
+        Debug.Log($"Generating block data for chunk X:{startX} Y:{startY} Z:{startZ}");
 
         // Generate block dataset
         for (int x = startX; x < chunkSize.x + startX; x++)
@@ -279,7 +279,7 @@ public class WorldGenerator : MonoBehaviour
                 CreateQuad(CubeSide.Bottom, _blocksDictionary[$"{x} {y} {z}"].blockType);
             }
             // Generate the front of the cube
-            if (z + 1 == chunkSize.z * (worldSize.z + 1) || _blocksDictionary[$"{x} {y} {z + 1}"].blockType == -1)
+            if (z + 2> (chunkSize.z * worldSize.z) || _blocksDictionary[$"{x} {y} {z + 1}"].blockType == -1)
             {
                 CreateQuad(CubeSide.Front, _blocksDictionary[$"{x} {y} {z}"].blockType);
             }
@@ -289,7 +289,8 @@ public class WorldGenerator : MonoBehaviour
                 CreateQuad(CubeSide.Back, _blocksDictionary[$"{x} {y} {z}"].blockType);
             }
             // Generate the right side of the cube
-            if (x + 1 == chunkSize.x * (worldSize.x + 1) || _blocksDictionary[$"{x + 1} {y} {z}"].blockType == -1)
+            // 15 > 16 * 1 
+            if (x + 2 > (chunkSize.x * worldSize.x) || _blocksDictionary[$"{x + 1} {y} {z}"].blockType == -1)
             {
                 CreateQuad(CubeSide.Right, _blocksDictionary[$"{x} {y} {z}"].blockType);
             }

@@ -291,14 +291,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkSize: {x: 16, y: 16, z: 16}
-  worldSize: {x: 1, y: 3, z: 1}
+  worldSize: {x: 2, y: 4, z: 2}
   atlasMaterial: {fileID: 2100000, guid: 05170b4ec04a2ec4ab46674b4ff5a290, type: 2}
   blocks:
   - {fileID: 11400000, guid: 421f29e3b496ff146acf1b0cd69bc73a, type: 2}
   - {fileID: 11400000, guid: c53165cc36e2009459cc240f38fcad5a, type: 2}
   - {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
   - {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
-  holesChance: 5
+  holesChance: 1
 --- !u!4 &678850215
 Transform:
   m_ObjectHideFlags: 0
