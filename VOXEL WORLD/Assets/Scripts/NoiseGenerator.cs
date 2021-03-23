@@ -9,6 +9,7 @@ namespace DevPenguin.VOXELWORLD
         private int _octaves = 3; // How many waves will be combined
         private float _persistance = 0.5f; // The amplitude combined with the value
         private int _maxHeight = 100; // Where is the ground level
+        private int _seed;
 
         private float _time;
         private float _height;
@@ -16,19 +17,20 @@ namespace DevPenguin.VOXELWORLD
         #endregion
 
         #region Main Methods
-        public NoiseGenerator(float smoothness, int octaves, float persistance, int maxHeight)
+        public NoiseGenerator(float smoothness, int octaves, float persistance, int maxHeight, int terrainSeed)
         {
             _smoothness = smoothness;
             _octaves = octaves;
             _persistance = persistance;
             _maxHeight = maxHeight;
+            _seed = terrainSeed;
         }
         #endregion
 
         #region Helper Methods
         public int GetTerrainHeightNoise(int x, int z)
         {
-            _brownianMotion = CalculateFractalBrownianMotion(x * _smoothness, z * _smoothness, _octaves, _persistance);
+            _brownianMotion = CalculateFractalBrownianMotion((x + _seed) * _smoothness, (z + _seed) * _smoothness, _octaves, _persistance);
             _height = ConvertFrequencyScale(0, _maxHeight, 0, 1, _brownianMotion);
 
             return (int)_height;

@@ -8,6 +8,8 @@ namespace DevPenguin.VOXELWORLD
     {
         #region Declarations
         [Header("World Setup")]
+        [SerializeField] int terrainSeed = 468786;
+        [SerializeField] bool randomizeSeed = true;
         [Tooltip("Chunk size in blocks")]
         [SerializeField] private Vector3 chunkSize = new Vector3(16, 16, 16);
         [Tooltip("World size in chunks")]
@@ -17,7 +19,12 @@ namespace DevPenguin.VOXELWORLD
         [SerializeField] private float terrainPersistance = 0.5f; // The amplitude combined with the value
         [SerializeField] private int terrainOctaves = 3; // How many waves will be combined
         [SerializeField] private Material atlasMaterial;
-        [SerializeField] private BlockType[] blocks;
+
+        [Header("Blocks Setup")]
+        [SerializeField] private BlockType[] allBlocks;
+        [SerializeField] private BlockType[] ruleBlocks;
+        [SerializeField] private BlockType bedBlock;
+        [SerializeField] private BlockType surfaceBlock;
 
         [Header("Debug")]
         [SerializeField] private int holesChance = 10;
@@ -75,8 +82,12 @@ namespace DevPenguin.VOXELWORLD
             // Debug
             _startTime = Time.realtimeSinceStartup;
 
+            // Setup noise seed
+            if (randomizeSeed)
+                terrainSeed = Random.Range(-999999, 999999);
+            noiseGenerator = new NoiseGenerator(terrainSmoothness, terrainOctaves, terrainPersistance, terrainMaxGroundHeight, terrainSeed);
+
             // Generate blocks dataset
-            noiseGenerator = new NoiseGenerator(terrainSmoothness, terrainOctaves, terrainPersistance, terrainMaxGroundHeight);
             _blocksDictionary = new Dictionary<string, BlockData>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
             for (int x = -(int)worldSize.x; x < worldSize.x; x++)
             {
@@ -118,7 +129,7 @@ namespace DevPenguin.VOXELWORLD
         {
             //Debug.Log($"Generating block data for chunk X:{startX} Y:{startY} Z:{startZ}");
 
-            // Generate block dataset
+            // Generate terrain dataset
             for (int x = startX; x < chunkSize.x + startX; x++)
             {
                 for (int y = startY; y < chunkSize.y + startY; y++)
@@ -134,28 +145,73 @@ namespace DevPenguin.VOXELWORLD
                         // If it is bellow the noise height 
                         if (y <= _topLayer) 
                         {
-                            // Choose which block to use by layer rules
-                            for (int b = 0; b < blocks.Length; b++)
+                            // If it is the surface
+                            if (y == _topLayer)
                             {
-                                if (y >= _topLayer - blocks[b].maxDepthLayer && y <= _topLayer - blocks[b].minDepthLayer)
+                                _blocksDictionary[$"{x} {y} {z}"].blockType = surfaceBlock.blockType;
+                            }
+                            // If it is the bedrock
+                            else if (y == 0)
+                            {
+                                _blocksDictionary[$"{x} {y} {z}"].blockType = bedBlock.blockType;
+                            }
+                            // Else choose which block to use by layer rules
+                            else
+                            {
+                                for (int b = 0; b < ruleBlocks.Length; b++)
                                 {
-                                    _blocksDictionary[$"{x} {y} {z}"].blockType = b;
+                                    if (y > _topLayer - ruleBlocks[b].maxDepthLayer && y <= _topLayer - ruleBlocks[b].minDepthLayer)
+                                    {
+                                        _blocksDictionary[$"{x} {y} {z}"].blockType = ruleBlocks[b].blockType;
+                                    }
 
-                                    //Debug.Log($"Created block data X:{x} Y:{y} Z:{z} Type:{blocks[_blocksDataDictionary[$"{x} {y} {z}"]].screenName}");
+                                    // Make some holes for mesh debug only
+                                    if (y != _topLayer && _topLayer != 0 && UnityEngine.Random.Range(0, 100) < holesChance) //
+                                        _blocksDictionary[$"{x} {y} {z}"].blockType = -1; //
                                 }
                             }
                         }
+                        // Else make it air
                         else
                         {
                             _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
                         }
 
-                        // Make some holes for debug only
-                        if (y != _topLayer && UnityEngine.Random.Range(0, 100) < holesChance) //
-                            _blocksDictionary[$"{x} {y} {z}"].blockType = -1; //
+                        //Debug.Log($"Created block data X:{x} Y:{y} Z:{z} Type:{blocks[_blocksDataDictionary[$"{x} {y} {z}"]].screenName}");
                     }
                 }
             }
+
+            // TODO: Generate caves
+            // TODO: Generate ores
+            // TODO: Generate structures
+            // TODO: Generate vegetation
+            // Generate trees
+            int _ramdonX = Random.Range(startX + 3, (int)chunkSize.x + startX - 3);
+            int _ramdonZ = Random.Range(startZ + 3, (int)chunkSize.z + startZ - 3);
+            int _randomY = noiseGenerator.GetTerrainHeightNoise(_ramdonX, _ramdonZ);
+            _blocksDictionary[$"{_ramdonX} {_randomY + 1} {_ramdonZ}"].blockType = 3;
+            _blocksDictionary[$"{_ramdonX} {_randomY + 2} {_ramdonZ}"].blockType = 3;
+            _blocksDictionary[$"{_ramdonX} {_randomY + 3} {_ramdonZ}"].blockType = 3;
+            _blocksDictionary[$"{_ramdonX} {_randomY + 4} {_ramdonZ}"].blockType = 3;
+            _blocksDictionary[$"{_ramdonX} {_randomY + 5} {_ramdonZ}"].blockType = 5;
+            _blocksDictionary[$"{_ramdonX} {_randomY + 6} {_ramdonZ}"].blockType = 5;
+
+            _blocksDictionary[$"{_ramdonX + 1} {_randomY + 3} {_ramdonZ}"].blockType = 5;
+            _blocksDictionary[$"{_ramdonX + 1} {_randomY + 4} {_ramdonZ}"].blockType = 5;
+            _blocksDictionary[$"{_ramdonX + 1} {_randomY + 5} {_ramdonZ}"].blockType = 5;
+
+            _blocksDictionary[$"{_ramdonX - 1} {_randomY + 3} {_ramdonZ}"].blockType = 5;
+            _blocksDictionary[$"{_ramdonX - 1} {_randomY + 4} {_ramdonZ}"].blockType = 5;
+            _blocksDictionary[$"{_ramdonX - 1} {_randomY + 5} {_ramdonZ}"].blockType = 5;
+
+            _blocksDictionary[$"{_ramdonX} {_randomY + 3} {_ramdonZ + 1}"].blockType = 5;
+            _blocksDictionary[$"{_ramdonX} {_randomY + 4} {_ramdonZ + 1}"].blockType = 5;
+            _blocksDictionary[$"{_ramdonX} {_randomY + 5} {_ramdonZ + 1}"].blockType = 5;
+
+            _blocksDictionary[$"{_ramdonX} {_randomY + 3} {_ramdonZ - 1}"].blockType = 5;
+            _blocksDictionary[$"{_ramdonX} {_randomY + 4} {_ramdonZ - 1}"].blockType = 5;
+            _blocksDictionary[$"{_ramdonX} {_randomY + 5} {_ramdonZ - 1}"].blockType = 5;
         }
 
         private void GenerateChunk(int startX, int startY, int startZ)
@@ -233,32 +289,32 @@ namespace DevPenguin.VOXELWORLD
                 case CubeSide.Bottom:
                     _vertices = new Vector3[] { _vertice0, _vertice1, _vertice2, _vertice3 };
                     _normals = new Vector3[] { Vector3.down, Vector3.down, Vector3.down, Vector3.down };
-                    _uvs = blocks[blockType].GetBottomUV();
+                    _uvs = allBlocks[blockType].GetBottomUV();
                     break;
                 case CubeSide.Top:
                     _vertices = new Vector3[] { _vertice7, _vertice6, _vertice5, _vertice4 };
                     _normals = new Vector3[] { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
-                    _uvs = blocks[blockType].GetTopUV();
+                    _uvs = allBlocks[blockType].GetTopUV();
                     break;
                 case CubeSide.Left:
                     _vertices = new Vector3[] { _vertice7, _vertice4, _vertice0, _vertice3 };
                     _normals = new Vector3[] { Vector3.left, Vector3.left, Vector3.left, Vector3.left };
-                    _uvs = blocks[blockType].GetSideUV(); // right texture
+                    _uvs = allBlocks[blockType].GetSideUV(); // right texture
                     break;
                 case CubeSide.Right:
                     _vertices = new Vector3[] { _vertice5, _vertice6, _vertice2, _vertice1 };
                     _normals = new Vector3[] { Vector3.right, Vector3.right, Vector3.right, Vector3.right };
-                    _uvs = blocks[blockType].GetSideUV(); // left texture
+                    _uvs = allBlocks[blockType].GetSideUV(); // left texture
                     break;
                 case CubeSide.Front:
                     _vertices = new Vector3[] { _vertice4, _vertice5, _vertice1, _vertice0 };
                     _normals = new Vector3[] { Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward };
-                    _uvs = blocks[blockType].GetSideUV(); // back texture
+                    _uvs = allBlocks[blockType].GetSideUV(); // back texture
                     break;
                 case CubeSide.Back:
                     _vertices = new Vector3[] { _vertice6, _vertice7, _vertice3, _vertice2 };
                     _normals = new Vector3[] { Vector3.back, Vector3.back, Vector3.back, Vector3.back };
-                    _uvs = blocks[blockType].GetSideUV(); // front texture
+                    _uvs = allBlocks[blockType].GetSideUV(); // front texture
                     break;
             }
             _triangles = new int[] { 3, 1, 0, 3, 2, 1 };

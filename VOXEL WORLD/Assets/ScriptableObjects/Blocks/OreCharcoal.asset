@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8c36d3902648074390dcdc5fe88dd28, type: 3}
-  m_Name: Stone
+  m_Name: OreCharcoal
   m_EditorClassIdentifier: 
-  screenName: Stone
-  minLayer: 3
-  maxLayer: 34
-  topUVPosition: {x: 3, y: 0}
-  sideUVPosition: {x: 3, y: 0}
-  bottomUVPosition: {x: 3, y: 0}
+  blockType: 6
+  screenName: Sand
+  minDepthLayer: 0
+  maxDepthLayer: 100
+  topUVPosition: {x: 9, y: 0}
+  sideUVPosition: {x: 9, y: 0}
+  bottomUVPosition: {x: 9, y: 0}

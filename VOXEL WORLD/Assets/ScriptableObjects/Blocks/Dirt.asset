@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8c36d3902648074390dcdc5fe88dd28, type: 3}
   m_Name: Dirt
   m_EditorClassIdentifier: 
+  blockType: 0
   screenName: Dirt
   minDepthLayer: 0
   maxDepthLayer: 3

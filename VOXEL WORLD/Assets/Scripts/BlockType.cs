@@ -6,6 +6,7 @@ namespace DevPenguin.VOXELWORLD
     public class BlockType : ScriptableObject
     {
         #region Declarations
+        public int blockType = 0; // -1 equals air
         public string screenName;
         // public enum Category{Solid, Liquid, Prop, Door, etc};
         // public int id;
