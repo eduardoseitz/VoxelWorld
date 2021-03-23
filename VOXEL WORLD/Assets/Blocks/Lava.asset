@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Lava
   m_EditorClassIdentifier: 
   screenName: Lava
-  minLayer: 0
-  maxLayer: 2
+  minDepthLayer: 15
+  maxDepthLayer: 100
   topUVPosition: {x: 6, y: 0}
   sideUVPosition: {x: 6, y: 0}
   bottomUVPosition: {x: 6, y: 0}

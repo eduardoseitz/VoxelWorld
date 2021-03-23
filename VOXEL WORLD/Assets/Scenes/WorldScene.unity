@@ -17,7 +17,7 @@ RenderSettings:
   m_Fog: 1
   m_FogColor: {r: 0.6247775, g: 0.65768754, b: 0.735849, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.025
+  m_FogDensity: 0.02
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -150,7 +150,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 0.8392157, g: 0.8512974, b: 1, a: 1}
-  m_Intensity: 0.5
+  m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.802082
@@ -192,7 +192,7 @@ Light:
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 0.25
+  m_BounceIntensity: 0.5
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
@@ -290,14 +290,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a34cc1fb65100a4fb7591d6a48db273, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkSize: {x: 16, y: 16, z: 16}
-  worldSize: {x: 2, y: 4, z: 2}
+  chunkSize: {x: 16, y: 64, z: 16}
+  worldSize: {x: 2, y: 1, z: 2}
+  terrainMaxGroundHeight: 48
+  terrainSmoothness: 0.02
+  terrainPersistance: 0.5
+  terrainOctaves: 3
   atlasMaterial: {fileID: 2100000, guid: 05170b4ec04a2ec4ab46674b4ff5a290, type: 2}
   blocks:
-  - {fileID: 11400000, guid: 421f29e3b496ff146acf1b0cd69bc73a, type: 2}
   - {fileID: 11400000, guid: c53165cc36e2009459cc240f38fcad5a, type: 2}
   - {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
   - {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
+  - {fileID: 11400000, guid: 421f29e3b496ff146acf1b0cd69bc73a, type: 2}
   holesChance: 1
 --- !u!4 &678850215
 Transform:
@@ -388,7 +392,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 256
+  far clip plane: 512
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -415,7 +419,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687258581}
   m_LocalRotation: {x: 0.2681881, y: 0.36620522, z: -0.11108714, w: 0.88409764}
-  m_LocalPosition: {x: -16, y: 40, z: -16}
+  m_LocalPosition: {x: -24, y: 48, z: -24}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Dirt
   m_EditorClassIdentifier: 
   screenName: Dirt
-  minLayer: 34
-  maxLayer: 38
+  minDepthLayer: 0
+  maxDepthLayer: 3
   topUVPosition: {x: 0, y: 0}
   sideUVPosition: {x: 0, y: 0}
   bottomUVPosition: {x: 0, y: 0}

@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
-public class BlockData
+namespace DevPenguin.VOXELWORLD
 {
-    public int blockType = -1; // -1 equals air
+    public class BlockData
+    {
+        public int blockType = -1; // -1 equals air
+    }
 }
