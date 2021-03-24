@@ -28,9 +28,9 @@ namespace DevPenguin.VOXELWORLD
         #endregion
 
         #region Helper Methods
-        public int GetTerrainHeightNoise(int x, int z)
+        public int GetTerrainHeightNoise(int x, int z, float smoothMultiplier)
         {
-            _brownianMotion = CalculateFractalBrownianMotion((x + _seed) * _smoothness, (z + _seed) * _smoothness, _octaves, _persistance);
+            _brownianMotion = CalculateFractalBrownianMotion((x + _seed) * (_smoothness * smoothMultiplier), (z + _seed) * (_smoothness * smoothMultiplier), _octaves, _persistance);
             _height = ConvertFrequencyScale(0, _maxHeight, 0, 1, _brownianMotion);
 
             return (int)_height;

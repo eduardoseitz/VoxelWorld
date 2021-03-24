@@ -3,7 +3,7 @@
 namespace DevPenguin.VOXELWORLD
 {
     [CreateAssetMenu(fileName = "NewBlock", menuName = "VOXEL WORLD/BlockType")]
-    public class BlockType : ScriptableObject
+    public class Block : ScriptableObject
     {
         #region Declarations
         public int blockType = 0; // -1 equals air
