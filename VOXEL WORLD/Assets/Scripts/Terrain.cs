@@ -5,9 +5,13 @@ namespace DevPenguin.VOXELWORLD
     [CreateAssetMenu(fileName = "NewTerrain", menuName = "VOXEL WORLD/Terrain")]
     public class Terrain : ScriptableObject
     {
-        public int height = 48; // Where is the ground level
-        public float smoothness = 0.02f; // The increment
-        public float persistance = 0.5f; // The amplitude combined with the value
-        public int octaves = 2; // How many waves will be combined
+        [Tooltip("Noise increment")]
+        public float smoothness = 0.0015f;
+        [Tooltip("Combined amplitude to the noise result")]
+        public float persistance = 0.5f;
+        [Tooltip("How many noise waves will be combined")]
+        public int octaves = 3;
+        [Tooltip("How high should the terrain raise to")]
+        public int groundHeight = 48;
     }
 }

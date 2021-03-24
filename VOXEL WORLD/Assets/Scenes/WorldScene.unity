@@ -292,15 +292,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   terrainSeed: 221855
   shouldRandomizeSeed: 1
+  groundHeight: 100
   chunkSize: {x: 16, y: 64, z: 16}
   worldSize: {x: 2, y: 1, z: 2}
-  terrainMaxGroundHeight: 48
-  terrainSmoothness: 0.02
-  terrainPersistance: 0.5
-  terrainOctaves: 2
-  atlasMaterial: {fileID: 2100000, guid: 05170b4ec04a2ec4ab46674b4ff5a290, type: 2}
-  caveSmoothness: 10
-  caveChance: 0.42
+  surfaceTerrain: {fileID: 11400000, guid: bdb85ab163023d14699ce9fe63264051, type: 2}
+  underSurfaceTerrain: {fileID: 11400000, guid: ceb6f3bdc28e0cc4491c35677569b8a4,
+    type: 2}
+  caveTerrain: {fileID: 11400000, guid: 6540750b158f2f04eaf9c3234e413de6, type: 2}
+  caveChance: 0.4
+  oreChance: 0.3
   allBlocks:
   - {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
   - {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
@@ -317,6 +317,7 @@ MonoBehaviour:
   bedBlock: {fileID: 11400000, guid: 421f29e3b496ff146acf1b0cd69bc73a, type: 2}
   surfaceBlock: {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
   underSurfaceBlock: {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
+  atlasMaterial: {fileID: 2100000, guid: 05170b4ec04a2ec4ab46674b4ff5a290, type: 2}
   shouldMakeHoles: 0
   holesChance: 0
 --- !u!4 &678850215

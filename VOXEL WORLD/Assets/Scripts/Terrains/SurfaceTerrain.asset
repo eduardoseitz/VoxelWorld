@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bed9a6a511e62454c946d5c7a8471f25, type: 3}
-  m_Name: ValleyTerrain
+  m_Name: SurfaceTerrain
   m_EditorClassIdentifier: 
-  height: 48
   smoothness: 0.02
   persistance: 0.5
   octaves: 2
+  groundHeight: 48

@@ -10,24 +10,20 @@ namespace DevPenguin.VOXELWORLD
         [Header("World Setup")]
         [SerializeField] int terrainSeed = 468786;
         [SerializeField] bool shouldRandomizeSeed = true;
+        [Tooltip("Where is the ground level")]
+        [SerializeField] int groundHeight = 100;
         [Tooltip("Chunk size in blocks")]
         [SerializeField] private Vector3 chunkSize = new Vector3(16, 16, 16);
         [Tooltip("World size in chunks")]
         [SerializeField] private Vector3 worldSize = new Vector3(3, 3, 3);
-        [Header("Base Terrain")]
-        [Tooltip("Where is the ground level")]
-        [SerializeField] private int terrainMaxGroundHeight = 100;
-        [Tooltip("Noise increment")]
-        [SerializeField] private float terrainSmoothness = 0.0015f;
-        [Tooltip("Combined amplitude to the noise result")]
-        [SerializeField] private float terrainPersistance = 0.5f;
-        [Tooltip("How many noise waves will be combined")]
-        [SerializeField] private int terrainOctaves = 3;
-        [SerializeField] private Material atlasMaterial;
+
+        [Header("Terrain Setup")]
+        [SerializeField] private Terrain surfaceTerrain;
+        [SerializeField] private Terrain underSurfaceTerrain;
         [Header("Cave Terrain")]
-        [Tooltip("Noise increment")]
-        [SerializeField] private float caveSmoothness = 10;
-        [SerializeField] private float caveChance = 0.4f;
+        [SerializeField] private Terrain caveTerrain;
+        [SerializeField] private float caveChance = 0.42f;
+        [SerializeField] private float oreChance = 0.38f;
         [Space(2f)]
 
         [Header("Blocks Setup")]
@@ -36,6 +32,7 @@ namespace DevPenguin.VOXELWORLD
         [SerializeField] private Block bedBlock;
         [SerializeField] private Block surfaceBlock;
         [SerializeField] private Block underSurfaceBlock;
+        [SerializeField] private Material atlasMaterial;
         [Space(2f)]
 
         [Header("Debug")]
@@ -98,7 +95,7 @@ namespace DevPenguin.VOXELWORLD
             // Setup noise seed
             if (shouldRandomizeSeed)
                 terrainSeed = Random.Range(-999999, 999999);
-            noiseGenerator = new NoiseGenerator(terrainSmoothness, terrainOctaves, terrainPersistance, terrainMaxGroundHeight, terrainSeed);
+            noiseGenerator = new NoiseGenerator(terrainSeed);
 
             // Generate blocks dataset
             _blocksDictionary = new Dictionary<string, BlockData>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
@@ -161,8 +158,8 @@ namespace DevPenguin.VOXELWORLD
                         _blocksDictionary.Add($"{x} {y} {z}", new BlockData());
 
                         // Get height noise
-                        int _topGrassLayer = noiseGenerator.GetTerrainHeightNoise(x, z, 1);
-                        int _topStoneLayer = noiseGenerator.GetTerrainHeightNoise(x + 5, z + 5, 1.1f) - 5;
+                        int _topGrassLayer = noiseGenerator.GetTerrainHeightNoise(x, z, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
+                        int _topStoneLayer = noiseGenerator.GetTerrainHeightNoise(x + 5, z + 5, underSurfaceTerrain.smoothness, underSurfaceTerrain.octaves, underSurfaceTerrain.persistance, underSurfaceTerrain.groundHeight) - 5;
                         
                         // Else make it air by default
                         _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
@@ -171,7 +168,7 @@ namespace DevPenguin.VOXELWORLD
                         if (y <= _topStoneLayer)
                         {
                             // Get terrain holes
-                            float _caveFactor = noiseGenerator.Get3DNoise(x, y, z, caveSmoothness);
+                            float _caveFactor = noiseGenerator.Get3DNoise(x, y, z, caveTerrain.smoothness, caveTerrain.octaves, caveTerrain.persistance);
 
                             // Check if it isn't a cave
                             if (_caveFactor >= caveChance)
@@ -230,7 +227,7 @@ namespace DevPenguin.VOXELWORLD
             // Get a ramdon location on the surface
             int _ramdonX = Random.Range(startX + 3, (int)chunkSize.x + startX - 3);
             int _ramdonZ = Random.Range(startZ + 3, (int)chunkSize.z + startZ - 3);
-            int _ramdonY = noiseGenerator.GetTerrainHeightNoise(_ramdonX, _ramdonZ, 1);
+            int _ramdonY = noiseGenerator.GetTerrainHeightNoise(_ramdonX, _ramdonZ, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
 
             // If it is grass then plant a tree
             if (_blocksDictionary[$"{_ramdonX} {_ramdonY} {_ramdonZ}"].blockType == 1)
