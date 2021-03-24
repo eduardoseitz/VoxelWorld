@@ -150,7 +150,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 0.8392157, g: 0.8512974, b: 1, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.5
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.802082
@@ -192,7 +192,7 @@ Light:
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 0.5
+  m_BounceIntensity: 0.25
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
@@ -290,13 +290,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a34cc1fb65100a4fb7591d6a48db273, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrainSeed: 221855
+  shouldRandomizeSeed: 1
   chunkSize: {x: 16, y: 64, z: 16}
-  worldSize: {x: 1, y: 1, z: 1}
+  worldSize: {x: 2, y: 1, z: 2}
   terrainMaxGroundHeight: 48
   terrainSmoothness: 0.02
   terrainPersistance: 0.5
-  terrainOctaves: 3
+  terrainOctaves: 2
   atlasMaterial: {fileID: 2100000, guid: 05170b4ec04a2ec4ab46674b4ff5a290, type: 2}
+  caveSmoothness: 10
+  caveChance: 0.42
   allBlocks:
   - {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
   - {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
@@ -312,7 +316,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c53165cc36e2009459cc240f38fcad5a, type: 2}
   bedBlock: {fileID: 11400000, guid: 421f29e3b496ff146acf1b0cd69bc73a, type: 2}
   surfaceBlock: {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
-  holesChance: 1
+  underSurfaceBlock: {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
+  shouldMakeHoles: 0
+  holesChance: 0
 --- !u!4 &678850215
 Transform:
   m_ObjectHideFlags: 0
@@ -519,7 +525,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 3
+  m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.802082
@@ -561,7 +567,7 @@ Light:
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1.5
+  m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}

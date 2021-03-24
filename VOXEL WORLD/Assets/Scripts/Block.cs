@@ -2,7 +2,7 @@
 
 namespace DevPenguin.VOXELWORLD
 {
-    [CreateAssetMenu(fileName = "NewBlock", menuName = "VOXEL WORLD/BlockType")]
+    [CreateAssetMenu(fileName = "NewBlock", menuName = "VOXEL WORLD/Block")]
     public class Block : ScriptableObject
     {
         #region Declarations

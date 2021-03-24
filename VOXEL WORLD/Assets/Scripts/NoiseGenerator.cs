@@ -36,6 +36,18 @@ namespace DevPenguin.VOXELWORLD
             return (int)_height;
         }
 
+        public float Get3DNoise(float x, float y, float z, float smoothMultiplier)
+        {
+            float _XY = CalculateFractalBrownianMotion(x * _smoothness * smoothMultiplier, y * _smoothness * smoothMultiplier, _octaves, _persistance);
+            float _YZ = CalculateFractalBrownianMotion(y * _smoothness * smoothMultiplier, z * _smoothness * smoothMultiplier, _octaves, _persistance);
+            float _XZ = CalculateFractalBrownianMotion(x * _smoothness * smoothMultiplier, z * _smoothness * smoothMultiplier, _octaves, _persistance);
+            float _YX = CalculateFractalBrownianMotion(y * _smoothness * smoothMultiplier, x * _smoothness * smoothMultiplier, _octaves, _persistance);
+            float _ZY = CalculateFractalBrownianMotion(z * _smoothness * smoothMultiplier, y * _smoothness * smoothMultiplier, _octaves, _persistance);
+            float _ZX = CalculateFractalBrownianMotion(z * _smoothness * smoothMultiplier, x * _smoothness * smoothMultiplier, _octaves, _persistance);
+
+            return (_XY + _YZ + _XZ + _YX + _ZY + _ZX) / 6f;
+        }
+
         private float ConvertFrequencyScale(float newMin, float newMax, float oldMin, float oldMax, float value)
         {
             return Mathf.Lerp(newMin, newMax, Mathf.InverseLerp(oldMin, oldMax, value));
@@ -45,7 +57,7 @@ namespace DevPenguin.VOXELWORLD
         {
             float _frequency = 1; // Higher frequencies make the wave periods shorter (zoomed out)
             float _amplitude = 1; // How much each sucessfull wave add to the total value
-            float _maxValue = 0; 
+            float _maxValue = 0;
             float _total = 0;
 
             // Make as many waves(octaves) of perlin noise and combine them

@@ -14,11 +14,20 @@ namespace DevPenguin.VOXELWORLD
         [SerializeField] private Vector3 chunkSize = new Vector3(16, 16, 16);
         [Tooltip("World size in chunks")]
         [SerializeField] private Vector3 worldSize = new Vector3(3, 3, 3);
-        [SerializeField] private int terrainMaxGroundHeight = 100; // Where is the ground level
-        [SerializeField] private float terrainSmoothness = 0.0015f; // The increment
-        [SerializeField] private float terrainPersistance = 0.5f; // The amplitude combined with the value
-        [SerializeField] private int terrainOctaves = 3; // How many waves will be combined
+        [Header("Base Terrain")]
+        [Tooltip("Where is the ground level")]
+        [SerializeField] private int terrainMaxGroundHeight = 100;
+        [Tooltip("Noise increment")]
+        [SerializeField] private float terrainSmoothness = 0.0015f;
+        [Tooltip("Combined amplitude to the noise result")]
+        [SerializeField] private float terrainPersistance = 0.5f;
+        [Tooltip("How many noise waves will be combined")]
+        [SerializeField] private int terrainOctaves = 3;
         [SerializeField] private Material atlasMaterial;
+        [Header("Cave Terrain")]
+        [Tooltip("Noise increment")]
+        [SerializeField] private float caveSmoothness = 10;
+        [SerializeField] private float caveChance = 0.4f;
         [Space(2f)]
 
         [Header("Blocks Setup")]
@@ -134,16 +143,13 @@ namespace DevPenguin.VOXELWORLD
             //Debug.Log($"Generating block data for chunk X:{startX} Y:{startY} Z:{startZ}");
 
             // Generate terrain dataset
-            GenerateTerrain(startX, startY, startZ);
+            GenerateBaseTerrain(startX, startY, startZ);
 
-            // TODO: Generate caves
-            // TODO: Generate ores
-
-            // Generate trees and strucutures
-            GenerateNature(startX, startZ);
+            // Generate trees and houses
+            GenerateNatureStructures(startX, startZ);
         }
 
-        private void GenerateTerrain(int startX, int startY, int startZ)
+        private void GenerateBaseTerrain(int startX, int startY, int startZ)
         {
             for (int x = startX; x < chunkSize.x + startX; x++)
             {
@@ -164,20 +170,32 @@ namespace DevPenguin.VOXELWORLD
                         // If it is bellow the stone level 
                         if (y <= _topStoneLayer)
                         {
-                            // Else choose which block to use by layer rules
-                            for (int b = 0; b < ruleBlocks.Length; b++)
-                            {
-                                if (y > _topGrassLayer - ruleBlocks[b].maxDepthLayer && y <= _topGrassLayer - ruleBlocks[b].minDepthLayer)
-                                {
-                                    _blocksDictionary[$"{x} {y} {z}"].blockType = ruleBlocks[b].blockType;
-                                }
+                            // Get terrain holes
+                            float _caveFactor = noiseGenerator.Get3DNoise(x, y, z, caveSmoothness);
 
-                                // Make some holes for mesh debug only
-                                if (shouldMakeHoles)
+                            // Check if it isn't a cave
+                            if (_caveFactor >= caveChance)
+                            {
+                                // Else choose which block to use by layer rules
+                                for (int b = 0; b < ruleBlocks.Length; b++)
                                 {
-                                    if (y != _topGrassLayer && _topGrassLayer != 0 && UnityEngine.Random.Range(0, 100) < holesChance)
-                                        _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
+                                    if (y > _topGrassLayer - ruleBlocks[b].maxDepthLayer && y <= _topGrassLayer - ruleBlocks[b].minDepthLayer)
+                                    {
+                                        _blocksDictionary[$"{x} {y} {z}"].blockType = ruleBlocks[b].blockType;
+                                    }
+
+                                    // Make some holes for mesh debug only
+                                    if (shouldMakeHoles)
+                                    {
+                                        if (y != _topGrassLayer && _topGrassLayer != 0 && UnityEngine.Random.Range(0, 100) < holesChance)
+                                            _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
+                                    }
                                 }
+                            }
+                            // Else if it is a cave make a hole
+                            else
+                            {
+                                _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
                             }
                         }
                         // If it is the surface
@@ -207,7 +225,7 @@ namespace DevPenguin.VOXELWORLD
             }
         }
 
-        private void GenerateNature(int startX, int startZ)
+        private void GenerateNatureStructures(int startX, int startZ)
         {
             // Get a ramdon location on the surface
             int _ramdonX = Random.Range(startX + 3, (int)chunkSize.x + startX - 3);
