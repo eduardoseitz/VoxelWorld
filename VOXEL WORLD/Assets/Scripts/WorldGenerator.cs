@@ -29,10 +29,11 @@ namespace DevPenguin.VOXELWORLD
         [Header("Blocks Setup")]
         [SerializeField] private Block[] allBlocks;
         [SerializeField] private Block[] ruleBlocks;
-        [SerializeField] private Block bedBlock;
+        [SerializeField] private Block[] oresBlocks;
         [SerializeField] private Block surfaceBlock;
         [SerializeField] private Block underSurfaceBlock;
-        [SerializeField] private Material atlasMaterial;
+        [SerializeField] private Block bedBlock;
+        [SerializeField] private Material blocksMaterial;
         [Space(2f)]
 
         [Header("Debug")]
@@ -99,11 +100,11 @@ namespace DevPenguin.VOXELWORLD
 
             // Generate blocks dataset
             _blocksDictionary = new Dictionary<string, BlockData>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
-            for (int x = -(int)worldSize.x; x < worldSize.x; x++)
+            for (int z = -(int)worldSize.z; z < worldSize.z; z++) 
             {
-                for (int y = 0; y < worldSize.y; y++)
+                for (int x = -(int)worldSize.x; x < worldSize.x; x++) 
                 {
-                    for (int z = -(int)worldSize.z; z < worldSize.z; z++)
+                    for (int y = 0; y < worldSize.y; y++)
                     {
                         GenerateBlocksData(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z);
                     }
@@ -140,27 +141,27 @@ namespace DevPenguin.VOXELWORLD
             //Debug.Log($"Generating block data for chunk X:{startX} Y:{startY} Z:{startZ}");
 
             // Generate terrain dataset
-            GenerateBaseTerrain(startX, startY, startZ);
+            GenerateTerrain(startX, startY, startZ);
 
             // Generate trees and houses
             GenerateNatureStructures(startX, startZ);
         }
 
-        private void GenerateBaseTerrain(int startX, int startY, int startZ)
+        private void GenerateTerrain(int startX, int startY, int startZ)
         {
-            for (int x = startX; x < chunkSize.x + startX; x++)
+            for (int z = startZ; z < chunkSize.z + startZ; z++) 
             {
-                for (int y = startY; y < chunkSize.y + startY; y++)
+                for (int x = startX; x < chunkSize.x + startX; x++)
                 {
-                    for (int z = startZ; z < chunkSize.z + startZ; z++)
+                    // Get height noise
+                    int _topGrassLayer = noiseGenerator.GetTerrainHeightNoise(x, z, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
+                    int _topStoneLayer = noiseGenerator.GetTerrainHeightNoise(x + 5, z + 5, underSurfaceTerrain.smoothness, underSurfaceTerrain.octaves, underSurfaceTerrain.persistance, underSurfaceTerrain.groundHeight) - 5;
+
+                    for (int y = startY; y < chunkSize.y + startY; y++)
                     {
                         // Set blocks as empty by default
                         _blocksDictionary.Add($"{x} {y} {z}", new BlockData());
 
-                        // Get height noise
-                        int _topGrassLayer = noiseGenerator.GetTerrainHeightNoise(x, z, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
-                        int _topStoneLayer = noiseGenerator.GetTerrainHeightNoise(x + 5, z + 5, underSurfaceTerrain.smoothness, underSurfaceTerrain.octaves, underSurfaceTerrain.persistance, underSurfaceTerrain.groundHeight) - 5;
-                        
                         // Else make it air by default
                         _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
 
@@ -176,8 +177,10 @@ namespace DevPenguin.VOXELWORLD
                                 // Else choose which block to use by layer rules
                                 for (int b = 0; b < ruleBlocks.Length; b++)
                                 {
-                                    if (y > _topGrassLayer - ruleBlocks[b].maxDepthLayer && y <= _topGrassLayer - ruleBlocks[b].minDepthLayer)
+                                    // Check if it is in the correct layer
+                                    if (y > _topStoneLayer - ruleBlocks[b].maxDepthLayer && y <= _topStoneLayer - ruleBlocks[b].minDepthLayer)
                                     {
+                                        // Check the chance of that block being
                                         _blocksDictionary[$"{x} {y} {z}"].blockType = ruleBlocks[b].blockType;
                                     }
 
@@ -186,6 +189,19 @@ namespace DevPenguin.VOXELWORLD
                                     {
                                         if (y != _topGrassLayer && _topGrassLayer != 0 && UnityEngine.Random.Range(0, 100) < holesChance)
                                             _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
+                                    }
+                                }
+
+                                // Generate ores
+                                for (int o = 0; o < oresBlocks.Length; o++)
+                                {
+                                    if (y > _topStoneLayer - oresBlocks[o].maxDepthLayer && y <= _topStoneLayer - oresBlocks[o].minDepthLayer)
+                                    {
+                                        if (_caveFactor < oresBlocks[o].generationChance)
+                                        {
+                                            _blocksDictionary[$"{x} {y} {z}"].blockType = oresBlocks[o].blockType;
+                                            Debug.Log("Generated ore");
+                                        }
                                     }
                                 }
                             }
@@ -210,8 +226,9 @@ namespace DevPenguin.VOXELWORLD
                             _blocksDictionary[$"{x} {y - 4} {z}"].blockType = 2;
                             _blocksDictionary[$"{x} {y - 5} {z}"].blockType = 2;
                         }
+
                         // If it is the bedrock
-                        else if (y == 0)
+                        if (y == 0)
                         {
                             _blocksDictionary[$"{x} {y} {z}"].blockType = bedBlock.blockType;
                         }
@@ -273,11 +290,11 @@ namespace DevPenguin.VOXELWORLD
             _combineInstanceList = new List<CombineInstance>();
 
             // Generate blocks meshes
-            for (int x = startX; x < chunkSize.x + startX; x++)
+            for (int z = startZ; z < chunkSize.z + startZ; z++) 
             {
-                for (int y = startY; y < chunkSize.y + startY; y++)
+                for (int x = startX; x < chunkSize.x + startX; x++) 
                 {
-                    for (int z = startZ; z < chunkSize.z + startZ; z++)
+                    for (int y = startY; y < chunkSize.y + startY; y++)
                     {
                         //Debug.Log(_blocksDataDictionary[$"{x} {y} {z}"]);
 
@@ -440,7 +457,7 @@ namespace DevPenguin.VOXELWORLD
 
             // Add renderer to the cube
             _chunkMeshRenderer = _chunkObject.AddComponent<MeshRenderer>();
-            _chunkMeshRenderer.material = atlasMaterial;
+            _chunkMeshRenderer.material = blocksMaterial;
 
             // Add mesh collider
             _chunkObject.AddComponent<MeshCollider>();

@@ -16,6 +16,7 @@ MonoBehaviour:
   screenName: Sand
   minDepthLayer: 0
   maxDepthLayer: 100
-  topUVPosition: {x: 8, y: 0}
-  sideUVPosition: {x: 8, y: 0}
-  bottomUVPosition: {x: 8, y: 0}
+  generationChance: 1
+  topUVPosition: {x: 9, y: 0}
+  sideUVPosition: {x: 9, y: 0}
+  bottomUVPosition: {x: 9, y: 0}

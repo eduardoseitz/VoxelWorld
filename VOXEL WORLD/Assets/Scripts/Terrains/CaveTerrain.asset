@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: CaveTerrain
   m_EditorClassIdentifier: 
   smoothness: 0.22
-  persistance: 0.5
+  persistance: 0.9
   octaves: 2
   groundHeight: 48

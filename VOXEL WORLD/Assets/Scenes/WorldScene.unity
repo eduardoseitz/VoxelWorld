@@ -314,10 +314,12 @@ MonoBehaviour:
   ruleBlocks:
   - {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
   - {fileID: 11400000, guid: c53165cc36e2009459cc240f38fcad5a, type: 2}
-  bedBlock: {fileID: 11400000, guid: 421f29e3b496ff146acf1b0cd69bc73a, type: 2}
+  oresBlocks:
+  - {fileID: 11400000, guid: 8e8e8fa7b57c35c4a9d27aaa294df992, type: 2}
   surfaceBlock: {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
   underSurfaceBlock: {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
-  atlasMaterial: {fileID: 2100000, guid: 05170b4ec04a2ec4ab46674b4ff5a290, type: 2}
+  bedBlock: {fileID: 11400000, guid: 421f29e3b496ff146acf1b0cd69bc73a, type: 2}
+  blocksMaterial: {fileID: 2100000, guid: 05170b4ec04a2ec4ab46674b4ff5a290, type: 2}
   shouldMakeHoles: 0
   holesChance: 0
 --- !u!4 &678850215

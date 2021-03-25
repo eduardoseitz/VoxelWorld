@@ -12,6 +12,8 @@ namespace DevPenguin.VOXELWORLD
         // public int id;
         public int minDepthLayer = 0;
         public int maxDepthLayer = 100;
+        [Range(0.01f,1f)]
+        public float generationChance = 1;
 
         [SerializeField] private Vector2 topUVPosition = new Vector2(0, 0);
         [SerializeField] private Vector2 sideUVPosition = new Vector2(0, 0);
