@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Cactus
   m_EditorClassIdentifier: 
   blockType: 7
-  screenName: Sand
+  screenName: Cactus
   minDepthLayer: 0
   maxDepthLayer: 100
-  topUVPosition: {x: 11, y: 0}
-  sideUVPosition: {x: 10, y: 0}
-  bottomUVPosition: {x: 11, y: 0}
+  generationChance: 1
+  topUVPosition: {x: 2, y: 1}
+  sideUVPosition: {x: 1, y: 1}
+  bottomUVPosition: {x: 2, y: 1}

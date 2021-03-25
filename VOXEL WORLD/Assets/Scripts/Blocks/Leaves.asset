@@ -16,6 +16,7 @@ MonoBehaviour:
   screenName: Leaves
   minDepthLayer: 0
   maxDepthLayer: 100
+  generationChance: 1
   topUVPosition: {x: 7, y: 0}
   sideUVPosition: {x: 7, y: 0}
   bottomUVPosition: {x: 7, y: 0}

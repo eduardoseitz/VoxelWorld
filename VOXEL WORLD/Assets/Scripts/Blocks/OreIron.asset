@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8c36d3902648074390dcdc5fe88dd28, type: 3}
-  m_Name: OreDiamond
+  m_Name: OreIron
   m_EditorClassIdentifier: 
   blockType: 6
-  screenName: Diamond Ore
-  minDepthLayer: 5
+  screenName: Iron Ore
+  minDepthLayer: 10
   maxDepthLayer: 70
-  generationChance: 0.41
+  generationChance: 0.42
   topUVPosition: {x: 10, y: 0}
   sideUVPosition: {x: 10, y: 0}
   bottomUVPosition: {x: 10, y: 0}

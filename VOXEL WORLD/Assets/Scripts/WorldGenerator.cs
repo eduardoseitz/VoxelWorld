@@ -200,7 +200,6 @@ namespace DevPenguin.VOXELWORLD
                                         if (_caveFactor < oresBlocks[o].generationChance)
                                         {
                                             _blocksDictionary[$"{x} {y} {z}"].blockType = oresBlocks[o].blockType;
-                                            Debug.Log("Generated ore");
                                         }
                                     }
                                 }

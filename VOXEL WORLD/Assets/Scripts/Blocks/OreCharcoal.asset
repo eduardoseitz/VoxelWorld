@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8c36d3902648074390dcdc5fe88dd28, type: 3}
   m_Name: OreCharcoal
   m_EditorClassIdentifier: 
-  blockType: 6
+  blockType: 8
   screenName: Charcoal Ore
   minDepthLayer: 5
   maxDepthLayer: 70
   generationChance: 0.43
-  topUVPosition: {x: 10, y: 0}
-  sideUVPosition: {x: 10, y: 0}
-  bottomUVPosition: {x: 10, y: 0}
+  topUVPosition: {x: 3, y: 1}
+  sideUVPosition: {x: 3, y: 1}
+  bottomUVPosition: {x: 3, y: 1}

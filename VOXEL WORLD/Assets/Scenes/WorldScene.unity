@@ -291,7 +291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terrainSeed: 221855
-  shouldRandomizeSeed: 1
+  shouldRandomizeSeed: 0
   groundHeight: 100
   chunkSize: {x: 16, y: 64, z: 16}
   worldSize: {x: 2, y: 1, z: 2}
@@ -309,8 +309,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 421f29e3b496ff146acf1b0cd69bc73a, type: 2}
   - {fileID: 11400000, guid: 3aea455f16397d947b8ef2219d41d443, type: 2}
   - {fileID: 11400000, guid: a5bf8e5830a55964398c1357dc50085c, type: 2}
-  - {fileID: 11400000, guid: 8e8e8fa7b57c35c4a9d27aaa294df992, type: 2}
   - {fileID: 11400000, guid: e5e93beea118c3845bb6f4d0b8d8d44c, type: 2}
+  - {fileID: 11400000, guid: 8e8e8fa7b57c35c4a9d27aaa294df992, type: 2}
   ruleBlocks:
   - {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
   - {fileID: 11400000, guid: c53165cc36e2009459cc240f38fcad5a, type: 2}

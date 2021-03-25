@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockType: 6
   screenName: Diamond Ore
-  minDepthLayer: 5
+  minDepthLayer: 15
   maxDepthLayer: 70
   generationChance: 0.41
   topUVPosition: {x: 10, y: 0}
