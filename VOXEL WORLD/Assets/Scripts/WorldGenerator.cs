@@ -10,12 +10,11 @@ namespace DevPenguin.VOXELWORLD
         [Header("World Setup")]
         [SerializeField] int terrainSeed = 468786;
         [SerializeField] bool shouldRandomizeSeed = true;
-        [Tooltip("Where is the ground level")]
-        [SerializeField] int groundHeight = 100;
         [Tooltip("Chunk size in blocks")]
         [SerializeField] private Vector3 chunkSize = new Vector3(16, 16, 16);
         [Tooltip("World size in chunks")]
         [SerializeField] private Vector3 worldSize = new Vector3(3, 3, 3);
+        [Space(5f)]
 
         [Header("Terrain Setup")]
         [SerializeField] private Terrain surfaceTerrain;
@@ -24,22 +23,26 @@ namespace DevPenguin.VOXELWORLD
         [SerializeField] private Terrain caveTerrain;
         [SerializeField] private float caveChance = 0.42f;
         [SerializeField] private float oreChance = 0.38f;
-        [Space(2f)]
+        [Space(5f)]
 
         [Header("Blocks Setup")]
         [SerializeField] private Block[] allBlocks;
+        [Space(3f)]
         [SerializeField] private Block[] ruleBlocks;
+        [Space(3f)]
         [SerializeField] private Block[] oresBlocks;
+        [Space(3f)]
         [SerializeField] private Block surfaceBlock;
         [SerializeField] private Block underSurfaceBlock;
         [SerializeField] private Block bedBlock;
+        [Space(3f)]
         [SerializeField] private Material blocksMaterial;
-        [Space(2f)]
+        [Space(5f)]
 
         [Header("Debug")]
         [SerializeField] private bool shouldMakeHoles = false;
         [SerializeField] private int holesChance = 1;
-        [Space(2f)]
+        [Space(5f)]
 
         // Mesh data
         private Vector3[] _vertices;
@@ -131,7 +134,7 @@ namespace DevPenguin.VOXELWORLD
             Destroy(_quadObject);
 
             // Debug
-            Debug.Log($"Generated {_chunksDictionary.Count} chunks with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString()} seconds");
+            Debug.Log($"Generated world with {_chunksDictionary.Count} chunks with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString()} seconds");
 
             yield return null;
         }
@@ -199,7 +202,10 @@ namespace DevPenguin.VOXELWORLD
                                     {
                                         if (_caveFactor < oresBlocks[o].generationChance)
                                         {
-                                            _blocksDictionary[$"{x} {y} {z}"].blockType = oresBlocks[o].blockType;
+                                            if (Random.Range(0, 100) < oresBlocks[o].generationChance * 100)
+                                            {
+                                                _blocksDictionary[$"{x} {y} {z}"].blockType = oresBlocks[o].blockType;
+                                            }
                                         }
                                     }
                                 }
@@ -232,7 +238,12 @@ namespace DevPenguin.VOXELWORLD
                             _blocksDictionary[$"{x} {y} {z}"].blockType = bedBlock.blockType;
                         }
 
-                        //Debug.Log($"Created block data X:{x} Y:{y} Z:{z} Type:{blocks[_blocksDataDictionary[$"{x} {y} {z}"]].screenName}");
+                        // Debug
+                        //if (_blocksDictionary[$"{x} {y} {z}"].blockType > -1)
+                        //{
+                        //    Debug.Log($"Created block at X:{x} Y:{y} Z:{z} ");
+                        //    Debug.Log($"Type:{allBlocks[_blocksDictionary[$"{x} {y} {z}"].blockType].screenName}");
+                        //}
                     }
                 }
             }

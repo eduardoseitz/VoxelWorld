@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8c36d3902648074390dcdc5fe88dd28, type: 3}
   m_Name: OreDiamond
   m_EditorClassIdentifier: 
-  blockType: 6
+  blockType: 10
   screenName: Diamond Ore
-  minDepthLayer: 15
-  maxDepthLayer: 70
+  minDepthLayer: 17
+  maxDepthLayer: 30
   generationChance: 0.41
-  topUVPosition: {x: 10, y: 0}
-  sideUVPosition: {x: 10, y: 0}
-  bottomUVPosition: {x: 10, y: 0}
+  topUVPosition: {x: 13, y: 0}
+  sideUVPosition: {x: 13, y: 0}
+  bottomUVPosition: {x: 13, y: 0}

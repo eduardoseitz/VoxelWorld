@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8c36d3902648074390dcdc5fe88dd28, type: 3}
-  m_Name: Sand
+  m_Name: OreCopper
   m_EditorClassIdentifier: 
-  blockType: 6
-  screenName: Sand
-  minDepthLayer: 0
-  maxDepthLayer: 100
-  generationChance: 1
-  topUVPosition: {x: 8, y: 0}
-  sideUVPosition: {x: 8, y: 0}
-  bottomUVPosition: {x: 8, y: 0}
+  blockType: 12
+  screenName: Copper Ore
+  minDepthLayer: 3
+  maxDepthLayer: 65
+  generationChance: 0.43
+  topUVPosition: {x: 0, y: 1}
+  sideUVPosition: {x: 0, y: 1}
+  bottomUVPosition: {x: 0, y: 1}

@@ -292,9 +292,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   terrainSeed: 221855
   shouldRandomizeSeed: 0
-  groundHeight: 100
   chunkSize: {x: 16, y: 64, z: 16}
-  worldSize: {x: 2, y: 1, z: 2}
+  worldSize: {x: 2, y: 2, z: 2}
   surfaceTerrain: {fileID: 11400000, guid: bdb85ab163023d14699ce9fe63264051, type: 2}
   underSurfaceTerrain: {fileID: 11400000, guid: ceb6f3bdc28e0cc4491c35677569b8a4,
     type: 2}
@@ -311,10 +310,21 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a5bf8e5830a55964398c1357dc50085c, type: 2}
   - {fileID: 11400000, guid: e5e93beea118c3845bb6f4d0b8d8d44c, type: 2}
   - {fileID: 11400000, guid: 8e8e8fa7b57c35c4a9d27aaa294df992, type: 2}
+  - {fileID: 11400000, guid: 1a7f8f3581d472c438863c91cac340d5, type: 2}
+  - {fileID: 11400000, guid: 0312647bd4676de4fbe2628b2d97103d, type: 2}
+  - {fileID: 11400000, guid: 0312647bd4676de4fbe2628b2d97103d, type: 2}
+  - {fileID: 11400000, guid: 12ad0f1a9672f1f4ca1590d9653ef5f0, type: 2}
+  - {fileID: 11400000, guid: 905ba322b9099b445924800cb0986171, type: 2}
+  - {fileID: 11400000, guid: 859ea1e85df851545a0e7b0ea7da99cf, type: 2}
   ruleBlocks:
   - {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
   - {fileID: 11400000, guid: c53165cc36e2009459cc240f38fcad5a, type: 2}
   oresBlocks:
+  - {fileID: 11400000, guid: 905ba322b9099b445924800cb0986171, type: 2}
+  - {fileID: 11400000, guid: 0312647bd4676de4fbe2628b2d97103d, type: 2}
+  - {fileID: 11400000, guid: 12ad0f1a9672f1f4ca1590d9653ef5f0, type: 2}
+  - {fileID: 11400000, guid: 1a7f8f3581d472c438863c91cac340d5, type: 2}
+  - {fileID: 11400000, guid: 859ea1e85df851545a0e7b0ea7da99cf, type: 2}
   - {fileID: 11400000, guid: 8e8e8fa7b57c35c4a9d27aaa294df992, type: 2}
   surfaceBlock: {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
   underSurfaceBlock: {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}

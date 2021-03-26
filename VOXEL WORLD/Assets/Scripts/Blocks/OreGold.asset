@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8c36d3902648074390dcdc5fe88dd28, type: 3}
-  m_Name: Sand
+  m_Name: OreGold
   m_EditorClassIdentifier: 
-  blockType: 6
-  screenName: Sand
-  minDepthLayer: 0
-  maxDepthLayer: 100
-  generationChance: 1
-  topUVPosition: {x: 8, y: 0}
-  sideUVPosition: {x: 8, y: 0}
-  bottomUVPosition: {x: 8, y: 0}
+  blockType: 11
+  screenName: Gold Ore
+  minDepthLayer: 7
+  maxDepthLayer: 40
+  generationChance: 0.42
+  topUVPosition: {x: 14, y: 0}
+  sideUVPosition: {x: 14, y: 0}
+  bottomUVPosition: {x: 14, y: 0}
