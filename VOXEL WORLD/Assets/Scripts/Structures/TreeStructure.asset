@@ -12,5 +12,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b29fdd569cb4cb4c9b45ace422f9a51, type: 3}
   m_Name: TreeStructure
   m_EditorClassIdentifier: 
-  size: {x: 0, y: 0, z: 0}
-  blocks: []
+  spawnChance: 50
+  maxAmount: 3
+  size: {x: 6, y: 6, z: 6}
+  underBlockType: 1
+  blocks:
+  - blockType: 1
+    location: {x: 0, y: 0, z: 0}
+  - blockType: 3
+    location: {x: 0, y: 1, z: 0}
+  - blockType: 3
+    location: {x: 0, y: 2, z: 0}
+  - blockType: 3
+    location: {x: 0, y: 3, z: 0}
+  - blockType: 3
+    location: {x: 0, y: 4, z: 0}
+  - blockType: 5
+    location: {x: 1, y: 4, z: 0}
+  - blockType: 5
+    location: {x: 1, y: 4, z: 1}
+  - blockType: 5
+    location: {x: -1, y: 4, z: 1}
+  - blockType: 5
+    location: {x: 1, y: 4, z: -1}
+  - blockType: 5
+    location: {x: -1, y: 4, z: -1}
+  - blockType: 5
+    location: {x: -1, y: 4, z: 0}
+  - blockType: 5
+    location: {x: 0, y: 4, z: 1}
+  - blockType: 5
+    location: {x: 0, y: 4, z: 1}
+  - blockType: 5
+    location: {x: 0, y: 4, z: -1}
+  - blockType: 5
+    location: {x: 0, y: 5, z: 0}

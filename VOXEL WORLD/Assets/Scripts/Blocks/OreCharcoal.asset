@@ -16,7 +16,7 @@ MonoBehaviour:
   screenName: Charcoal Ore
   minDepthLayer: 3
   maxDepthLayer: 65
-  generationChance: 0.43
+  generationChance: 0.44
   topUVPosition: {x: 11, y: 0}
   sideUVPosition: {x: 11, y: 0}
   bottomUVPosition: {x: 11, y: 0}

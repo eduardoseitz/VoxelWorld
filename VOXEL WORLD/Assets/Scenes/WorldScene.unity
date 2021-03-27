@@ -294,12 +294,6 @@ MonoBehaviour:
   shouldRandomizeSeed: 0
   chunkSize: {x: 16, y: 64, z: 16}
   worldSize: {x: 2, y: 2, z: 2}
-  surfaceTerrain: {fileID: 11400000, guid: bdb85ab163023d14699ce9fe63264051, type: 2}
-  underSurfaceTerrain: {fileID: 11400000, guid: ceb6f3bdc28e0cc4491c35677569b8a4,
-    type: 2}
-  caveTerrain: {fileID: 11400000, guid: 6540750b158f2f04eaf9c3234e413de6, type: 2}
-  caveChance: 0.4
-  oreChance: 0.3
   allBlocks:
   - {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
   - {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
@@ -330,6 +324,14 @@ MonoBehaviour:
   underSurfaceBlock: {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
   bedBlock: {fileID: 11400000, guid: 421f29e3b496ff146acf1b0cd69bc73a, type: 2}
   blocksMaterial: {fileID: 2100000, guid: 05170b4ec04a2ec4ab46674b4ff5a290, type: 2}
+  surfaceTerrain: {fileID: 11400000, guid: bdb85ab163023d14699ce9fe63264051, type: 2}
+  underSurfaceTerrain: {fileID: 11400000, guid: ceb6f3bdc28e0cc4491c35677569b8a4,
+    type: 2}
+  caveTerrain: {fileID: 11400000, guid: 6540750b158f2f04eaf9c3234e413de6, type: 2}
+  caveChance: 0.4
+  oreChance: 0.3
+  structures:
+  - {fileID: 11400000, guid: 0ede126011f8e99418db81c2f61d0f11, type: 2}
   shouldMakeHoles: 0
   holesChance: 0
 --- !u!4 &678850215

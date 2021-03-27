@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockType: 12
   screenName: Copper Ore
-  minDepthLayer: 3
+  minDepthLayer: 4
   maxDepthLayer: 65
   generationChance: 0.43
   topUVPosition: {x: 0, y: 1}

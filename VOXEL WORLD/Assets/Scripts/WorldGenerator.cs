@@ -16,15 +16,6 @@ namespace DevPenguin.VOXELWORLD
         [SerializeField] private Vector3 worldSize = new Vector3(3, 3, 3);
         [Space(5f)]
 
-        [Header("Terrain Setup")]
-        [SerializeField] private Terrain surfaceTerrain;
-        [SerializeField] private Terrain underSurfaceTerrain;
-        [Header("Cave Terrain")]
-        [SerializeField] private Terrain caveTerrain;
-        [SerializeField] private float caveChance = 0.42f;
-        [SerializeField] private float oreChance = 0.38f;
-        [Space(5f)]
-
         [Header("Blocks Setup")]
         [SerializeField] private Block[] allBlocks;
         [Space(3f)]
@@ -38,6 +29,19 @@ namespace DevPenguin.VOXELWORLD
         [Space(3f)]
         [SerializeField] private Material blocksMaterial;
         [Space(5f)]
+
+        [Header("Terrain Setup")]
+        [Header("Base Terrain")]
+        [SerializeField] private Terrain surfaceTerrain;
+        [SerializeField] private Terrain underSurfaceTerrain;
+        [Header("Cave Terrain")]
+        [SerializeField] private Terrain caveTerrain;
+        [SerializeField] private float caveChance = 0.42f;
+        [SerializeField] private float oreChance = 0.38f;
+        [Space(5f)]
+
+        [Header("Structures Setup")]
+        [SerializeField] Structure[] structures;
 
         [Header("Debug")]
         [SerializeField] private bool shouldMakeHoles = false;
@@ -147,7 +151,7 @@ namespace DevPenguin.VOXELWORLD
             GenerateTerrain(startX, startY, startZ);
 
             // Generate trees and houses
-            GenerateNatureStructures(startX, startZ);
+            GenerateStructures(startX, startY, startZ);
         }
 
         private void GenerateTerrain(int startX, int startY, int startZ)
@@ -249,41 +253,89 @@ namespace DevPenguin.VOXELWORLD
             }
         }
 
-        private void GenerateNatureStructures(int startX, int startZ)
+        private void GenerateStructures(int startX, int startY, int startZ)
         {
-            // Get a ramdon location on the surface
-            int _ramdonX = Random.Range(startX + 3, (int)chunkSize.x + startX - 3);
-            int _ramdonZ = Random.Range(startZ + 3, (int)chunkSize.z + startZ - 3);
-            int _ramdonY = noiseGenerator.GetTerrainHeightNoise(_ramdonX, _ramdonZ, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
+            /*
+             * Loop through all strucutres
+                 * Pick a random number between 1 and max spawn
+                 * Check the chance of having it
+                 * Pick a random number between x chunksize - structure x size
+                 * Pick a random number between z chunksize - structure z size
+                 * Check if the y layer matches the needed block of the structure
+                 * Check if structure y size doesn't exceed the chunksize.y - y
+                 * Loop through all of the structure blocks starting by y+1 randomX randomZ
+                    * Build them
+             */
 
-            // If it is grass then plant a tree
-            if (_blocksDictionary[$"{_ramdonX} {_ramdonY} {_ramdonZ}"].blockType == 1)
+            // Loop through all strucutres
+            for (int i = 0; i < structures.Length; i++)
             {
-                // Replace grass with dirt
-                _blocksDictionary[$"{_ramdonX} {_ramdonY} {_ramdonZ}"].blockType = 0;
+                // Pick a random number between 1 and max spawn
+                int _amount = Random.Range(1, structures[i].maxAmount);
+                for (int a = 0; a < _amount; a++)
+                {
+                    // Check the chance of having it
+                    if (Random.Range(0, 100) < structures[i].spawnChance)
+                    {
+                        // Pick a random position in the surface
+                        int _randomX = Random.Range(startX + (int)structures[i].size.x, startX + (int)chunkSize.x - (int)structures[i].size.x);
+                        int _randomZ = Random.Range(startZ + (int)structures[i].size.z, startZ + (int)chunkSize.z - (int)structures[i].size.z);
+                        int _randomY = noiseGenerator.GetTerrainHeightNoise(_randomX, _randomZ, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
 
-                // Grow timber
-                _blocksDictionary[$"{_ramdonX} {_ramdonY + 1} {_ramdonZ}"].blockType = 3;
-                _blocksDictionary[$"{_ramdonX} {_ramdonY + 2} {_ramdonZ}"].blockType = 3;
-                _blocksDictionary[$"{_ramdonX} {_ramdonY + 3} {_ramdonZ}"].blockType = 3;
-                _blocksDictionary[$"{_ramdonX} {_ramdonY + 4} {_ramdonZ}"].blockType = 3;
+                        // Check if the y layer matches the needed block of the structure
+                        if (_blocksDictionary[$"{_randomX} {_randomY} {_randomZ}"].blockType == structures[i].underBlockType)
+                        {
+                            // Check if structure y size doesn't exceed the worldsize height
+                            if (_randomY + structures[i].size.y < chunkSize.y * worldSize.y)
+                            {
+                                // Build all the required blocks
+                                for (int b = 0; b < structures[i].blocks.Length; b++)
+                                {
+                                    int _posX = _randomX + (int)structures[i].blocks[b].location.x;
+                                    int _posY = _randomY + (int)structures[i].blocks[b].location.y;
+                                    int _posZ = _randomZ + (int)structures[i].blocks[b].location.z;
 
-                // Grow leaves
-                _blocksDictionary[$"{_ramdonX} {_ramdonY + 5} {_ramdonZ}"].blockType = 5;
-                _blocksDictionary[$"{_ramdonX} {_ramdonY + 6} {_ramdonZ}"].blockType = 5;
-                _blocksDictionary[$"{_ramdonX + 1} {_ramdonY + 3} {_ramdonZ}"].blockType = 5;
-                _blocksDictionary[$"{_ramdonX + 1} {_ramdonY + 4} {_ramdonZ}"].blockType = 5;
-                _blocksDictionary[$"{_ramdonX + 1} {_ramdonY + 5} {_ramdonZ}"].blockType = 5;
-                _blocksDictionary[$"{_ramdonX - 1} {_ramdonY + 3} {_ramdonZ}"].blockType = 5;
-                _blocksDictionary[$"{_ramdonX - 1} {_ramdonY + 4} {_ramdonZ}"].blockType = 5;
-                _blocksDictionary[$"{_ramdonX - 1} {_ramdonY + 5} {_ramdonZ}"].blockType = 5;
-                _blocksDictionary[$"{_ramdonX} {_ramdonY + 3} {_ramdonZ + 1}"].blockType = 5;
-                _blocksDictionary[$"{_ramdonX} {_ramdonY + 4} {_ramdonZ + 1}"].blockType = 5;
-                _blocksDictionary[$"{_ramdonX} {_ramdonY + 5} {_ramdonZ + 1}"].blockType = 5;
-                _blocksDictionary[$"{_ramdonX} {_ramdonY + 3} {_ramdonZ - 1}"].blockType = 5;
-                _blocksDictionary[$"{_ramdonX} {_ramdonY + 4} {_ramdonZ - 1}"].blockType = 5;
-                _blocksDictionary[$"{_ramdonX} {_ramdonY + 5} {_ramdonZ - 1}"].blockType = 5;
+                                    _blocksDictionary[$"{_posX} {_posY} {_posZ}"].blockType = structures[i].blocks[b].blockType;
+                                }
+                            }
+                        }
+                    }
+                }
             }
+
+            //// Get a ramdon location on the surface
+            //int _ramdonX = Random.Range(startX + 3, (int)chunkSize.x + startX - 3);
+            //int _ramdonZ = Random.Range(startZ + 3, (int)chunkSize.z + startZ - 3);
+            //int _ramdonY = noiseGenerator.GetTerrainHeightNoise(_ramdonX, _ramdonZ, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
+
+            //// If it is grass then plant a tree
+            //if (_blocksDictionary[$"{_ramdonX} {_ramdonY} {_ramdonZ}"].blockType == 1)
+            //{
+            //    // Replace grass with dirt
+            //    _blocksDictionary[$"{_ramdonX} {_ramdonY} {_ramdonZ}"].blockType = 0;
+
+            //    // Grow timber
+            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 1} {_ramdonZ}"].blockType = 3;
+            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 2} {_ramdonZ}"].blockType = 3;
+            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 3} {_ramdonZ}"].blockType = 3;
+            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 4} {_ramdonZ}"].blockType = 3;
+
+            //    // Grow leaves
+            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 5} {_ramdonZ}"].blockType = 5;
+            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 6} {_ramdonZ}"].blockType = 5;
+            //    _blocksDictionary[$"{_ramdonX + 1} {_ramdonY + 3} {_ramdonZ}"].blockType = 5;
+            //    _blocksDictionary[$"{_ramdonX + 1} {_ramdonY + 4} {_ramdonZ}"].blockType = 5;
+            //    _blocksDictionary[$"{_ramdonX + 1} {_ramdonY + 5} {_ramdonZ}"].blockType = 5;
+            //    _blocksDictionary[$"{_ramdonX - 1} {_ramdonY + 3} {_ramdonZ}"].blockType = 5;
+            //    _blocksDictionary[$"{_ramdonX - 1} {_ramdonY + 4} {_ramdonZ}"].blockType = 5;
+            //    _blocksDictionary[$"{_ramdonX - 1} {_ramdonY + 5} {_ramdonZ}"].blockType = 5;
+            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 3} {_ramdonZ + 1}"].blockType = 5;
+            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 4} {_ramdonZ + 1}"].blockType = 5;
+            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 5} {_ramdonZ + 1}"].blockType = 5;
+            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 3} {_ramdonZ - 1}"].blockType = 5;
+            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 4} {_ramdonZ - 1}"].blockType = 5;
+            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 5} {_ramdonZ - 1}"].blockType = 5;
+            //}
         }
 
         private void GenerateChunk(int startX, int startY, int startZ)
