@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8c36d3902648074390dcdc5fe88dd28, type: 3}
-  m_Name: WoodTimber
+  m_Name: WoodDarkTimber
   m_EditorClassIdentifier: 
   blockType: 3
-  screenName: Timber Wood
+  screenName: Dark Timber Wood
   minDepthLayer: 0
   maxDepthLayer: 100
+  generationChance: 1
   topUVPosition: {x: 5, y: 0}
   sideUVPosition: {x: 4, y: 0}
   bottomUVPosition: {x: 5, y: 0}

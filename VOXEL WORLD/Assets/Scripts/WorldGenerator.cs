@@ -7,6 +7,8 @@ namespace DevPenguin.VOXELWORLD
     public class WorldGenerator : MonoBehaviour
     {
         #region Declarations
+        public static WorldGenerator instance;
+
         [Header("World Setup")]
         [SerializeField] int terrainSeed = 468786;
         [SerializeField] bool shouldRandomizeSeed = true;
@@ -85,17 +87,19 @@ namespace DevPenguin.VOXELWORLD
         #endregion
 
         #region Main Methods
-        // Start is called before the first frame update
-        private void Start()
+        private void Awake()
         {
-            StartCoroutine(GenerateWorld());
+            if (instance == null)
+                instance = this;
+            else
+                Destroy(this);
         }
         #endregion
 
         #region Helper Methods
 
         #region World and Chunks
-        private IEnumerator GenerateWorld()
+        public IEnumerator GenerateWorld()
         {
             // Debug
             float _startTime = Time.realtimeSinceStartup;
@@ -138,6 +142,7 @@ namespace DevPenguin.VOXELWORLD
             Destroy(_quadObject);
 
             // Debug
+            GameManager.instance.debugText.text = $"World generated with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString("00.00")} seconds";
             Debug.Log($"Generated world with {_chunksDictionary.Count} chunks with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString()} seconds");
 
             yield return null;
@@ -255,18 +260,6 @@ namespace DevPenguin.VOXELWORLD
 
         private void GenerateStructures(int startX, int startY, int startZ)
         {
-            /*
-             * Loop through all strucutres
-                 * Pick a random number between 1 and max spawn
-                 * Check the chance of having it
-                 * Pick a random number between x chunksize - structure x size
-                 * Pick a random number between z chunksize - structure z size
-                 * Check if the y layer matches the needed block of the structure
-                 * Check if structure y size doesn't exceed the chunksize.y - y
-                 * Loop through all of the structure blocks starting by y+1 randomX randomZ
-                    * Build them
-             */
-
             // Loop through all strucutres
             for (int i = 0; i < structures.Length; i++)
             {
@@ -302,40 +295,6 @@ namespace DevPenguin.VOXELWORLD
                     }
                 }
             }
-
-            //// Get a ramdon location on the surface
-            //int _ramdonX = Random.Range(startX + 3, (int)chunkSize.x + startX - 3);
-            //int _ramdonZ = Random.Range(startZ + 3, (int)chunkSize.z + startZ - 3);
-            //int _ramdonY = noiseGenerator.GetTerrainHeightNoise(_ramdonX, _ramdonZ, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
-
-            //// If it is grass then plant a tree
-            //if (_blocksDictionary[$"{_ramdonX} {_ramdonY} {_ramdonZ}"].blockType == 1)
-            //{
-            //    // Replace grass with dirt
-            //    _blocksDictionary[$"{_ramdonX} {_ramdonY} {_ramdonZ}"].blockType = 0;
-
-            //    // Grow timber
-            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 1} {_ramdonZ}"].blockType = 3;
-            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 2} {_ramdonZ}"].blockType = 3;
-            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 3} {_ramdonZ}"].blockType = 3;
-            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 4} {_ramdonZ}"].blockType = 3;
-
-            //    // Grow leaves
-            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 5} {_ramdonZ}"].blockType = 5;
-            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 6} {_ramdonZ}"].blockType = 5;
-            //    _blocksDictionary[$"{_ramdonX + 1} {_ramdonY + 3} {_ramdonZ}"].blockType = 5;
-            //    _blocksDictionary[$"{_ramdonX + 1} {_ramdonY + 4} {_ramdonZ}"].blockType = 5;
-            //    _blocksDictionary[$"{_ramdonX + 1} {_ramdonY + 5} {_ramdonZ}"].blockType = 5;
-            //    _blocksDictionary[$"{_ramdonX - 1} {_ramdonY + 3} {_ramdonZ}"].blockType = 5;
-            //    _blocksDictionary[$"{_ramdonX - 1} {_ramdonY + 4} {_ramdonZ}"].blockType = 5;
-            //    _blocksDictionary[$"{_ramdonX - 1} {_ramdonY + 5} {_ramdonZ}"].blockType = 5;
-            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 3} {_ramdonZ + 1}"].blockType = 5;
-            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 4} {_ramdonZ + 1}"].blockType = 5;
-            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 5} {_ramdonZ + 1}"].blockType = 5;
-            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 3} {_ramdonZ - 1}"].blockType = 5;
-            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 4} {_ramdonZ - 1}"].blockType = 5;
-            //    _blocksDictionary[$"{_ramdonX} {_ramdonY + 5} {_ramdonZ - 1}"].blockType = 5;
-            //}
         }
 
         private void GenerateChunk(int startX, int startY, int startZ)

@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8c36d3902648074390dcdc5fe88dd28, type: 3}
-  m_Name: OreCopper
+  m_Name: WoodLightTimber
   m_EditorClassIdentifier: 
-  blockType: 12
-  screenName: Copper Ore
-  minDepthLayer: 4
-  maxDepthLayer: 65
-  generationChance: 0.43
-  topUVPosition: {x: 0, y: 1}
-  sideUVPosition: {x: 0, y: 1}
-  bottomUVPosition: {x: 0, y: 1}
+  blockType: 14
+  screenName: Light Timber Wood
+  minDepthLayer: 0
+  maxDepthLayer: 100
+  generationChance: 1
+  topUVPosition: {x: 2, y: 1}
+  sideUVPosition: {x: 1, y: 1}
+  bottomUVPosition: {x: 2, y: 1}
