@@ -1,0 +1,164 @@
+Using pre-set license
+Built from '2020.3/release' branch; Version is '2020.3.2f1 (8fd9074bf66c) revision 9427207'; Using compiler version '192528614'; Build Type 'Release'
+OS: 'Windows 10 Pro; OS build 18362.30; Version 1903; 64bit' Language: 'es' Physical Memory: 16350 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 0
+
+ COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\2020.3.2f1\Editor\Unity.exe
+-adb2
+-batchMode
+-noUpm
+-name
+AssetImportWorker0
+-projectPath
+D:/Unity/Projects/_Tutorials/VoxelWorld/VOXEL WORLD
+-logFile
+Logs/AssetImportWorker0.log
+-srvPort
+53381
+Successfully changed project path to: D:/Unity/Projects/_Tutorials/VoxelWorld/VOXEL WORLD
+D:/Unity/Projects/_Tutorials/VoxelWorld/VOXEL WORLD
+Using Asset Import Pipeline V2.
+Refreshing native plugins compatible for Editor in 81.81 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 2020.3.2f1 (8fd9074bf66c)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2020.3.2f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path D:/Unity/Projects/_Tutorials/VoxelWorld/VOXEL WORLD/Assets
+GfxDevice: creating device client; threaded=0
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon R9 200 Series (ID=0x6810)
+    Vendor:   
+    VRAM:     2027 MB
+    Driver:   27.20.14501.18003
+Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2020.3.2f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2020.3.2f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/2020.3.2f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56832
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.3.2f1/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
+Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.3.2f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.004529 seconds.
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in 89.33 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  3.115 seconds
+Platform modules already initialized, skipping
+Registering precompiled user dll's ...
+Registered in 0.001787 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in 96.65 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.756 seconds
+Platform modules already initialized, skipping
+========================================================================
+Worker process is ready to serve import requests
+Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.15 seconds
+Refreshing native plugins compatible for Editor in 0.89 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 2473 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 117.3 MB.
+System memory in use after: 117.5 MB.
+
+Unloading 10 unused Assets to reduce memory usage. Loaded Objects now: 2917.
+Total: 3.408900 ms (FindLiveObjects: 0.545900 ms CreateObjectMapping: 0.142000 ms MarkObjects: 2.605500 ms  DeleteObjects: 0.114000 ms)
+
+========================================================================
+Received Import Request.
+  path: Assets/Sprites/KenneyVoxelPack/Spritesheets/spritesheet_tiles 1.png
+  artifactKey: Guid(fe2ceb1d8866c3e4a81f3bd19839a075) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Sprites/KenneyVoxelPack/Spritesheets/spritesheet_tiles 1.png using Guid(fe2ceb1d8866c3e4a81f3bd19839a075) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '14e9fff616ee05ce8c7dc39f8f948e8a') in 0.473529 seconds
+  Import took 0.480388 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000388 seconds.
+  path: Assets/Sprites/KenneyVoxelPack/Spritesheets/spritesheet_items.png
+  artifactKey: Guid(e8a1bc6faca0f224cad0b4d9d7a5f3d3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Sprites/KenneyVoxelPack/Spritesheets/spritesheet_items.png using Guid(e8a1bc6faca0f224cad0b4d9d7a5f3d3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1e899bc019c4a4bb087d6c5ece0a869f') in 0.022577 seconds
+  Import took 0.029100 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000338 seconds.
+  path: Assets/Sprites/KenneyVoxelPack/Spritesheets/blocks_spritesheet.png
+  artifactKey: Guid(a0aa1688b149da84fa6aaa013638fa44) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Sprites/KenneyVoxelPack/Spritesheets/blocks_spritesheet.png using Guid(a0aa1688b149da84fa6aaa013638fa44) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f39d7ad43d96b9402feabd095f2471c4') in 0.028957 seconds
+  Import took 0.035708 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000361 seconds.
+  path: Assets/Sprites/KenneyVoxelPack/Spritesheets/spritesheet_characters.png
+  artifactKey: Guid(a01233c8d3cb55646b76ece0f868e92c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Sprites/KenneyVoxelPack/Spritesheets/spritesheet_characters.png using Guid(a01233c8d3cb55646b76ece0f868e92c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '757bd21cd61998065ec854b89fb80ef3') in 0.023495 seconds
+  Import took 0.030072 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000308 seconds.
+  path: Assets/Sprites/KenneyVoxelPack/Spritesheets/spritesheet_tiles.png
+  artifactKey: Guid(b1c4f94cfbd82e6499aaa83f9a4fd37e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Sprites/KenneyVoxelPack/Spritesheets/spritesheet_tiles.png using Guid(b1c4f94cfbd82e6499aaa83f9a4fd37e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ccde655ced0eded72a7d4ab0478d3f03') in 0.022496 seconds
+  Import took 0.028931 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000327 seconds.
+  path: Assets/Sprites/KenneyVoxelPack/Spritesheets/spritesheet_particles.png
+  artifactKey: Guid(9534f31ccd062df46bebb1fe7807898e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Sprites/KenneyVoxelPack/Spritesheets/spritesheet_particles.png using Guid(9534f31ccd062df46bebb1fe7807898e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '18cd59bf4690ace4b6a044f86f062e92') in 0.021515 seconds
+  Import took 0.026780 seconds .
+
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.001868 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in 0.81 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.443 seconds
+Platform modules already initialized, skipping
+Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
+Refreshing native plugins compatible for Editor in 0.81 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 2352 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 112.2 MB.
+System memory in use after: 112.4 MB.
+
+Unloading 5 unused Assets to reduce memory usage. Loaded Objects now: 2928.
+Total: 3.408200 ms (FindLiveObjects: 0.563800 ms CreateObjectMapping: 0.152500 ms MarkObjects: 2.660600 ms  DeleteObjects: 0.029500 ms)
+
+========================================================================
+Received Prepare
+Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
+Refreshing native plugins compatible for Editor in 2.23 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 65.8 MB.
+System memory in use after: 66.0 MB.
+
+Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 2928.
+Total: 5.626800 ms (FindLiveObjects: 1.032100 ms CreateObjectMapping: 0.373200 ms MarkObjects: 4.193000 ms  DeleteObjects: 0.027200 ms)
+
