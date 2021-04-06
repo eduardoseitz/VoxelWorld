@@ -39,7 +39,6 @@ namespace DevPenguin.VOXELWORLD
         [Header("Cave Terrain")]
         [SerializeField] private Terrain caveTerrain;
         [SerializeField] private float caveChance = 0.42f;
-        [SerializeField] private float oreChance = 0.38f;
         [Space(5f)]
 
         [Header("Structures Setup")]

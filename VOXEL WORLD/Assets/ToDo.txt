@@ -1,0 +1,13 @@
+// To do
+-Basic UI
+	-Main menu
+		-New World
+			-Loading progress
+	-Pause menu
+		-Resume playing
+		-New World
+		-Quit world
+
+-Basic player controller
+	-Setup third person controller
+	-Spawn player at world origin
