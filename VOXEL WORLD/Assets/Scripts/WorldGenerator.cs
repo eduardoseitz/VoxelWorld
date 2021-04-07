@@ -102,6 +102,17 @@ namespace DevPenguin.VOXELWORLD
         {
             // Debug
             float _startTime = Time.realtimeSinceStartup;
+            float _uiDelay = 0.01f;
+            int _numberOfSteps = (int)worldSize.z * 2 * (int)worldSize.x * 2 * (int)worldSize.y * 2;
+            float _currentStep = 1f;
+            float _currentProgress = 1f;
+
+            // Update UI
+            CanvasManager.instance.mainMenuPanel.SetActive(false);
+            CanvasManager.instance.loadingInfoText.text = "01%";
+            CanvasManager.instance.loadingPanel.SetActive(true);
+
+            yield return new WaitForSeconds(_uiDelay);
 
             // Setup noise seed
             if (shouldRandomizeSeed)
@@ -116,6 +127,12 @@ namespace DevPenguin.VOXELWORLD
                 {
                     for (int y = 0; y < worldSize.y; y++)
                     {
+                        // Update loading screen
+                        _currentStep += 1;
+                        _currentProgress = _currentStep / _numberOfSteps * 100;
+                        CanvasManager.instance.loadingInfoText.text = Mathf.Clamp(_currentProgress, 0, 100).ToString("00") + "%";
+                        yield return new WaitForSeconds(_uiDelay);
+
                         GenerateBlocksData(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z);
                     }
                 }
@@ -132,6 +149,12 @@ namespace DevPenguin.VOXELWORLD
                 {
                     for (int z = -(int)worldSize.z; z < worldSize.z; z++)
                     {
+                        // Update loading screen
+                        _currentStep += 1;
+                        _currentProgress = _currentStep / _numberOfSteps * 100;
+                        CanvasManager.instance.loadingInfoText.text = Mathf.Clamp(_currentProgress, 0, 100).ToString("00") + "%";
+                        yield return new WaitForSeconds(_uiDelay);
+
                         GenerateChunk(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z);
                     }
                 }
@@ -140,8 +163,17 @@ namespace DevPenguin.VOXELWORLD
             // Destroy template quad
             Destroy(_quadObject);
 
+            // Update UI
+            CanvasManager.instance.loadingPanel.SetActive(false);
+            CanvasManager.instance.backgroundMenuPanel.SetActive(false);
+
+            // Setup player
+            int _topGrassLayer = noiseGenerator.GetTerrainHeightNoise(0, 0, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
+            int _topStoneLayer = noiseGenerator.GetTerrainHeightNoise(0 + 5, 0 + 5, underSurfaceTerrain.smoothness, underSurfaceTerrain.octaves, underSurfaceTerrain.persistance, underSurfaceTerrain.groundHeight) - 5;
+            GameManager.instance.SetupPlayer(new Vector3(0, Mathf.Max(_topGrassLayer, _topStoneLayer), 0), Quaternion.identity);
+
             // Debug
-            GameManager.instance.debugText.text = $"World generated with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString("00.00")} seconds";
+            //GameManager.instance.debugText.text = $"World generated with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString("00.00")} seconds";
             Debug.Log($"Generated world with {_chunksDictionary.Count} chunks with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString()} seconds");
 
             yield return null;

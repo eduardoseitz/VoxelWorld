@@ -8,9 +8,13 @@ namespace DevPenguin.VOXELWORLD
     public class GameManager : MonoBehaviour
     {
         public static GameManager instance;
+        public GameObject player;
 
-        public TextMeshProUGUI debugText;
+        [SerializeField] Vector3 playerSpawnOffset = new Vector3(0, 3, 0);
 
+        private Vector3 _spawnPosition;
+
+        //public TextMeshProUGUI debugText;
 
         private void Awake()
         {
@@ -23,26 +27,39 @@ namespace DevPenguin.VOXELWORLD
         // Start is called before the first frame update
         void Start()
         {
-            debugText.text = "Generating New World...";
-            StartCoroutine(CreateNewWorld());
-        }
-
-        private IEnumerator CreateNewWorld()
-        {
-            WorldGenerator.instance.StartCoroutine(WorldGenerator.instance.GenerateWorld());
-
-            yield return new WaitForSeconds(0);
+            player.SetActive(false);
         }
 
         // Update is called once per frame
         void Update()
         {
             // Recreate world
-            if (Input.GetKeyDown(KeyCode.R))
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                debugText.text = "Generating New World...";
                 SceneManager.LoadSceneAsync(0);
             }
+
+            if (player.transform.position.y < - 10)
+                player.transform.SetPositionAndRotation(_spawnPosition, Quaternion.identity);
+        }
+
+        public void CreateNewWorld()
+        {
+            Debug.Log("Creating world");
+            WorldGenerator.instance.StartCoroutine(WorldGenerator.instance.GenerateWorld());
+        }
+
+        public void QuitGame()
+        {
+            Debug.Log("Quiting game");
+            Application.Quit();
+        }
+
+        public void SetupPlayer(Vector3 playerPosition, Quaternion playerRotation)
+        {
+            _spawnPosition = playerPosition + playerSpawnOffset;
+            player.transform.SetPositionAndRotation(_spawnPosition, playerRotation);
+            player.SetActive(true);
         }
     } 
 }
