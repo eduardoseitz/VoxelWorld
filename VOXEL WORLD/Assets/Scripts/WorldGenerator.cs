@@ -166,6 +166,7 @@ namespace DevPenguin.VOXELWORLD
             // Update UI
             CanvasManager.instance.loadingPanel.SetActive(false);
             CanvasManager.instance.backgroundMenuPanel.SetActive(false);
+            CanvasManager.instance.hudPanel.SetActive(true);
 
             // Setup player
             int _topGrassLayer = noiseGenerator.GetTerrainHeightNoise(0, 0, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
@@ -174,7 +175,9 @@ namespace DevPenguin.VOXELWORLD
 
             // Debug
             //GameManager.instance.debugText.text = $"World generated with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString("00.00")} seconds";
-            Debug.Log($"Generated world with {_chunksDictionary.Count} chunks with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString()} seconds");
+            string _debugMessage = $"Generated world with {_chunksDictionary.Count} chunks with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString()} seconds";
+            Debug.Log(_debugMessage);
+            CanvasManager.instance.debugText.text = _debugMessage;
 
             yield return null;
         }

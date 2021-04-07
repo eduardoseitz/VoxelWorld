@@ -12,7 +12,8 @@ namespace DevPenguin.VOXELWORLD
         public GameObject loadingPanel;
         public TextMeshProUGUI loadingInfoText;
         public GameObject pausedPanel;
-        //public GameObject hudPanel;
+        public GameObject hudPanel;
+        public TextMeshProUGUI debugText;
 
         private void Awake()
         {
