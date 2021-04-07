@@ -34,13 +34,24 @@ namespace DevPenguin.VOXELWORLD
         void Update()
         {
             // Recreate world
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                SceneManager.LoadSceneAsync(0);
-            }
+            //if (Input.GetKeyDown(KeyCode.Escape))
+            //{
+            //    player.SetActive(false);
+            //    SceneManager.LoadScene(0, LoadSceneMode.Single);
+            //}
 
-            if (player.transform.position.y < - 10)
-                player.transform.SetPositionAndRotation(_spawnPosition, Quaternion.identity);
+            if (player.transform.position.y < -10)
+            {
+                player.SetActive(false);
+                Invoke(nameof(ResetPlayer), 1f);
+            }
+        }
+
+        public void ResetPlayer()
+        {
+            player.transform.position = _spawnPosition;
+            player.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            player.SetActive(true);
         }
 
         public void CreateNewWorld()

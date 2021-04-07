@@ -109,7 +109,7 @@ namespace DevPenguin.VOXELWORLD
 
             // Update UI
             CanvasManager.instance.mainMenuPanel.SetActive(false);
-            CanvasManager.instance.loadingInfoText.text = "01%";
+            CanvasManager.instance.loadingInfoText.text = "Setting up...\n 01%";
             CanvasManager.instance.loadingPanel.SetActive(true);
 
             yield return new WaitForSeconds(_uiDelay);
@@ -130,7 +130,7 @@ namespace DevPenguin.VOXELWORLD
                         // Update loading screen
                         _currentStep += 1;
                         _currentProgress = _currentStep / _numberOfSteps * 100;
-                        CanvasManager.instance.loadingInfoText.text = Mathf.Clamp(_currentProgress, 0, 100).ToString("00") + "%";
+                        CanvasManager.instance.loadingInfoText.text = "Generating chunks...\n" + Mathf.Clamp(_currentProgress, 0, 100).ToString("00") + "%";
                         yield return new WaitForSeconds(_uiDelay);
 
                         GenerateBlocksData(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z);
@@ -152,7 +152,7 @@ namespace DevPenguin.VOXELWORLD
                         // Update loading screen
                         _currentStep += 1;
                         _currentProgress = _currentStep / _numberOfSteps * 100;
-                        CanvasManager.instance.loadingInfoText.text = Mathf.Clamp(_currentProgress, 0, 100).ToString("00") + "%";
+                        CanvasManager.instance.loadingInfoText.text = "Building world...\n " + Mathf.Clamp(_currentProgress, 0, 100).ToString("00") + "%";
                         yield return new WaitForSeconds(_uiDelay);
 
                         GenerateChunk(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z);

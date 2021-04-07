@@ -634,7 +634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 841149906}
+  m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
 --- !u!4 &656221662
@@ -1016,12 +1016,6 @@ PrefabInstance:
 --- !u!224 &841149905 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6766466109012897365, guid: 81130d021e3e250438f0a7614fe2aa12,
-    type: 3}
-  m_PrefabInstance: {fileID: 841149904}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &841149906 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6766466109012897364, guid: 81130d021e3e250438f0a7614fe2aa12,
     type: 3}
   m_PrefabInstance: {fileID: 841149904}
   m_PrefabAsset: {fileID: 0}
@@ -1620,13 +1614,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687258581}
-  m_LocalRotation: {x: 0.22833337, y: 0.30451903, z: -0.075433165, w: 0.9216518}
-  m_LocalPosition: {x: -50.118324, y: 47.147346, z: -61.016075}
+  m_LocalRotation: {x: 0.28552663, y: 0.29920453, z: -0.094331704, w: 0.90556765}
+  m_LocalPosition: {x: -58.11832, y: 55.14735, z: -61.016075}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 22.5, y: 45, z: 0}
+  m_LocalEulerAnglesHint: {x: 35, y: 36.568, z: 0.001}
 --- !u!114 &1687258586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1666,7 +1660,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687258581}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62f37ce020cc027458904015bcb20777, type: 3}
   m_Name: 
@@ -2644,7 +2638,7 @@ PrefabInstance:
     - target: {fileID: 8714709512748129104, guid: dbcb0309c5798394599ef8e9ef7a2ff4,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 200
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 8714709512748129104, guid: dbcb0309c5798394599ef8e9ef7a2ff4,
         type: 3}
@@ -3025,6 +3019,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8018109198748064197, guid: abd4f8321f33ba849a95cb3394f1326b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8018109198748091877, guid: abd4f8321f33ba849a95cb3394f1326b,
         type: 3}
