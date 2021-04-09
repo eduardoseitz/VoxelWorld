@@ -754,8 +754,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   terrainSeed: 221855
   shouldRandomizeSeed: 1
-  chunkSize: {x: 16, y: 128, z: 16}
+  chunkSize: {x: 16, y: 64, z: 16}
   worldSize: {x: 2, y: 1, z: 2}
+  isWorldDynamic: 0
+  worldForseen: 2
   allBlocks:
   - {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
   - {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
@@ -3530,7 +3532,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 930.58704, y: -88.534546}
+  m_AnchoredPosition: {x: 930.58704, y: -88.53467}
   m_SizeDelta: {x: 1580.5869, y: 63.5345}
   m_Pivot: {x: 1, y: 0}
 --- !u!1 &8714709514016135157

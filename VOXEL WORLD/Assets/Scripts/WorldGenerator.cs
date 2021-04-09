@@ -16,6 +16,8 @@ namespace DevPenguin.VOXELWORLD
         [SerializeField] private Vector3 chunkSize = new Vector3(16, 16, 16);
         [Tooltip("World size in chunks")]
         [SerializeField] private Vector3 worldSize = new Vector3(3, 3, 3);
+        [SerializeField] private bool isWorldDynamic = true;
+        [SerializeField] private int worldForseen = 2;
         [Space(5f)]
 
         [Header("Blocks Setup")]
@@ -72,10 +74,10 @@ namespace DevPenguin.VOXELWORLD
         private MeshFilter _quadMeshFilter;
 
         // Blocks
-        private Dictionary<string, BlockData> _blocksDictionary;
+        private Dictionary<string, BlockData> _blocksDictionary; // A key looks like this $"{x} {y} {z}"
 
         // Chunks
-        private Dictionary<string, GameObject> _chunksDictionary;
+        private Dictionary<string, GameObject> _chunksDictionary;  // A key looks like this $"{x} {y} {z}"
         private GameObject _chunkObject;
         private MeshFilter _chunkMeshFilter;
         private MeshRenderer _chunkMeshRenderer;
@@ -83,6 +85,11 @@ namespace DevPenguin.VOXELWORLD
 
         // Noise
         private NoiseGenerator noiseGenerator;
+
+        // Player
+        private Transform _player;
+        private Vector3 _worldOrigin;
+        private bool _isUpdatingWorld;
         #endregion
 
         #region Main Methods
@@ -93,17 +100,33 @@ namespace DevPenguin.VOXELWORLD
             else
                 Destroy(this);
         }
+
+        private void Start()
+        {
+            _player = GameManager.instance.player.transform;
+            _worldOrigin = new Vector3(0, 0, 0);
+            if (!isWorldDynamic)
+                worldForseen = 1;
+        }
+
+        private void Update()
+        {
+            // Dynamicly update world
+            if (isWorldDynamic)
+                UpdateWorldAroundPlayer();
+        }
         #endregion
 
         #region Helper Methods
 
         #region World and Chunks
+
         public IEnumerator GenerateWorld()
         {
             // Debug
             float _startTime = Time.realtimeSinceStartup;
             float _uiDelay = 0.01f;
-            int _numberOfSteps = (int)worldSize.z * 2 * (int)worldSize.x * 2 * (int)worldSize.y * 2;
+            int _numberOfSteps = (int)worldSize.z * 2 * (int)worldSize.x * 2 * (int)worldSize.y * 2 * worldForseen;
             float _currentStep = 1f;
             float _currentProgress = 1f;
 
@@ -121,9 +144,9 @@ namespace DevPenguin.VOXELWORLD
 
             // Generate blocks dataset
             _blocksDictionary = new Dictionary<string, BlockData>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
-            for (int z = -(int)worldSize.z; z < worldSize.z; z++) 
+            for (int z = -(int)worldSize.z * worldForseen; z < worldSize.z * worldForseen; z++) 
             {
-                for (int x = -(int)worldSize.x; x < worldSize.x; x++) 
+                for (int x = -(int)worldSize.x * worldForseen; x < worldSize.x * worldForseen; x++) 
                 {
                     for (int y = 0; y < worldSize.y; y++)
                     {
@@ -161,7 +184,7 @@ namespace DevPenguin.VOXELWORLD
             }
 
             // Destroy template quad
-            Destroy(_quadObject);
+            //Destroy(_quadObject);
 
             // Update UI
             CanvasManager.instance.loadingPanel.SetActive(false);
@@ -180,6 +203,54 @@ namespace DevPenguin.VOXELWORLD
             CanvasManager.instance.debugText.text = _debugMessage;
 
             yield return null;
+        }
+
+        // Update world dynamicly
+        private void UpdateWorldAroundPlayer()
+        {
+            if (_isUpdatingWorld == false)
+            {
+                // If player has walked a quarter of the world size in the x direction
+                if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / 4))
+                {
+                    _isUpdatingWorld = true;
+                    Debug.Log("Player has passed: " + (_worldOrigin.x + (worldSize.x * chunkSize.x / 4)));
+
+                    // Start hiding the last chunk
+                    int _chunkBehind = (int)(_worldOrigin.x - (worldSize.x * chunkSize.x));
+                    Debug.Log("Hiding chunck: " + _chunkBehind);
+
+                    // If chunk behind exists 
+                    if (_chunksDictionary.ContainsKey($"{_chunkBehind} {0} {0}"))
+                    {
+                        // TODO: if chunk exists the hide it
+
+                        // TODO if chunk is hidden destroy it
+                        Destroy(_chunksDictionary[$"{_chunkBehind} {0} {0}"]);
+                    }
+
+                    // Start loading the next chunk
+                    int _chunkFoward = (int)(_worldOrigin.x + (worldSize.x * chunkSize.x));
+                    Debug.Log("Loading chunck: " + _chunkFoward);
+
+                    // TODO: Check if next chunk is just hidding
+
+                    // Check if chunk data in front has been generated
+                    if (!_blocksDictionary.ContainsKey($"{_chunkFoward} {0} {0}"))
+                    {
+                        // Generate all new blocks needed
+                        GenerateBlocksData(_chunkFoward, 0, 0);
+                    }
+
+                    // Generate all new chunck mesh needed
+                    GenerateChunk(_chunkFoward, 0, 0);
+
+
+                    // Update world origin
+                    _worldOrigin += new Vector3(chunkSize.x, 0, 0);
+                    _isUpdatingWorld = false;
+                }
+            }
         }
 
         private void GenerateBlocksData(int startX, int startY, int startZ)
