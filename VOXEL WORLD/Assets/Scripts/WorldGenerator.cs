@@ -126,13 +126,13 @@ namespace DevPenguin.VOXELWORLD
             // Debug
             float _startTime = Time.realtimeSinceStartup;
             float _uiDelay = 0.01f;
-            int _numberOfSteps = (int)worldSize.z * 2 * (int)worldSize.x * 2 * (int)worldSize.y * 2 * worldForseen;
-            float _currentStep = 1f;
+            int _numberOfSteps = (int)worldSize.z * (1 + worldForseen) * (int)worldSize.x * (1 + worldForseen) * (int)worldSize.y * 2 + 8;
+            float _currentStep = 0f;
             float _currentProgress = 1f;
 
             // Update UI
             CanvasManager.instance.mainMenuPanel.SetActive(false);
-            CanvasManager.instance.loadingInfoText.text = "Setting up...\n 01%";
+            CanvasManager.instance.loadingInfoText.text = "Setting up...\n" + Mathf.Clamp(_currentProgress, 0, 100).ToString("00") + "%";
             CanvasManager.instance.loadingPanel.SetActive(true);
 
             yield return new WaitForSeconds(_uiDelay);
@@ -156,7 +156,7 @@ namespace DevPenguin.VOXELWORLD
                         CanvasManager.instance.loadingInfoText.text = "Generating chunks...\n" + Mathf.Clamp(_currentProgress, 0, 100).ToString("00") + "%";
                         yield return new WaitForSeconds(_uiDelay);
 
-                        GenerateBlocksData(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z);
+                        StartCoroutine(GenerateBlocksData(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z));
                     }
                 }
             }
@@ -178,7 +178,7 @@ namespace DevPenguin.VOXELWORLD
                         CanvasManager.instance.loadingInfoText.text = "Building world...\n " + Mathf.Clamp(_currentProgress, 0, 100).ToString("00") + "%";
                         yield return new WaitForSeconds(_uiDelay);
 
-                        GenerateChunk(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z);
+                        StartCoroutine(GenerateChunk(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z));
                     }
                 }
             }
@@ -214,11 +214,11 @@ namespace DevPenguin.VOXELWORLD
                 if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / 4))
                 {
                     _isUpdatingWorld = true;
-                    Debug.Log("Player has passed: " + (_worldOrigin.x + (worldSize.x * chunkSize.x / 4)));
+                    //Debug.Log("Player has passed: " + (_worldOrigin.x + (worldSize.x * chunkSize.x / 4)));
 
                     // Start hiding the last chunk
                     int _chunkBehind = (int)(_worldOrigin.x - (worldSize.x * chunkSize.x));
-                    Debug.Log("Hiding chunck: " + _chunkBehind);
+                    //Debug.Log("Hiding chunck: " + _chunkBehind);
 
                     // If chunk behind exists 
                     if (_chunksDictionary.ContainsKey($"{_chunkBehind} {0} {0}"))
@@ -231,7 +231,7 @@ namespace DevPenguin.VOXELWORLD
 
                     // Start loading the next chunk
                     int _chunkFoward = (int)(_worldOrigin.x + (worldSize.x * chunkSize.x));
-                    Debug.Log("Loading chunck: " + _chunkFoward);
+                    //Debug.Log("Loading chunck: " + _chunkFoward);
 
                     // TODO: Check if next chunk is just hidding
 
@@ -239,11 +239,11 @@ namespace DevPenguin.VOXELWORLD
                     if (!_blocksDictionary.ContainsKey($"{_chunkFoward} {0} {0}"))
                     {
                         // Generate all new blocks needed
-                        GenerateBlocksData(_chunkFoward, 0, 0);
+                        StartCoroutine(GenerateBlocksData(_chunkFoward, 0, 0));
                     }
 
                     // Generate all new chunck mesh needed
-                    GenerateChunk(_chunkFoward, 0, 0);
+                    StartCoroutine(GenerateChunk(_chunkFoward, 0, 0));
 
 
                     // Update world origin
@@ -253,14 +253,16 @@ namespace DevPenguin.VOXELWORLD
             }
         }
 
-        private void GenerateBlocksData(int startX, int startY, int startZ)
+        private IEnumerator GenerateBlocksData(int startX, int startY, int startZ)
         {
             //Debug.Log($"Generating block data for chunk X:{startX} Y:{startY} Z:{startZ}");
 
             // Generate terrain dataset
+            yield return null;
             GenerateTerrain(startX, startY, startZ);
 
             // Generate trees and houses
+            yield return null;
             GenerateStructures(startX, startY, startZ);
         }
 
@@ -402,9 +404,10 @@ namespace DevPenguin.VOXELWORLD
             }
         }
 
-        private void GenerateChunk(int startX, int startY, int startZ)
+        private IEnumerator GenerateChunk(int startX, int startY, int startZ)
         {
             //Debug.Log($"Generating mesh for chunk X:{startX} Y:{startY} Z:{startZ}");
+            yield return null;
 
             // Create new chunk object
             _chunkObject = new GameObject($"Chunk {startX} {startY} {startZ}");
@@ -441,9 +444,11 @@ namespace DevPenguin.VOXELWORLD
                     }
                 }
             }
+            yield return null;
 
             // Combine meshes
             CombineQuadsIntoSingleChunk();
+            yield return null;
         }
         #endregion
 
@@ -570,7 +575,7 @@ namespace DevPenguin.VOXELWORLD
             }
             catch
             {
-                Debug.Log($"Could not generate mesh for block X:{x} Y:{y} Z:{z}");
+                //Debug.Log($"Could not generate mesh for block X:{x} Y:{y} Z:{z}");
             }
         }
 
