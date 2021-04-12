@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b29fdd569cb4cb4c9b45ace422f9a51, type: 3}
   m_Name: TreeDarkStructure
   m_EditorClassIdentifier: 
-  spawnChance: 30
-  maxAmount: 2
+  spawnChance: 70
+  maxAmount: 5
   size: {x: 4, y: 6, z: 4}
   underBlockType: 1
   blocks:

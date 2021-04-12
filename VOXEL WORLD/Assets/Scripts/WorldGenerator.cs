@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Realtime.Messaging.Internal;
 
 namespace DevPenguin.VOXELWORLD
 {
@@ -74,10 +75,10 @@ namespace DevPenguin.VOXELWORLD
         private MeshFilter _quadMeshFilter;
 
         // Blocks
-        private Dictionary<string, BlockData> _blocksDictionary; // A key looks like this $"{x} {y} {z}"
+        private ConcurrentDictionary<string, BlockData> _blocksDictionary; // A key looks like this $"{x} {y} {z}"
 
         // Chunks
-        private Dictionary<string, GameObject> _chunksDictionary;  // A key looks like this $"{x} {y} {z}"
+        private ConcurrentDictionary<string, GameObject> _chunksDictionary;  // A key looks like this $"{x} {y} {z}"
         private GameObject _chunkObject;
         private MeshFilter _chunkMeshFilter;
         private MeshRenderer _chunkMeshRenderer;
@@ -143,7 +144,7 @@ namespace DevPenguin.VOXELWORLD
             noiseGenerator = new NoiseGenerator(terrainSeed);
 
             // Generate blocks dataset
-            _blocksDictionary = new Dictionary<string, BlockData>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
+            _blocksDictionary = new ConcurrentDictionary<string, BlockData>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
             for (int z = -(int)worldSize.z * worldForseen; z < worldSize.z * worldForseen; z++) 
             {
                 for (int x = -(int)worldSize.x * worldForseen; x < worldSize.x * worldForseen; x++) 
@@ -165,7 +166,7 @@ namespace DevPenguin.VOXELWORLD
             SetupQuadMeshData();
 
             // Generate world mesh
-            _chunksDictionary = new Dictionary<string, GameObject>(); // Holds current loaded chuncks for later use
+            _chunksDictionary = new ConcurrentDictionary<string, GameObject>(); // Holds current loaded chuncks for later use
             for (int x = -(int)worldSize.x; x < worldSize.x; x++)
             {
                 for (int y = 0; y < worldSize.y; y++)
@@ -197,8 +198,7 @@ namespace DevPenguin.VOXELWORLD
             GameManager.instance.SetupPlayer(new Vector3(0, Mathf.Max(_topGrassLayer, _topStoneLayer), 0), Quaternion.identity);
 
             // Debug
-            //GameManager.instance.debugText.text = $"World generated with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString("00.00")} seconds";
-            string _debugMessage = $"Generated world with {_chunksDictionary.Count} chunks with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString()} seconds";
+            string _debugMessage = $"Generated world with {_chunksDictionary.Count} chunks with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString("00.00")} seconds";
             Debug.Log(_debugMessage);
             CanvasManager.instance.debugText.text = _debugMessage;
 
@@ -211,7 +211,7 @@ namespace DevPenguin.VOXELWORLD
             if (_isUpdatingWorld == false)
             {
                 // If player has walked a quarter of the world size in the x direction
-                if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / 4))
+                if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / worldForseen))
                 {
                     _isUpdatingWorld = true;
                     //Debug.Log("Player has passed: " + (_worldOrigin.x + (worldSize.x * chunkSize.x / 4)));
@@ -223,7 +223,8 @@ namespace DevPenguin.VOXELWORLD
                     // If chunk behind exists 
                     if (_chunksDictionary.ContainsKey($"{_chunkBehind} {0} {0}"))
                     {
-                        // TODO: if chunk exists the hide it
+                        // TODO: if chunk exists then hide it
+
 
                         // TODO if chunk is hidden destroy it
                         Destroy(_chunksDictionary[$"{_chunkBehind} {0} {0}"]);
@@ -279,7 +280,7 @@ namespace DevPenguin.VOXELWORLD
                     for (int y = startY; y < chunkSize.y + startY; y++)
                     {
                         // Set blocks as empty by default
-                        _blocksDictionary.Add($"{x} {y} {z}", new BlockData());
+                        _blocksDictionary.TryAdd($"{x} {y} {z}", new BlockData());
 
                         // Else make it air by default
                         _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
@@ -413,7 +414,7 @@ namespace DevPenguin.VOXELWORLD
             _chunkObject = new GameObject($"Chunk {startX} {startY} {startZ}");
             _chunkObject.transform.parent = transform;
             _chunkObject.transform.SetPositionAndRotation(new Vector3(0, 0, 0), Quaternion.identity);
-            _chunksDictionary.Add($"{startX} {startY} {startZ}", _chunkObject);
+            _chunksDictionary.TryAdd($"{startX} {startY} {startZ}", _chunkObject);
 
             // Instantiate mesh list
             _combineInstanceList = new List<CombineInstance>();

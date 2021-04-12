@@ -755,9 +755,9 @@ MonoBehaviour:
   terrainSeed: 221855
   shouldRandomizeSeed: 1
   chunkSize: {x: 16, y: 64, z: 16}
-  worldSize: {x: 2, y: 1, z: 2}
-  isWorldDynamic: 0
-  worldForseen: 2
+  worldSize: {x: 1, y: 1, z: 1}
+  isWorldDynamic: 1
+  worldForseen: 4
   allBlocks:
   - {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
   - {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}

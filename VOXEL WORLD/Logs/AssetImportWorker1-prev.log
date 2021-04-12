@@ -1,0 +1,268 @@
+Using pre-set license
+Built from '2020.3/release' branch; Version is '2020.3.2f1 (8fd9074bf66c) revision 9427207'; Using compiler version '192528614'; Build Type 'Release'
+OS: 'Windows 10 Pro; OS build 18362.30; Version 1903; 64bit' Language: 'es' Physical Memory: 16350 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 0
+
+ COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\2020.3.2f1\Editor\Unity.exe
+-adb2
+-batchMode
+-noUpm
+-name
+AssetImportWorker1
+-projectPath
+D:/Unity/Projects/_Tutorials/VoxelWorld/VOXEL WORLD
+-logFile
+Logs/AssetImportWorker1.log
+-srvPort
+50920
+Successfully changed project path to: D:/Unity/Projects/_Tutorials/VoxelWorld/VOXEL WORLD
+D:/Unity/Projects/_Tutorials/VoxelWorld/VOXEL WORLD
+Using Asset Import Pipeline V2.
+Refreshing native plugins compatible for Editor in 100.15 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 2020.3.2f1 (8fd9074bf66c)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2020.3.2f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path D:/Unity/Projects/_Tutorials/VoxelWorld/VOXEL WORLD/Assets
+GfxDevice: creating device client; threaded=0
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon R9 200 Series (ID=0x6810)
+    Vendor:   
+    VRAM:     2027 MB
+    Driver:   27.20.14501.18003
+Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2020.3.2f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2020.3.2f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/2020.3.2f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56696
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.3.2f1/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
+Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.3.2f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.004254 seconds.
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in 104.22 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  3.618 seconds
+Platform modules already initialized, skipping
+Registering precompiled user dll's ...
+Registered in 0.001923 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in 101.82 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.890 seconds
+Platform modules already initialized, skipping
+========================================================================
+Worker process is ready to serve import requests
+Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.22 seconds
+Refreshing native plugins compatible for Editor in 0.97 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 2518 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 119.5 MB.
+System memory in use after: 119.7 MB.
+
+Unloading 10 unused Assets to reduce memory usage. Loaded Objects now: 2962.
+Total: 4.019000 ms (FindLiveObjects: 0.557200 ms CreateObjectMapping: 0.159100 ms MarkObjects: 3.173700 ms  DeleteObjects: 0.127300 ms)
+
+========================================================================
+Received Import Request.
+  path: Assets/ScriptableObjects/Blocks/Cactus.asset
+  artifactKey: Guid(e5e93beea118c3845bb6f4d0b8d8d44c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/Cactus.asset using Guid(e5e93beea118c3845bb6f4d0b8d8d44c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '15c7a6a11f444626673fc0689153924d') in 0.066864 seconds
+  Import took 0.075902 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000259 seconds.
+  path: Assets/ScriptableObjects/Blocks/Lava.asset
+  artifactKey: Guid(421f29e3b496ff146acf1b0cd69bc73a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/Lava.asset using Guid(421f29e3b496ff146acf1b0cd69bc73a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '57b7a49880ea34f4a0e792ccf27ed45a') in 0.022318 seconds
+  Import took 0.029863 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000585 seconds.
+  path: Assets/ScriptableObjects/Blocks/OreDiamond.asset
+  artifactKey: Guid(0312647bd4676de4fbe2628b2d97103d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/OreDiamond.asset using Guid(0312647bd4676de4fbe2628b2d97103d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e5a718d06aa4cb392cbf4d0dbcce784d') in 0.021801 seconds
+  Import took 0.029019 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000703 seconds.
+  path: Assets/ScriptableObjects/Blocks/OreGold.asset
+  artifactKey: Guid(12ad0f1a9672f1f4ca1590d9653ef5f0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/OreGold.asset using Guid(12ad0f1a9672f1f4ca1590d9653ef5f0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '52e76895e18316cc587de0252e53039b') in 0.020618 seconds
+  Import took 0.029958 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000285 seconds.
+  path: Assets/ScriptableObjects/Blocks/WoodLightTimber.asset
+  artifactKey: Guid(1cc795188c4d2874c998620cad4454b5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/WoodLightTimber.asset using Guid(1cc795188c4d2874c998620cad4454b5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ff873d0fe6c509577037b45a548fd271') in 0.023006 seconds
+  Import took 0.029028 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000306 seconds.
+  path: Assets/ScriptableObjects/Structures/TreeDarkStructure.asset
+  artifactKey: Guid(0ede126011f8e99418db81c2f61d0f11) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Structures/TreeDarkStructure.asset using Guid(0ede126011f8e99418db81c2f61d0f11) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '09267ca042f316b42f8f3b2adc17d82c') in 0.025858 seconds
+  Import took 0.034484 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000273 seconds.
+  path: Assets/ScriptableObjects/Blocks/Leaves.asset
+  artifactKey: Guid(3aea455f16397d947b8ef2219d41d443) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/Leaves.asset using Guid(3aea455f16397d947b8ef2219d41d443) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '543de8a86a6233aaae143508aafc8681') in 0.025397 seconds
+  Import took 0.030953 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000230 seconds.
+  path: Assets/ScriptableObjects/Blocks/Dirt.asset
+  artifactKey: Guid(bebdbae55edd7144a95858d080ed6d7c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/Dirt.asset using Guid(bebdbae55edd7144a95858d080ed6d7c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ab56b0ade17fb190b0190246a7ae7703') in 0.023009 seconds
+  Import took 0.030026 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000312 seconds.
+  path: Assets/ScriptableObjects/Blocks/Sand.asset
+  artifactKey: Guid(a5bf8e5830a55964398c1357dc50085c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/Sand.asset using Guid(a5bf8e5830a55964398c1357dc50085c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a4c10bd0ec61309db508a05d953914a5') in 0.025611 seconds
+  Import took 0.034834 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000333 seconds.
+  path: Assets/ScriptableObjects/Structures/TreeLightStructure.asset
+  artifactKey: Guid(26347dcc894b91b48a05529a2fbd2fe8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Structures/TreeLightStructure.asset using Guid(26347dcc894b91b48a05529a2fbd2fe8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e6d981f28e5d28fca7873f5e54434640') in 0.026225 seconds
+  Import took 0.034019 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000227 seconds.
+  path: Assets/ScriptableObjects/Blocks/OreCharcoal.asset
+  artifactKey: Guid(8e8e8fa7b57c35c4a9d27aaa294df992) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/OreCharcoal.asset using Guid(8e8e8fa7b57c35c4a9d27aaa294df992) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3479f8aa2253c5c3b839a3624a956c6c') in 0.024307 seconds
+  Import took 0.032343 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000369 seconds.
+  path: Assets/ScriptableObjects/Terrains/CaveTerrain.asset
+  artifactKey: Guid(6540750b158f2f04eaf9c3234e413de6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Terrains/CaveTerrain.asset using Guid(6540750b158f2f04eaf9c3234e413de6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7a41a6cea3ece8ff71b2b15d6ac02636') in 0.024157 seconds
+  Import took 0.032971 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000306 seconds.
+  path: Assets/ScriptableObjects/Blocks/Grass.asset
+  artifactKey: Guid(c7a7a680963e864458e276986999eec9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/Grass.asset using Guid(c7a7a680963e864458e276986999eec9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ef4fd19be3d2d4800d65ee0f45e370d7') in 0.023080 seconds
+  Import took 0.030263 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000257 seconds.
+  path: Assets/ScriptableObjects/Blocks/OreIron.asset
+  artifactKey: Guid(1a7f8f3581d472c438863c91cac340d5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/OreIron.asset using Guid(1a7f8f3581d472c438863c91cac340d5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c813271dc5cbf6352667ce918628908b') in 0.023272 seconds
+  Import took 0.030021 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000282 seconds.
+  path: Assets/ScriptableObjects/Blocks/OreSapphire.asset
+  artifactKey: Guid(905ba322b9099b445924800cb0986171) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/OreSapphire.asset using Guid(905ba322b9099b445924800cb0986171) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'cf8832f3da54f82d8696e29f657183d0') in 0.034171 seconds
+  Import took 0.041153 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000255 seconds.
+  path: Assets/ScriptableObjects/Blocks/WoodDarkTimber.asset
+  artifactKey: Guid(cd98268ee16a6f2409178700158377fa) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/WoodDarkTimber.asset using Guid(cd98268ee16a6f2409178700158377fa) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a18caeca65e657c1970dbac07f3c0396') in 0.027259 seconds
+  Import took 0.035898 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000333 seconds.
+  path: Assets/ScriptableObjects/Terrains/SurfaceTerrain.asset
+  artifactKey: Guid(bdb85ab163023d14699ce9fe63264051) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Terrains/SurfaceTerrain.asset using Guid(bdb85ab163023d14699ce9fe63264051) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '756b9d23c488eba4ea70cccd0881b69f') in 0.024739 seconds
+  Import took 0.032911 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000288 seconds.
+  path: Assets/ScriptableObjects/Terrains/UnderSurfaceTerrain.asset
+  artifactKey: Guid(ceb6f3bdc28e0cc4491c35677569b8a4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Terrains/UnderSurfaceTerrain.asset using Guid(ceb6f3bdc28e0cc4491c35677569b8a4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ca988697461420fd19bf45d93a65ba8b') in 0.017481 seconds
+  Import took 0.026008 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000256 seconds.
+  path: Assets/ScriptableObjects/Blocks/Stone.asset
+  artifactKey: Guid(c53165cc36e2009459cc240f38fcad5a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/Stone.asset using Guid(c53165cc36e2009459cc240f38fcad5a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3d42c96a2d91c647eabc4f41e7a33a82') in 0.021120 seconds
+  Import took 0.026728 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000277 seconds.
+  path: Assets/ScriptableObjects/Blocks/OreCopper.asset
+  artifactKey: Guid(859ea1e85df851545a0e7b0ea7da99cf) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Blocks/OreCopper.asset using Guid(859ea1e85df851545a0e7b0ea7da99cf) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'bfe2dd0fa878eadbb02f0967d08a5147') in 0.019437 seconds
+  Import took 0.025463 seconds .
+
+========================================================================
+Received Prepare
+Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
+Refreshing native plugins compatible for Editor in 1.76 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 63.9 MB.
+System memory in use after: 64.1 MB.
+
+Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 2962.
+Total: 4.045900 ms (FindLiveObjects: 0.562900 ms CreateObjectMapping: 0.137700 ms MarkObjects: 3.311800 ms  DeleteObjects: 0.031300 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 208.604233 seconds.
+  path: Assets/ScriptableObjects/Structures/TreeDarkStructure.asset
+  artifactKey: Guid(0ede126011f8e99418db81c2f61d0f11) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Structures/TreeDarkStructure.asset using Guid(0ede126011f8e99418db81c2f61d0f11) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '422bbc920809120bdfe2640542d10654') in 0.003613 seconds
+  Import took 0.011702 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000248 seconds.
+  path: Assets/ScriptableObjects/Structures/TreeLightStructure.asset
+  artifactKey: Guid(26347dcc894b91b48a05529a2fbd2fe8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptableObjects/Structures/TreeLightStructure.asset using Guid(26347dcc894b91b48a05529a2fbd2fe8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'bb379066c60953c306903f5598c6f4c2') in 0.004219 seconds
+  Import took 0.010457 seconds .
+
+AssetImportWorkerClient::OnTransportError - code=2 error=End of file
