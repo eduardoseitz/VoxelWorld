@@ -104,6 +104,7 @@ namespace DevPenguin.VOXELWORLD
 
         private void Start()
         {
+            // World dynamic loading setup
             _player = GameManager.instance.player.transform;
             _worldOrigin = new Vector3(0, 0, 0);
             if (!isWorldDynamic)
@@ -208,47 +209,71 @@ namespace DevPenguin.VOXELWORLD
         // Update world dynamicly
         private void UpdateWorldAroundPlayer()
         {
+            // If wolrd is already being updated than skip this frame
             if (_isUpdatingWorld == false)
             {
-                // If player has walked a quarter of the world size in the x direction
-                if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / worldForseen))
+                int _lastChunk = (int)(_worldOrigin.x - (worldSize.x * chunkSize.x * 2));
+                int _currentChunk = (int)(_worldOrigin.x - (worldSize.x * chunkSize.x));
+                int _nextChunk = (int)(_worldOrigin.x + (worldSize.x * chunkSize.x));
+
+                // If player has walked 1/2 of the world
+                if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / 2))
                 {
                     _isUpdatingWorld = true;
-                    //Debug.Log("Player has passed: " + (_worldOrigin.x + (worldSize.x * chunkSize.x / 4)));
 
-                    // Start hiding the last chunk
-                    int _chunkBehind = (int)(_worldOrigin.x - (worldSize.x * chunkSize.x));
-                    //Debug.Log("Hiding chunck: " + _chunkBehind);
-
-                    // If chunk behind exists 
-                    if (_chunksDictionary.ContainsKey($"{_chunkBehind} {0} {0}"))
+                    // Destroy 2 chunks behind
+                    if (_chunksDictionary.ContainsKey($"{_lastChunk} {0} {0}") == true)
                     {
-                        // TODO: if chunk exists then hide it
-
-
-                        // TODO if chunk is hidden destroy it
-                        Destroy(_chunksDictionary[$"{_chunkBehind} {0} {0}"]);
+                        // Destroy chunck
+                        Destroy(_chunksDictionary[$"{_lastChunk} {0} {0}"]);
                     }
 
-                    // Start loading the next chunk
-                    int _chunkFoward = (int)(_worldOrigin.x + (worldSize.x * chunkSize.x));
-                    //Debug.Log("Loading chunck: " + _chunkFoward);
-
-                    // TODO: Check if next chunk is just hidding
-
-                    // Check if chunk data in front has been generated
-                    if (!_blocksDictionary.ContainsKey($"{_chunkFoward} {0} {0}"))
+                    // Hide 1 chunck behind
+                    if (_chunksDictionary.ContainsKey($"{_currentChunk} {0} {0}") == true)
                     {
-                        // Generate all new blocks needed
-                        StartCoroutine(GenerateBlocksData(_chunkFoward, 0, 0));
+                        // Hide chunck
+                        if (_chunksDictionary[$"{_currentChunk} {0} {0}"].activeInHierarchy == true)
+                            _chunksDictionary[$"{_currentChunk} {0} {0}"].SetActive(false);
                     }
 
-                    // Generate all new chunck mesh needed
-                    StartCoroutine(GenerateChunk(_chunkFoward, 0, 0));
+                    _isUpdatingWorld = false;
+                }
+                // If player has walked 1/4 of the world size in the x direction
+                else if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / 4))
+                {
+                    _isUpdatingWorld = true;
 
+                    // If chunck data exists but chunck isnt built
+                    if (_chunksDictionary.ContainsKey($"{_nextChunk} {0} {0}") == false && _blocksDictionary.ContainsKey($"{_nextChunk} {0} {0}") == true)
+                    {
+                        // Build new chunck mesh needed
+                        StartCoroutine(GenerateChunk(_nextChunk, 0, 0));
+                    }
 
                     // Update world origin
                     _worldOrigin += new Vector3(chunkSize.x, 0, 0);
+                    _isUpdatingWorld = false;
+                }
+                // If player has walked 1/8 of the world
+                else if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / 8))
+                {
+                    _isUpdatingWorld = true;
+
+                    // If chunck in front is already built but hidden
+                    if (_chunksDictionary.ContainsKey($"{_nextChunk} {0} {0}") == true)
+                    {
+
+                        // Unhide chunck
+                        if (_chunksDictionary[$"{_nextChunk} {0} {0}"].activeInHierarchy == false)
+                            _chunksDictionary[$"{_nextChunk} {0} {0}"].SetActive(true);
+                    }
+                    // Check if chunk data in front has not been generated
+                    else if (_blocksDictionary.ContainsKey($"{_nextChunk} {0} {0}") == false)
+                    {
+                        // Generate all new blocks needed by the new chunck
+                        StartCoroutine(GenerateBlocksData(_nextChunk, 0, 0));
+                    }
+
                     _isUpdatingWorld = false;
                 }
             }
