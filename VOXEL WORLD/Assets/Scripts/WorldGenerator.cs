@@ -128,7 +128,7 @@ namespace DevPenguin.VOXELWORLD
             // Debug
             float _startTime = Time.realtimeSinceStartup;
             float _uiDelay = 0.01f;
-            int _numberOfSteps = (int)worldSize.z * (1 + worldForseen) * (int)worldSize.x * (1 + worldForseen) * (int)worldSize.y * 2 + 8;
+            int _numberOfSteps = (int)worldSize.z * (2 + worldForseen) * (int)worldSize.x * (2 + worldForseen) * (int)worldSize.y;
             float _currentStep = 0f;
             float _currentProgress = 1f;
 
@@ -146,9 +146,9 @@ namespace DevPenguin.VOXELWORLD
 
             // Generate blocks dataset
             _blocksDictionary = new ConcurrentDictionary<string, BlockData>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
-            for (int z = -(int)worldSize.z * worldForseen; z < worldSize.z * worldForseen; z++) 
+            for (int z = -(int)worldSize.z * worldForseen; z < (int)worldSize.z * worldForseen; z++) 
             {
-                for (int x = -(int)worldSize.x * worldForseen; x < worldSize.x * worldForseen; x++) 
+                for (int x = -(int)worldSize.x * worldForseen; x < (int)worldSize.x * worldForseen; x++) 
                 {
                     for (int y = 0; y < worldSize.y; y++)
                     {
@@ -236,33 +236,36 @@ namespace DevPenguin.VOXELWORLD
                             _chunksDictionary[$"{_currentChunk} {0} {0}"].SetActive(false);
                     }
 
+                    // Update world origin
+                    _worldOrigin += new Vector3(chunkSize.x, 0, 0);
+                    _isUpdatingWorld = false;
+
                     _isUpdatingWorld = false;
                 }
                 // If player has walked 1/4 of the world size in the x direction
-                else if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / 4))
+                if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / 4))
                 {
                     _isUpdatingWorld = true;
 
                     // If chunck data exists but chunck isnt built
                     if (_chunksDictionary.ContainsKey($"{_nextChunk} {0} {0}") == false && _blocksDictionary.ContainsKey($"{_nextChunk} {0} {0}") == true)
                     {
-                        // Build new chunck mesh needed
-                        StartCoroutine(GenerateChunk(_nextChunk, 0, 0));
+                        // Build on the y axis
+                        for (int y = 0; y < (int)worldSize.y; y++)
+                        {
+                            // Build new chunck mesh needed
+                            StartCoroutine(GenerateChunk(_nextChunk, 0, 0));
+                        }
                     }
-
-                    // Update world origin
-                    _worldOrigin += new Vector3(chunkSize.x, 0, 0);
-                    _isUpdatingWorld = false;
                 }
                 // If player has walked 1/8 of the world
-                else if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / 8))
+                if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / 8))
                 {
                     _isUpdatingWorld = true;
 
                     // If chunck in front is already built but hidden
                     if (_chunksDictionary.ContainsKey($"{_nextChunk} {0} {0}") == true)
                     {
-
                         // Unhide chunck
                         if (_chunksDictionary[$"{_nextChunk} {0} {0}"].activeInHierarchy == false)
                             _chunksDictionary[$"{_nextChunk} {0} {0}"].SetActive(true);
@@ -270,8 +273,12 @@ namespace DevPenguin.VOXELWORLD
                     // Check if chunk data in front has not been generated
                     else if (_blocksDictionary.ContainsKey($"{_nextChunk} {0} {0}") == false)
                     {
-                        // Generate all new blocks needed by the new chunck
-                        StartCoroutine(GenerateBlocksData(_nextChunk, 0, 0));
+                        // Build on the y axis
+                        for (int y = 0; y < (int)worldSize.y; y++) 
+                        {
+                            // Generate all new blocks needed by the new chunck
+                            StartCoroutine(GenerateBlocksData(_nextChunk, y, 0));
+                        }
                     }
 
                     _isUpdatingWorld = false;
@@ -294,139 +301,152 @@ namespace DevPenguin.VOXELWORLD
 
         private void GenerateTerrain(int startX, int startY, int startZ)
         {
-            for (int z = startZ; z < chunkSize.z + startZ; z++) 
+            try
             {
-                for (int x = startX; x < chunkSize.x + startX; x++)
+                for (int z = startZ; z < chunkSize.z + startZ; z++)
                 {
-                    // Get height noise
-                    int _topGrassLayer = noiseGenerator.GetTerrainHeightNoise(x, z, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
-                    int _topStoneLayer = noiseGenerator.GetTerrainHeightNoise(x + 5, z + 5, underSurfaceTerrain.smoothness, underSurfaceTerrain.octaves, underSurfaceTerrain.persistance, underSurfaceTerrain.groundHeight) - 5;
-
-                    for (int y = startY; y < chunkSize.y + startY; y++)
+                    for (int x = startX; x < chunkSize.x + startX; x++)
                     {
-                        // Set blocks as empty by default
-                        _blocksDictionary.TryAdd($"{x} {y} {z}", new BlockData());
+                        // Get height noise
+                        int _topGrassLayer = noiseGenerator.GetTerrainHeightNoise(x, z, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
+                        int _topStoneLayer = noiseGenerator.GetTerrainHeightNoise(x + 5, z + 5, underSurfaceTerrain.smoothness, underSurfaceTerrain.octaves, underSurfaceTerrain.persistance, underSurfaceTerrain.groundHeight) - 5;
 
-                        // Else make it air by default
-                        _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
-
-                        // If it is bellow the stone level 
-                        if (y <= _topStoneLayer)
+                        for (int y = startY; y < chunkSize.y + startY; y++)
                         {
-                            // Get terrain holes
-                            float _caveFactor = noiseGenerator.Get3DNoise(x, y, z, caveTerrain.smoothness, caveTerrain.octaves, caveTerrain.persistance);
+                            // Set blocks as empty by default
+                            _blocksDictionary.TryAdd($"{x} {y} {z}", new BlockData());
 
-                            // Check if it isn't a cave
-                            if (_caveFactor >= caveChance)
+                            // Else make it air by default
+                            _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
+
+                            // If it is bellow the stone level 
+                            if (y <= _topStoneLayer)
                             {
-                                // Else choose which block to use by layer rules
-                                for (int b = 0; b < ruleBlocks.Length; b++)
-                                {
-                                    // Check if it is in the correct layer
-                                    if (y > _topStoneLayer - ruleBlocks[b].maxDepthLayer && y <= _topStoneLayer - ruleBlocks[b].minDepthLayer)
-                                    {
-                                        // Check the chance of that block being
-                                        _blocksDictionary[$"{x} {y} {z}"].blockType = ruleBlocks[b].blockType;
-                                    }
+                                // Get terrain holes
+                                float _caveFactor = noiseGenerator.Get3DNoise(x, y, z, caveTerrain.smoothness, caveTerrain.octaves, caveTerrain.persistance);
 
-                                    // Make some holes for mesh debug only
-                                    if (shouldMakeHoles)
-                                    {
-                                        if (y != _topGrassLayer && _topGrassLayer != 0 && UnityEngine.Random.Range(0, 100) < holesChance)
-                                            _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
-                                    }
-                                }
-
-                                // Generate ores
-                                for (int o = 0; o < oresBlocks.Length; o++)
+                                // Check if it isn't a cave
+                                if (_caveFactor >= caveChance)
                                 {
-                                    if (y > _topStoneLayer - oresBlocks[o].maxDepthLayer && y <= _topStoneLayer - oresBlocks[o].minDepthLayer)
+                                    // Else choose which block to use by layer rules
+                                    for (int b = 0; b < ruleBlocks.Length; b++)
                                     {
-                                        if (_caveFactor < oresBlocks[o].generationChance)
+                                        // Check if it is in the correct layer
+                                        if (y > _topStoneLayer - ruleBlocks[b].maxDepthLayer && y <= _topStoneLayer - ruleBlocks[b].minDepthLayer)
                                         {
-                                            if (Random.Range(0, 100) < oresBlocks[o].generationChance * 100)
+                                            // Check the chance of that block being
+                                            _blocksDictionary[$"{x} {y} {z}"].blockType = ruleBlocks[b].blockType;
+                                        }
+
+                                        // Make some holes for mesh debug only
+                                        if (shouldMakeHoles)
+                                        {
+                                            if (y != _topGrassLayer && _topGrassLayer != 0 && UnityEngine.Random.Range(0, 100) < holesChance)
+                                                _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
+                                        }
+                                    }
+
+                                    // Generate ores
+                                    for (int o = 0; o < oresBlocks.Length; o++)
+                                    {
+                                        if (y > _topStoneLayer - oresBlocks[o].maxDepthLayer && y <= _topStoneLayer - oresBlocks[o].minDepthLayer)
+                                        {
+                                            if (_caveFactor < oresBlocks[o].generationChance)
                                             {
-                                                _blocksDictionary[$"{x} {y} {z}"].blockType = oresBlocks[o].blockType;
+                                                if (Random.Range(0, 100) < oresBlocks[o].generationChance * 100)
+                                                {
+                                                    _blocksDictionary[$"{x} {y} {z}"].blockType = oresBlocks[o].blockType;
+                                                }
                                             }
                                         }
                                     }
                                 }
+                                // Else if it is a cave make a hole
+                                else
+                                {
+                                    _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
+                                }
                             }
-                            // Else if it is a cave make a hole
-                            else
+                            // If it is the surface
+                            else if (y == _topGrassLayer)
                             {
-                                _blocksDictionary[$"{x} {y} {z}"].blockType = -1;
+                                // First layer is grass
+                                _blocksDictionary[$"{x} {y} {z}"].blockType = surfaceBlock.blockType;
+
+                                // Under the grass is dirt
+                                _blocksDictionary[$"{x} {y - 1} {z}"].blockType = 0;
+                                _blocksDictionary[$"{x} {y - 2} {z}"].blockType = 0;
+                                _blocksDictionary[$"{x} {y - 3} {z}"].blockType = 0;
+
+                                // Under the dirt is stone
+                                _blocksDictionary[$"{x} {y - 4} {z}"].blockType = 2;
+                                _blocksDictionary[$"{x} {y - 5} {z}"].blockType = 2;
                             }
+
+                            // If it is the bedrock
+                            if (y == 0)
+                            {
+                                _blocksDictionary[$"{x} {y} {z}"].blockType = bedBlock.blockType;
+                            }
+
+                            // Debug
+                            //if (_blocksDictionary[$"{x} {y} {z}"].blockType > -1)
+                            //{
+                            //    Debug.Log($"Created block at X:{x} Y:{y} Z:{z} ");
+                            //    Debug.Log($"Type:{allBlocks[_blocksDictionary[$"{x} {y} {z}"].blockType].screenName}");
+                            //}
                         }
-                        // If it is the surface
-                        else if (y == _topGrassLayer)
-                        {
-                            // First layer is grass
-                            _blocksDictionary[$"{x} {y} {z}"].blockType = surfaceBlock.blockType;
-
-                            // Under the grass is dirt
-                            _blocksDictionary[$"{x} {y - 1} {z}"].blockType = 0;
-                            _blocksDictionary[$"{x} {y - 2} {z}"].blockType = 0;
-                            _blocksDictionary[$"{x} {y - 3} {z}"].blockType = 0;
-
-                            // Under the dirt is stone
-                            _blocksDictionary[$"{x} {y - 4} {z}"].blockType = 2;
-                            _blocksDictionary[$"{x} {y - 5} {z}"].blockType = 2;
-                        }
-
-                        // If it is the bedrock
-                        if (y == 0)
-                        {
-                            _blocksDictionary[$"{x} {y} {z}"].blockType = bedBlock.blockType;
-                        }
-
-                        // Debug
-                        //if (_blocksDictionary[$"{x} {y} {z}"].blockType > -1)
-                        //{
-                        //    Debug.Log($"Created block at X:{x} Y:{y} Z:{z} ");
-                        //    Debug.Log($"Type:{allBlocks[_blocksDictionary[$"{x} {y} {z}"].blockType].screenName}");
-                        //}
                     }
                 }
+            }
+            catch
+            {
+                Debug.LogError($"Could not generate terrain for the chunk {startX} {startY} {startZ}");
             }
         }
 
         private void GenerateStructures(int startX, int startY, int startZ)
         {
-            // Loop through all strucutres
-            for (int i = 0; i < structures.Length; i++)
-            {
-                // Pick a random number between 1 and max spawn
-                int _amount = Random.Range(1, structures[i].maxAmount);
-                for (int a = 0; a < _amount; a++)
+            try {
+                // Loop through all strucutres
+                for (int i = 0; i < structures.Length; i++)
                 {
-                    // Check the chance of having it
-                    if (Random.Range(0, 100) < structures[i].spawnChance)
+                    // Pick a random number between 1 and max spawn
+                    int _amount = Random.Range(1, structures[i].maxAmount);
+                    for (int a = 0; a < _amount; a++)
                     {
-                        // Pick a random position in the surface
-                        int _randomX = Random.Range(startX + (int)structures[i].size.x, startX + (int)chunkSize.x - (int)structures[i].size.x);
-                        int _randomZ = Random.Range(startZ + (int)structures[i].size.z, startZ + (int)chunkSize.z - (int)structures[i].size.z);
-                        int _randomY = noiseGenerator.GetTerrainHeightNoise(_randomX, _randomZ, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
-
-                        // Check if the y layer matches the needed block of the structure
-                        if (_blocksDictionary[$"{_randomX} {_randomY} {_randomZ}"].blockType == structures[i].underBlockType)
+                        // Check the chance of having it
+                        if (Random.Range(0, 100) < structures[i].spawnChance)
                         {
-                            // Check if structure y size doesn't exceed the worldsize height
-                            if (_randomY + structures[i].size.y < chunkSize.y * worldSize.y)
-                            {
-                                // Build all the required blocks
-                                for (int b = 0; b < structures[i].blocks.Length; b++)
-                                {
-                                    int _posX = _randomX + (int)structures[i].blocks[b].location.x;
-                                    int _posY = _randomY + (int)structures[i].blocks[b].location.y;
-                                    int _posZ = _randomZ + (int)structures[i].blocks[b].location.z;
+                            // Pick a random position in the surface
+                            int _randomX = Random.Range(startX + (int)structures[i].size.x, startX + (int)chunkSize.x - (int)structures[i].size.x);
+                            int _randomZ = Random.Range(startZ + (int)structures[i].size.z, startZ + (int)chunkSize.z - (int)structures[i].size.z);
+                            int _randomY = noiseGenerator.GetTerrainHeightNoise(_randomX, _randomZ, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
 
-                                    _blocksDictionary[$"{_posX} {_posY} {_posZ}"].blockType = structures[i].blocks[b].blockType;
+                            // Check if the y layer matches the needed block of the structure
+                            if (_blocksDictionary[$"{_randomX} {_randomY} {_randomZ}"].blockType == structures[i].underBlockType)
+                            {
+                                // Check if structure y size doesn't exceed the worldsize height
+                                if (_randomY + structures[i].size.y < chunkSize.y * worldSize.y)
+                                {
+                                    // Build all the required blocks
+                                    for (int b = 0; b < structures[i].blocks.Length; b++)
+                                    {
+                                        int _posX = _randomX + (int)structures[i].blocks[b].location.x;
+                                        int _posY = _randomY + (int)structures[i].blocks[b].location.y;
+                                        int _posZ = _randomZ + (int)structures[i].blocks[b].location.z;
+
+                                        _blocksDictionary[$"{_posX} {_posY} {_posZ}"].blockType = structures[i].blocks[b].blockType;
+                                    }
                                 }
                             }
                         }
-                    }
+                    } 
                 }
+            }
+            catch
+            {
+                Debug.LogError($"Could not generate structures for the chunk {startX} {startY} {startZ}");
             }
         }
 
@@ -465,7 +485,7 @@ namespace DevPenguin.VOXELWORLD
                         }
                         catch
                         {
-                            Debug.Log($"Could not get data from chunk {x} {y} {z}");
+                            Debug.LogError($"Could not generate block at position {x} {y} {z}");
                         }
                     }
                 }
