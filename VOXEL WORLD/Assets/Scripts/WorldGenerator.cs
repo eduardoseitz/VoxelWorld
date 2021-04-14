@@ -274,7 +274,7 @@ namespace DevPenguin.VOXELWORLD
                             for (int y = 0; y < worldSize.y; y++)
                             {
                                 _isUpdatingWorld = true;
-                                StartCoroutine(DeleteChunk(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
+                                StartCoroutine(RemoveChunck(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
                                 while (_isUpdatingWorld)
                                     yield return null;
 
@@ -288,7 +288,7 @@ namespace DevPenguin.VOXELWORLD
                             for (int y = 0; y < worldSize.y; y++)
                             {
                                 _isUpdatingWorld = true;
-                                StartCoroutine(DeleteChunk(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
+                                StartCoroutine(RemoveChunck(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
                                 while (_isUpdatingWorld)
                                     yield return null;
 
@@ -476,8 +476,14 @@ namespace DevPenguin.VOXELWORLD
         {
             // Debug.Log($"Generating mesh for chunk X:{startX} Y:{startY} Z:{startZ}");
 
+            // If chunk mesh exists then unhide it
+            if (_chunksDictionary.ContainsKey($"{startX} {startY} {startZ}") == true)
+            {
+                if (_chunksDictionary[$"{startX} {startY} {startZ}"].activeInHierarchy == false)
+                    _chunksDictionary[$"{startX} {startY} {startZ}"].SetActive(true);
+            }
             // If blocks data do not exist then create it
-            if (_chunksDictionary.ContainsKey($"{startX} {startY} {startZ}") == false)
+            else
             {
                 // Create new chunk object
                 _chunkObject = new GameObject($"Chunk {startX} {startY} {startZ}");
@@ -519,23 +525,31 @@ namespace DevPenguin.VOXELWORLD
                 // Combine meshes
                 CombineQuadsIntoSingleChunk();
             }
-
+            
+            
             _isUpdatingWorld = false;
             yield return null;
         }
 
-        private IEnumerator DeleteChunk(int startX, int startY, int startZ)
+        private IEnumerator RemoveChunck(int startX, int startY, int startZ)
         {
             //Debug.Log($"Removing mesh for chunk X:{startX} Y:{startY} Z:{startZ}");
 
-            // If blocks data do exist then remove it
+            // If chunck data do exist then remove it
             if (_chunksDictionary.ContainsKey($"{startX} {startY} {startZ}") == true)
             {
-                Destroy(_chunksDictionary[$"{startX} {startY} {startZ}"]);
+                // If chunk is visible then hide it
+                if (_chunksDictionary[$"{startX} {startY} {startZ}"].activeInHierarchy)
+                    _chunksDictionary[$"{startX} {startY} {startZ}"].SetActive(false);
+                // Otherwise destroy it
+                //else
+                //    Destroy(_chunksDictionary[$"{startX} {startY} {startZ}"]);
             }
 
             _isUpdatingWorld = false;
             yield return null;
+
+
         }
         #endregion
 
