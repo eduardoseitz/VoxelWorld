@@ -40,7 +40,7 @@ namespace DevPenguin.VOXELWORLD
             //    SceneManager.LoadScene(0, LoadSceneMode.Single);
             //}
 
-            if (player.transform.position.y < -10)
+            if (player.transform.position.y < -10 || Input.GetKeyDown(KeyCode.R))
             {
                 player.SetActive(false);
                 Invoke(nameof(ResetPlayer), 1f);
