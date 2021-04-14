@@ -655,7 +655,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &656221659
 GameObject:
@@ -721,7 +721,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &678850213
 GameObject:
@@ -755,9 +755,9 @@ MonoBehaviour:
   terrainSeed: 221855
   shouldRandomizeSeed: 1
   chunkSize: {x: 16, y: 64, z: 16}
-  worldSize: {x: 2, y: 1, z: 2}
   isWorldDynamic: 1
-  worldForseen: 2
+  worldSize: {x: 1, y: 1, z: 1}
+  worldForseen: 4
   allBlocks:
   - {fileID: 11400000, guid: bebdbae55edd7144a95858d080ed6d7c, type: 2}
   - {fileID: 11400000, guid: c7a7a680963e864458e276986999eec9, type: 2}
@@ -798,6 +798,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 26347dcc894b91b48a05529a2fbd2fe8, type: 2}
   shouldMakeHoles: 0
   holesChance: 0
+  _worldOrigin: {x: 0, y: 0, z: 0}
 --- !u!4 &678850215
 Transform:
   m_ObjectHideFlags: 0
@@ -1377,7 +1378,7 @@ Transform:
   - {fileID: 2138677393}
   - {fileID: 445272694}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1224819321
 GameObject:
@@ -1841,7 +1842,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 35, y: 36.568, z: 0.001}
 --- !u!114 &1687258586
 MonoBehaviour:
@@ -3359,8 +3360,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8018109198748064197, guid: abd4f8321f33ba849a95cb3394f1326b,
         type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000,
+        type: 0}
+    - target: {fileID: 8018109198748064197, guid: abd4f8321f33ba849a95cb3394f1326b,
+        type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8018109198748064197, guid: abd4f8321f33ba849a95cb3394f1326b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8018109198748091877, guid: abd4f8321f33ba849a95cb3394f1326b,
         type: 3}

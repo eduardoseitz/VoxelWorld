@@ -16,3 +16,7 @@
 	-Detect chunks in player sight radius
 	-Generate new chunks as player moves
 	-Delete old chunks outside player radius
+
+// Bugs
+-Generating more than 1 chunk in y axis gives errors
+-When not at origin world generating is generating uneeded right faces

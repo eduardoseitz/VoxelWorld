@@ -57,7 +57,7 @@ namespace DevPenguin.VOXELWORLD
         public void CreateNewWorld()
         {
             Debug.Log("Creating new world");
-            WorldGenerator.instance.StartCoroutine(WorldGenerator.instance.GenerateWorld());
+            WorldGenerator.instance.StartCoroutine(WorldGenerator.instance.GenerateNewWorld());
         }
 
         public void QuitGame()

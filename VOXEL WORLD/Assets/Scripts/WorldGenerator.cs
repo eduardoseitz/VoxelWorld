@@ -10,14 +10,16 @@ namespace DevPenguin.VOXELWORLD
         #region Declarations
         public static WorldGenerator instance;
 
+        public bool IsWorldDynamic => isWorldDynamic;
+
         [Header("World Setup")]
         [SerializeField] int terrainSeed = 468786;
         [SerializeField] bool shouldRandomizeSeed = true;
         [Tooltip("Chunk size in blocks")]
         [SerializeField] private Vector3 chunkSize = new Vector3(16, 16, 16);
         [Tooltip("World size in chunks")]
-        [SerializeField] private Vector3 worldSize = new Vector3(3, 3, 3);
         [SerializeField] private bool isWorldDynamic = true;
+        [SerializeField] private Vector3 worldSize = new Vector3(3, 3, 3);
         [SerializeField] private int worldForseen = 2;
         [Space(5f)]
 
@@ -89,7 +91,7 @@ namespace DevPenguin.VOXELWORLD
 
         // Player
         private Transform _player;
-        private Vector3 _worldOrigin;
+        [SerializeField] private Vector3 _worldOrigin;
         private bool _isUpdatingWorld;
         #endregion
 
@@ -110,20 +112,13 @@ namespace DevPenguin.VOXELWORLD
             if (!isWorldDynamic)
                 worldForseen = 1;
         }
-
-        private void Update()
-        {
-            // Dynamicly update world
-            if (isWorldDynamic)
-                UpdateWorldAroundPlayer();
-        }
         #endregion
 
         #region Helper Methods
 
         #region World and Chunks
 
-        public IEnumerator GenerateWorld()
+        public IEnumerator GenerateNewWorld()
         {
             // Debug
             float _startTime = Time.realtimeSinceStartup;
@@ -146,9 +141,9 @@ namespace DevPenguin.VOXELWORLD
 
             // Generate blocks dataset
             _blocksDictionary = new ConcurrentDictionary<string, BlockData>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
-            for (int z = -(int)worldSize.z * worldForseen; z < (int)worldSize.z * worldForseen; z++) 
+            for (int z = -(int)worldSize.z * worldForseen; z < (int)worldSize.z * worldForseen; z++)
             {
-                for (int x = -(int)worldSize.x * worldForseen; x < (int)worldSize.x * worldForseen; x++) 
+                for (int x = -(int)worldSize.x * worldForseen; x < (int)worldSize.x * worldForseen; x++)
                 {
                     for (int y = 0; y < worldSize.y; y++)
                     {
@@ -206,97 +201,107 @@ namespace DevPenguin.VOXELWORLD
             yield return null;
         }
 
-        // Update world dynamicly
-        private void UpdateWorldAroundPlayer()
+        public IEnumerator UpdateWorld()
         {
-            // If wolrd is already being updated than skip this frame
-            if (_isUpdatingWorld == false)
+            while (isWorldDynamic)
             {
-                int _lastChunk = (int)(_worldOrigin.x - (worldSize.x * chunkSize.x * 2));
-                int _currentChunk = (int)(_worldOrigin.x - (worldSize.x * chunkSize.x));
-                int _nextChunk = (int)(_worldOrigin.x + (worldSize.x * chunkSize.x));
+                bool _shouldUpdate = false;
 
-                // If player has walked 1/2 of the world
-                if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / 2))
-                {
-                    _isUpdatingWorld = true;
-
-                    // Destroy 2 chunks behind
-                    if (_chunksDictionary.ContainsKey($"{_lastChunk} {0} {0}") == true)
-                    {
-                        // Destroy chunck
-                        Destroy(_chunksDictionary[$"{_lastChunk} {0} {0}"]);
-                    }
-
-                    // Hide 1 chunck behind
-                    if (_chunksDictionary.ContainsKey($"{_currentChunk} {0} {0}") == true)
-                    {
-                        // Hide chunck
-                        if (_chunksDictionary[$"{_currentChunk} {0} {0}"].activeInHierarchy == true)
-                            _chunksDictionary[$"{_currentChunk} {0} {0}"].SetActive(false);
-                    }
-
-                    // Update world origin
-                    _worldOrigin += new Vector3(chunkSize.x, 0, 0);
-                    _isUpdatingWorld = false;
-
-                    _isUpdatingWorld = false;
-                }
-                // If player has walked 1/4 of the world size in the x direction
+                // Check new player position
                 if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / 4))
                 {
-                    _isUpdatingWorld = true;
-
-                    // If chunck data exists but chunck isnt built
-                    if (_chunksDictionary.ContainsKey($"{_nextChunk} {0} {0}") == false && _blocksDictionary.ContainsKey($"{_nextChunk} {0} {0}") == true)
-                    {
-                        // Build on the y axis
-                        for (int y = 0; y < (int)worldSize.y; y++)
-                        {
-                            // Build new chunck mesh needed
-                            StartCoroutine(GenerateChunk(_nextChunk, 0, 0));
-                        }
-                    }
+                    _worldOrigin.x += chunkSize.x;
+                    _shouldUpdate = true;
                 }
-                // If player has walked 1/8 of the world
-                if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / 8))
+                else if (_player.position.x <= _worldOrigin.x - (worldSize.x * chunkSize.x / 4))
                 {
-                    _isUpdatingWorld = true;
+                    _worldOrigin.x -= chunkSize.x;
+                    _shouldUpdate = true;
+                }
+                else if (_player.position.z >= _worldOrigin.z + (worldSize.z * chunkSize.z / 4))
+                {
+                    _worldOrigin.z += chunkSize.z;
+                    _shouldUpdate = true;
+                }
+                else if (_player.position.z <= _worldOrigin.z - (worldSize.z * chunkSize.z / 4))
+                {
+                    _worldOrigin.z -= chunkSize.z;
+                    _shouldUpdate = true;
+                }
 
-                    // If chunck in front is already built but hidden
-                    if (_chunksDictionary.ContainsKey($"{_nextChunk} {0} {0}") == true)
+                // If would has to be updated
+                if (_shouldUpdate)
+                {
+                    // Generate new blocks needed
+                    for (int z = -(int)worldSize.z; z < (int)worldSize.z; z++)
                     {
-                        // Unhide chunck
-                        if (_chunksDictionary[$"{_nextChunk} {0} {0}"].activeInHierarchy == false)
-                            _chunksDictionary[$"{_nextChunk} {0} {0}"].SetActive(true);
-                    }
-                    // Check if chunk data in front has not been generated
-                    else if (_blocksDictionary.ContainsKey($"{_nextChunk} {0} {0}") == false)
-                    {
-                        // Build on the y axis
-                        for (int y = 0; y < (int)worldSize.y; y++) 
+                        for (int x = -(int)worldSize.x; x < (int)worldSize.x; x++)
                         {
-                            // Generate all new blocks needed by the new chunck
-                            StartCoroutine(GenerateBlocksData(_nextChunk, y, 0));
+                            for (int y = 0; y < worldSize.y; y++)
+                            {
+                                _isUpdatingWorld = true;
+                                StartCoroutine(GenerateBlocksData(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
+                                while (_isUpdatingWorld)
+                                    yield return null;
+                            }
                         }
                     }
+                    yield return null;
 
-                    _isUpdatingWorld = false;
+                    // Generate new chuncks needed
+                    for (int x = -(int)worldSize.x; x < worldSize.x; x++)
+                    {
+                        for (int y = 0; y < worldSize.y; y++)
+                        {
+                            for (int z = -(int)worldSize.z; z < worldSize.z; z++)
+                            {
+                                _isUpdatingWorld = true;
+                                StartCoroutine(GenerateChunk(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
+                                while (_isUpdatingWorld)
+                                    yield return null;
+                            }
+                        }
+                    }
+                    yield return null;
+
+                    // TODO: Destroy chuncks not needed anymore
+                    //for (int z = -(int)worldSize.z - 1; z < (int)worldSize.z + 1; z += (int)worldSize.z * 2)
+                    //{
+                    //    for (int x = -(int)worldSize.x - 1; x < (int)worldSize.x + 1; x += (int)worldSize.x * 2)
+                    //    {
+                    //        for (int y = 0; y < worldSize.y; y++)
+                    //        {
+                    //            _isUpdatingWorld = true;
+                    //            StartCoroutine(DeleteChunk(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
+                    //            while (_isUpdatingWorld)
+                    //                yield return null;
+                    //        }
+                    //    }
+                    //}
                 }
+
+                yield return null;
             }
         }
 
         private IEnumerator GenerateBlocksData(int startX, int startY, int startZ)
         {
-            //Debug.Log($"Generating block data for chunk X:{startX} Y:{startY} Z:{startZ}");
+            // Debug.Log($"Generating block data for chunk X:{startX} Y:{startY} Z:{startZ}");
 
-            // Generate terrain dataset
-            yield return null;
-            GenerateTerrain(startX, startY, startZ);
+            // If blocks data do not exist then create it
+            if (_blocksDictionary.ContainsKey($"{startX} {startY} {startZ}") == false)
+            {
+                // Generate terrain dataset
+                yield return null;
+                GenerateTerrain(startX, startY, startZ);
 
-            // Generate trees and houses
+                // Generate trees and houses
+                yield return null;
+                GenerateStructures(startX, startY, startZ);
+            }
+
+            _isUpdatingWorld = false;
             yield return null;
-            GenerateStructures(startX, startY, startZ);
         }
 
         private void GenerateTerrain(int startX, int startY, int startZ)
@@ -450,50 +455,69 @@ namespace DevPenguin.VOXELWORLD
             }
         }
 
+        private IEnumerator DeleteChunk(int startX, int startY, int startZ)
+        {
+            // Debug.Log($"Generating mesh for chunk X:{startX} Y:{startY} Z:{startZ}");
+
+            // If blocks data do exist then remove it
+            if (_chunksDictionary.ContainsKey($"{startX} {startY} {startZ}") == true)
+            {
+                Destroy(_chunksDictionary[$"{startX} {startY} {startZ}"]);
+            }
+
+            _isUpdatingWorld = false;
+            yield return null;
+        }
+
         private IEnumerator GenerateChunk(int startX, int startY, int startZ)
         {
-            //Debug.Log($"Generating mesh for chunk X:{startX} Y:{startY} Z:{startZ}");
-            yield return null;
+            // Debug.Log($"Generating mesh for chunk X:{startX} Y:{startY} Z:{startZ}");
 
-            // Create new chunk object
-            _chunkObject = new GameObject($"Chunk {startX} {startY} {startZ}");
-            _chunkObject.transform.parent = transform;
-            _chunkObject.transform.SetPositionAndRotation(new Vector3(0, 0, 0), Quaternion.identity);
-            _chunksDictionary.TryAdd($"{startX} {startY} {startZ}", _chunkObject);
-
-            // Instantiate mesh list
-            _combineInstanceList = new List<CombineInstance>();
-
-            // Generate blocks meshes
-            for (int z = startZ; z < chunkSize.z + startZ; z++) 
+            // If blocks data do not exist then create it
+            if (_chunksDictionary.ContainsKey($"{startX} {startY} {startZ}") == false)
             {
-                for (int x = startX; x < chunkSize.x + startX; x++) 
-                {
-                    for (int y = startY; y < chunkSize.y + startY; y++)
-                    {
-                        //Debug.Log(_blocksDataDictionary[$"{x} {y} {z}"]);
+                // Create new chunk object
+                _chunkObject = new GameObject($"Chunk {startX} {startY} {startZ}");
+                _chunkObject.transform.parent = transform;
+                _chunkObject.transform.SetPositionAndRotation(new Vector3(0, 0, 0), Quaternion.identity);
+                _chunksDictionary.TryAdd($"{startX} {startY} {startZ}", _chunkObject);
 
-                        // If block is not empty
-                        try
+                // Instantiate mesh list
+                _combineInstanceList = new List<CombineInstance>();
+
+                // Generate blocks meshes
+                for (int z = startZ; z < chunkSize.z + startZ; z++)
+                {
+                    for (int x = startX; x < chunkSize.x + startX; x++)
+                    {
+                        for (int y = startY; y < chunkSize.y + startY; y++)
                         {
-                            if (_blocksDictionary[$"{x} {y} {z}"].blockType > -1)
+                            //Debug.Log(_blocksDataDictionary[$"{x} {y} {z}"]);
+
+                            // If block is not empty
+                            try
                             {
-                                // Generate a cube at the position
-                                _newQuadPos = new Vector3(x, y, z);
-                                GenerateBlock(x, y, z);
+                                if (_blocksDictionary[$"{x} {y} {z}"].blockType > -1)
+                                {
+                                    // Generate a cube at the position
+                                    _newQuadPos = new Vector3(x, y, z);
+                                    GenerateBlock(x, y, z);
+                                }
                             }
-                        }
-                        catch
-                        {
-                            Debug.LogError($"Could not generate block at position {x} {y} {z}");
+                            catch
+                            {
+                                Debug.LogError($"Could not generate block at position {x} {y} {z}");
+                            }
                         }
                     }
                 }
-            }
-            yield return null;
+                yield return null;
 
-            // Combine meshes
-            CombineQuadsIntoSingleChunk();
+                // Combine meshes
+                CombineQuadsIntoSingleChunk();
+            }
+
+            _isUpdatingWorld = false;
             yield return null;
         }
         #endregion
