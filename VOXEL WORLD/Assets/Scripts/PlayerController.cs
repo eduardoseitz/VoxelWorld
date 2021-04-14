@@ -7,13 +7,13 @@ namespace DevPenguin.VOXELWORLD
         private void OnEnable()
         {
             if (WorldGenerator.instance)
-                WorldGenerator.instance.StartCoroutine(WorldGenerator.instance.UpdateWorld());
+                WorldGenerator.instance.StartCoroutine(WorldGenerator.instance.UpdateWorldAroundPlayer());
         }
 
         private void OnDisable()
         {
             if (WorldGenerator.instance)
-                WorldGenerator.instance.StopCoroutine(WorldGenerator.instance.UpdateWorld());
+                WorldGenerator.instance.StopCoroutine(WorldGenerator.instance.UpdateWorldAroundPlayer());
         }
     }
 }

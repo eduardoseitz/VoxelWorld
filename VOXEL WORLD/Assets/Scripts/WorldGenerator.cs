@@ -163,11 +163,12 @@ namespace DevPenguin.VOXELWORLD
 
             // Generate world mesh
             _chunksDictionary = new ConcurrentDictionary<string, GameObject>(); // Holds current loaded chuncks for later use
-            for (int x = -(int)worldSize.x; x < worldSize.x; x++)
+
+            for (int z = -(int)worldSize.z; z < worldSize.z; z++)
             {
-                for (int y = 0; y < worldSize.y; y++)
+                for (int x = -(int)worldSize.x; x < worldSize.x; x++)
                 {
-                    for (int z = -(int)worldSize.z; z < worldSize.z; z++)
+                    for (int y = 0; y < worldSize.y; y++)
                     {
                         // Update loading screen
                         _currentStep += 1;
@@ -201,29 +202,30 @@ namespace DevPenguin.VOXELWORLD
             yield return null;
         }
 
-        public IEnumerator UpdateWorld()
+        public IEnumerator UpdateWorldAroundPlayer()
         {
             while (isWorldDynamic)
             {
                 bool _shouldUpdate = false;
+                int _worldSlice = 4;
 
                 // Check new player position
-                if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / 4))
+                if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / _worldSlice))
                 {
                     _worldOrigin.x += chunkSize.x;
                     _shouldUpdate = true;
                 }
-                else if (_player.position.x <= _worldOrigin.x - (worldSize.x * chunkSize.x / 4))
+                else if (_player.position.x <= _worldOrigin.x - (worldSize.x * chunkSize.x / _worldSlice))
                 {
                     _worldOrigin.x -= chunkSize.x;
                     _shouldUpdate = true;
                 }
-                else if (_player.position.z >= _worldOrigin.z + (worldSize.z * chunkSize.z / 4))
+                if (_player.position.z >= _worldOrigin.z + (worldSize.z * chunkSize.z / _worldSlice))
                 {
                     _worldOrigin.z += chunkSize.z;
                     _shouldUpdate = true;
                 }
-                else if (_player.position.z <= _worldOrigin.z - (worldSize.z * chunkSize.z / 4))
+                else if (_player.position.z <= _worldOrigin.z - (worldSize.z * chunkSize.z / _worldSlice))
                 {
                     _worldOrigin.z -= chunkSize.z;
                     _shouldUpdate = true;
@@ -246,14 +248,14 @@ namespace DevPenguin.VOXELWORLD
                             }
                         }
                     }
-                    yield return null;
+                    yield return new WaitForSeconds(0.5f);
 
                     // Generate new chuncks needed
-                    for (int x = -(int)worldSize.x; x < worldSize.x; x++)
+                    for (int z = -(int)worldSize.z; z < worldSize.z; z++)
                     {
-                        for (int y = 0; y < worldSize.y; y++)
+                        for (int x = -(int)worldSize.x; x < worldSize.x; x++)
                         {
-                            for (int z = -(int)worldSize.z; z < worldSize.z; z++)
+                            for (int y = 0; y < worldSize.y; y++)
                             {
                                 _isUpdatingWorld = true;
                                 StartCoroutine(GenerateChunk(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
@@ -262,22 +264,37 @@ namespace DevPenguin.VOXELWORLD
                             }
                         }
                     }
-                    yield return null;
+                    yield return new WaitForSeconds(0.5f);
 
-                    // TODO: Destroy chuncks not needed anymore
-                    //for (int z = -(int)worldSize.z - 1; z < (int)worldSize.z + 1; z += (int)worldSize.z * 2)
-                    //{
-                    //    for (int x = -(int)worldSize.x - 1; x < (int)worldSize.x + 1; x += (int)worldSize.x * 2)
-                    //    {
-                    //        for (int y = 0; y < worldSize.y; y++)
-                    //        {
-                    //            _isUpdatingWorld = true;
-                    //            StartCoroutine(DeleteChunk(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
-                    //            while (_isUpdatingWorld)
-                    //                yield return null;
-                    //        }
-                    //    }
-                    //}
+                    // Destroy chuncks no longer needed
+                    for (int z = -(int)worldSize.z; z < worldSize.z; z++)
+                    {
+                        for (int x = -(int)worldSize.x - 1; x <= worldSize.x; x += (int)worldSize.x * 2 + 1)
+                        {
+                            for (int y = 0; y < worldSize.y; y++)
+                            {
+                                _isUpdatingWorld = true;
+                                StartCoroutine(DeleteChunk(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
+                                while (_isUpdatingWorld)
+                                    yield return null;
+
+                            }
+                        }
+                    }
+                    for (int x = -(int)worldSize.x; x < worldSize.x; x++)
+                    {
+                        for (int z = -(int)worldSize.z - 1; z <= worldSize.z; z += (int)worldSize.z * 2 + 1)
+                        {
+                            for (int y = 0; y < worldSize.y; y++)
+                            {
+                                _isUpdatingWorld = true;
+                                StartCoroutine(DeleteChunk(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
+                                while (_isUpdatingWorld)
+                                    yield return null;
+
+                            }
+                        }
+                    }
                 }
 
                 yield return null;
@@ -455,20 +472,6 @@ namespace DevPenguin.VOXELWORLD
             }
         }
 
-        private IEnumerator DeleteChunk(int startX, int startY, int startZ)
-        {
-            // Debug.Log($"Generating mesh for chunk X:{startX} Y:{startY} Z:{startZ}");
-
-            // If blocks data do exist then remove it
-            if (_chunksDictionary.ContainsKey($"{startX} {startY} {startZ}") == true)
-            {
-                Destroy(_chunksDictionary[$"{startX} {startY} {startZ}"]);
-            }
-
-            _isUpdatingWorld = false;
-            yield return null;
-        }
-
         private IEnumerator GenerateChunk(int startX, int startY, int startZ)
         {
             // Debug.Log($"Generating mesh for chunk X:{startX} Y:{startY} Z:{startZ}");
@@ -515,6 +518,20 @@ namespace DevPenguin.VOXELWORLD
 
                 // Combine meshes
                 CombineQuadsIntoSingleChunk();
+            }
+
+            _isUpdatingWorld = false;
+            yield return null;
+        }
+
+        private IEnumerator DeleteChunk(int startX, int startY, int startZ)
+        {
+            //Debug.Log($"Removing mesh for chunk X:{startX} Y:{startY} Z:{startZ}");
+
+            // If blocks data do exist then remove it
+            if (_chunksDictionary.ContainsKey($"{startX} {startY} {startZ}") == true)
+            {
+                Destroy(_chunksDictionary[$"{startX} {startY} {startZ}"]);
             }
 
             _isUpdatingWorld = false;
@@ -663,7 +680,6 @@ namespace DevPenguin.VOXELWORLD
             // Add mesh collider
             _chunkObject.AddComponent<MeshCollider>();
         }
-
         #endregion
 
         #endregion
