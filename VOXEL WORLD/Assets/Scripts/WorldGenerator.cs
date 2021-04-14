@@ -18,10 +18,11 @@ namespace DevPenguin.VOXELWORLD
         [Tooltip("Chunk size in blocks")]
         [SerializeField] private Vector3 chunkSize = new Vector3(16, 16, 16);
         [Tooltip("World size in chunks")]
+        [SerializeField] private Vector3 worldSize = new Vector3(4, 2, 4);
         [SerializeField] private bool isWorldDynamic = true;
-        [SerializeField] private Vector3 worldSize = new Vector3(3, 3, 3);
-        [SerializeField] private int worldPreGenerated = 2;
-        [SerializeField] private int playerView = 2;
+        [Tooltip("Render size in chunks, can't be bigger than world")]
+        [SerializeField] private Vector3 drawDistance = new Vector3(2,2,2);
+        [SerializeField] private int distanceBeforeUpdate = 4;
         [Space(5f)]
 
         [Header("Blocks Setup")]
@@ -92,7 +93,8 @@ namespace DevPenguin.VOXELWORLD
 
         // Player
         private Transform _player;
-        [SerializeField] private Vector3 _worldOrigin;
+        private Vector3 _worldOrigin;
+        private Vector3 _lastPlayerPosition;
         private bool _isUpdatingWorld;
         #endregion
 
@@ -110,13 +112,9 @@ namespace DevPenguin.VOXELWORLD
             // World dynamic loading setup
             _player = GameManager.instance.player.transform;
             _worldOrigin = new Vector3(0, 0, 0);
-            if (!isWorldDynamic)
+            if (isWorldDynamic == false)
             {
-                worldPreGenerated = 1;
-            }
-            else
-            {
-                playerView = (int)worldSize.x;
+                drawDistance = worldSize;
             }
         }
         #endregion
@@ -130,7 +128,7 @@ namespace DevPenguin.VOXELWORLD
             // Debug
             float _startTime = Time.realtimeSinceStartup;
             float _uiDelay = 0.01f;
-            int _numberOfSteps = (int)worldSize.z * (2 + worldPreGenerated) * (int)worldSize.x * (2 + worldPreGenerated) * (int)worldSize.y;
+            int _numberOfSteps = ((int)worldSize.z * (int)worldSize.x * (int)worldSize.y) * ((int)worldSize.z * (int)worldSize.x * (int)worldSize.y) / 2;
             float _currentStep = 0f;
             float _currentProgress = 1f;
 
@@ -148,9 +146,9 @@ namespace DevPenguin.VOXELWORLD
 
             // Generate blocks dataset
             _blocksDictionary = new ConcurrentDictionary<string, BlockData>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
-            for (int z = -(int)worldSize.z * worldPreGenerated; z < (int)worldSize.z * worldPreGenerated; z++)
+            for (int z = -(int)worldSize.z; z < (int)worldSize.z; z++)
             {
-                for (int x = -(int)worldSize.x * worldPreGenerated; x < (int)worldSize.x * worldPreGenerated; x++)
+                for (int x = -(int)worldSize.x; x < (int)worldSize.x; x++)
                 {
                     for (int y = 0; y < worldSize.y; y++)
                     {
@@ -170,9 +168,9 @@ namespace DevPenguin.VOXELWORLD
 
             // Generate world mesh
             _chunksDictionary = new ConcurrentDictionary<string, GameObject>(); // Holds current loaded chuncks for later use
-            for (int z = -(int)worldSize.z * worldPreGenerated; z < worldSize.z * worldPreGenerated; z++)
+            for (int z = -(int)worldSize.z; z < worldSize.z; z++)
             {
-                for (int x = -(int)worldSize.x * worldPreGenerated; x < worldSize.x * worldPreGenerated; x++)
+                for (int x = -(int)worldSize.x; x < worldSize.x; x++)
                 {
                     for (int y = 0; y < worldSize.y; y++)
                     {
@@ -187,11 +185,11 @@ namespace DevPenguin.VOXELWORLD
                 }
             }
             // Unhide chunks withing player view
-            for (int z = -(int)worldSize.z; z < worldSize.z; z++)
+            for (int z = -(int)drawDistance.z; z < drawDistance.z; z++)
             {
-                for (int x = -(int)worldSize.x; x < worldSize.x; x++)
+                for (int x = -(int)drawDistance.x; x < drawDistance.x; x++)
                 {
-                    for (int y = 0; y < worldSize.y; y++)
+                    for (int y = 0; y < drawDistance.y; y++)
                     {
                         StartCoroutine(GenerateChunk(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z));
                     }
@@ -221,97 +219,110 @@ namespace DevPenguin.VOXELWORLD
 
         public IEnumerator UpdateWorldAroundPlayer()
         {
+            _lastPlayerPosition = _player.position;
+
             while (isWorldDynamic)
             {
                 bool _shouldUpdate = false;
-                int _worldSlice = 4;
 
-                // Check new player position
-                if (_player.position.x >= _worldOrigin.x + (worldSize.x * chunkSize.x / _worldSlice))
+                // If player has moved enough
+                if (Mathf.Abs(_player.position.magnitude - _lastPlayerPosition.magnitude) > 0.9f)
                 {
-                    _worldOrigin.x += chunkSize.x;
-                    _shouldUpdate = true;
-                }
-                else if (_player.position.x <= _worldOrigin.x - (worldSize.x * chunkSize.x / _worldSlice))
-                {
-                    _worldOrigin.x -= chunkSize.x;
-                    _shouldUpdate = true;
-                }
-                if (_player.position.z >= _worldOrigin.z + (worldSize.z * chunkSize.z / _worldSlice))
-                {
-                    _worldOrigin.z += chunkSize.z;
-                    _shouldUpdate = true;
-                }
-                else if (_player.position.z <= _worldOrigin.z - (worldSize.z * chunkSize.z / _worldSlice))
-                {
-                    _worldOrigin.z -= chunkSize.z;
-                    _shouldUpdate = true;
-                }
+                    _lastPlayerPosition = _player.position;
 
-                // If would has to be updated
-                if (_shouldUpdate)
-                {
-                    // Generate new blocks needed
-                    for (int z = -(int)worldSize.z; z < (int)worldSize.z; z++)
+                    // Check new player position
+                    if (_player.position.x >= _worldOrigin.x + (drawDistance.x * chunkSize.x / distanceBeforeUpdate))
                     {
-                        for (int x = -(int)worldSize.x; x < (int)worldSize.x; x++)
+                        _worldOrigin.x += chunkSize.x;
+                        _shouldUpdate = true;
+                    }
+                    else if (_player.position.x <= _worldOrigin.x - (drawDistance.x * chunkSize.x / distanceBeforeUpdate))
+                    {
+                        _worldOrigin.x -= chunkSize.x;
+                        _shouldUpdate = true;
+                    }
+                    if (_player.position.z >= _worldOrigin.z + (drawDistance.z * chunkSize.z / distanceBeforeUpdate))
+                    {
+                        _worldOrigin.z += chunkSize.z;
+                        _shouldUpdate = true;
+                    }
+                    else if (_player.position.z <= _worldOrigin.z - (drawDistance.z * chunkSize.z / distanceBeforeUpdate))
+                    {
+                        _worldOrigin.z -= chunkSize.z;
+                        _shouldUpdate = true;
+                    }
+
+                    // If would has to be updated
+                    if (_shouldUpdate)
+                    {
+                        float _startTime = Time.realtimeSinceStartup;
+
+                        // Generate new blocks needed
+                        for (int z = -(int)drawDistance.z; z < (int)drawDistance.z; z++)
                         {
-                            for (int y = 0; y < worldSize.y; y++)
+                            for (int x = -(int)drawDistance.x; x < (int)drawDistance.x; x++)
                             {
-                                _isUpdatingWorld = true;
-                                StartCoroutine(GenerateBlocksData(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
-                                while (_isUpdatingWorld)
-                                    yield return null;
+                                for (int y = 0; y < drawDistance.y; y++)
+                                {
+                                    _isUpdatingWorld = true;
+                                    StartCoroutine(GenerateBlocksData(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
+                                    while (_isUpdatingWorld)
+                                        yield return null;
+                                }
                             }
                         }
-                    }
-                    yield return new WaitForSeconds(0.5f);
+                        yield return new WaitForSeconds(0.1f);
 
-                    // Generate new chuncks needed
-                    for (int z = -(int)worldSize.z; z < worldSize.z; z++)
-                    {
-                        for (int x = -(int)worldSize.x; x < worldSize.x; x++)
+                        // Generate new chuncks needed
+                        for (int z = -(int)drawDistance.z; z < drawDistance.z; z++)
                         {
-                            for (int y = 0; y < worldSize.y; y++)
+                            for (int x = -(int)drawDistance.z; x < drawDistance.x; x++)
                             {
-                                _isUpdatingWorld = true;
-                                StartCoroutine(GenerateChunk(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
-                                while (_isUpdatingWorld)
-                                    yield return null;
+                                for (int y = 0; y < drawDistance.y; y++)
+                                {
+                                    _isUpdatingWorld = true;
+                                    StartCoroutine(GenerateChunk(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
+                                    while (_isUpdatingWorld)
+                                        yield return null;
+                                }
                             }
                         }
-                    }
-                    yield return new WaitForSeconds(0.5f);
+                        yield return new WaitForSeconds(0.1f);
 
-                    // Destroy chuncks no longer needed
-                    for (int z = -(int)worldSize.z; z < worldSize.z; z++)
-                    {
-                        for (int x = -(int)worldSize.x - 1; x <= worldSize.x; x += (int)worldSize.x * 2 + 1)
+                        // Destroy chuncks no longer needed
+                        for (int z = -(int)drawDistance.z; z < drawDistance.z; z++)
                         {
-                            for (int y = 0; y < worldSize.y; y++)
+                            for (int x = -(int)drawDistance.z - 1; x <= drawDistance.x; x += (int)drawDistance.x * 2 + 1)
                             {
-                                _isUpdatingWorld = true;
-                                StartCoroutine(RemoveChunck(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
-                                while (_isUpdatingWorld)
-                                    yield return null;
+                                for (int y = 0; y < drawDistance.y; y++)
+                                {
+                                    _isUpdatingWorld = true;
+                                    StartCoroutine(RemoveChunck(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
+                                    while (_isUpdatingWorld)
+                                        yield return null;
 
+                                }
                             }
                         }
-                    }
-                    for (int x = -(int)worldSize.x; x < worldSize.x; x++)
-                    {
-                        for (int z = -(int)worldSize.z - 1; z <= worldSize.z; z += (int)worldSize.z * 2 + 1)
+                        for (int x = -(int)drawDistance.x; x < drawDistance.x; x++)
                         {
-                            for (int y = 0; y < worldSize.y; y++)
+                            for (int z = -(int)drawDistance.z - 1; z <= drawDistance.z; z += (int)drawDistance.z * 2 + 1)
                             {
-                                _isUpdatingWorld = true;
-                                StartCoroutine(RemoveChunck(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
-                                while (_isUpdatingWorld)
-                                    yield return null;
+                                for (int y = 0; y < drawDistance.y; y++)
+                                {
+                                    _isUpdatingWorld = true;
+                                    StartCoroutine(RemoveChunck(x * (int)chunkSize.x + (int)_worldOrigin.x, y * (int)chunkSize.y, z * (int)chunkSize.z + (int)_worldOrigin.z));
+                                    while (_isUpdatingWorld)
+                                        yield return null;
 
+                                }
                             }
                         }
+
+                        // Debug
+                        //Debug.Log($"World update took {(Time.realtimeSinceStartup - _startTime).ToString("00.00")} seconds");
                     }
+                    yield return new WaitForSeconds(0.1f);
                 }
 
                 yield return null;
