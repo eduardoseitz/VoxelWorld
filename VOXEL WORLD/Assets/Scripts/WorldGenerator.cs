@@ -20,7 +20,8 @@ namespace DevPenguin.VOXELWORLD
         [Tooltip("World size in chunks")]
         [SerializeField] private bool isWorldDynamic = true;
         [SerializeField] private Vector3 worldSize = new Vector3(3, 3, 3);
-        [SerializeField] private int worldForseen = 2;
+        [SerializeField] private int worldPreGenerated = 2;
+        [SerializeField] private int playerView = 2;
         [Space(5f)]
 
         [Header("Blocks Setup")]
@@ -110,7 +111,13 @@ namespace DevPenguin.VOXELWORLD
             _player = GameManager.instance.player.transform;
             _worldOrigin = new Vector3(0, 0, 0);
             if (!isWorldDynamic)
-                worldForseen = 1;
+            {
+                worldPreGenerated = 1;
+            }
+            else
+            {
+                playerView = (int)worldSize.x;
+            }
         }
         #endregion
 
@@ -123,7 +130,7 @@ namespace DevPenguin.VOXELWORLD
             // Debug
             float _startTime = Time.realtimeSinceStartup;
             float _uiDelay = 0.01f;
-            int _numberOfSteps = (int)worldSize.z * (2 + worldForseen) * (int)worldSize.x * (2 + worldForseen) * (int)worldSize.y;
+            int _numberOfSteps = (int)worldSize.z * (2 + worldPreGenerated) * (int)worldSize.x * (2 + worldPreGenerated) * (int)worldSize.y;
             float _currentStep = 0f;
             float _currentProgress = 1f;
 
@@ -141,9 +148,9 @@ namespace DevPenguin.VOXELWORLD
 
             // Generate blocks dataset
             _blocksDictionary = new ConcurrentDictionary<string, BlockData>(); // Exaple item: "5 -15 10" = 1 or "X5 Y-15 Z10" has the stone block
-            for (int z = -(int)worldSize.z * worldForseen; z < (int)worldSize.z * worldForseen; z++)
+            for (int z = -(int)worldSize.z * worldPreGenerated; z < (int)worldSize.z * worldPreGenerated; z++)
             {
-                for (int x = -(int)worldSize.x * worldForseen; x < (int)worldSize.x * worldForseen; x++)
+                for (int x = -(int)worldSize.x * worldPreGenerated; x < (int)worldSize.x * worldPreGenerated; x++)
                 {
                     for (int y = 0; y < worldSize.y; y++)
                     {
@@ -163,10 +170,9 @@ namespace DevPenguin.VOXELWORLD
 
             // Generate world mesh
             _chunksDictionary = new ConcurrentDictionary<string, GameObject>(); // Holds current loaded chuncks for later use
-
-            for (int z = -(int)worldSize.z; z < worldSize.z; z++)
+            for (int z = -(int)worldSize.z * worldPreGenerated; z < worldSize.z * worldPreGenerated; z++)
             {
-                for (int x = -(int)worldSize.x; x < worldSize.x; x++)
+                for (int x = -(int)worldSize.x * worldPreGenerated; x < worldSize.x * worldPreGenerated; x++)
                 {
                     for (int y = 0; y < worldSize.y; y++)
                     {
@@ -176,6 +182,17 @@ namespace DevPenguin.VOXELWORLD
                         CanvasManager.instance.loadingInfoText.text = "Building world...\n " + Mathf.Clamp(_currentProgress, 0, 100).ToString("00") + "%";
                         yield return new WaitForSeconds(_uiDelay);
 
+                        StartCoroutine(GenerateChunk(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z));
+                    }
+                }
+            }
+            // Unhide chunks withing player view
+            for (int z = -(int)worldSize.z; z < worldSize.z; z++)
+            {
+                for (int x = -(int)worldSize.x; x < worldSize.x; x++)
+                {
+                    for (int y = 0; y < worldSize.y; y++)
+                    {
                         StartCoroutine(GenerateChunk(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z));
                     }
                 }
@@ -479,8 +496,11 @@ namespace DevPenguin.VOXELWORLD
             // If chunk mesh exists then unhide it
             if (_chunksDictionary.ContainsKey($"{startX} {startY} {startZ}") == true)
             {
-                if (_chunksDictionary[$"{startX} {startY} {startZ}"].activeInHierarchy == false)
-                    _chunksDictionary[$"{startX} {startY} {startZ}"].SetActive(true);
+                if (_chunksDictionary[$"{startX} {startY} {startZ}"] != null)
+                {
+                    if (_chunksDictionary[$"{startX} {startY} {startZ}"].activeInHierarchy == false)
+                        _chunksDictionary[$"{startX} {startY} {startZ}"].SetActive(true);
+                }
             }
             // If blocks data do not exist then create it
             else
@@ -489,6 +509,7 @@ namespace DevPenguin.VOXELWORLD
                 _chunkObject = new GameObject($"Chunk {startX} {startY} {startZ}");
                 _chunkObject.transform.parent = transform;
                 _chunkObject.transform.SetPositionAndRotation(new Vector3(0, 0, 0), Quaternion.identity);
+                _chunkObject.SetActive(false);
                 _chunksDictionary.TryAdd($"{startX} {startY} {startZ}", _chunkObject);
 
                 // Instantiate mesh list
@@ -525,8 +546,7 @@ namespace DevPenguin.VOXELWORLD
                 // Combine meshes
                 CombineQuadsIntoSingleChunk();
             }
-            
-            
+
             _isUpdatingWorld = false;
             yield return null;
         }
@@ -538,18 +558,37 @@ namespace DevPenguin.VOXELWORLD
             // If chunck data do exist then remove it
             if (_chunksDictionary.ContainsKey($"{startX} {startY} {startZ}") == true)
             {
-                // If chunk is visible then hide it
-                if (_chunksDictionary[$"{startX} {startY} {startZ}"].activeInHierarchy)
-                    _chunksDictionary[$"{startX} {startY} {startZ}"].SetActive(false);
-                // Otherwise destroy it
-                //else
-                //    Destroy(_chunksDictionary[$"{startX} {startY} {startZ}"]);
+                if (_chunksDictionary[$"{startX} {startY} {startZ}"] != null)
+                {
+                    // If chunk is visible then hide it
+                    if (_chunksDictionary[$"{startX} {startY} {startZ}"].activeInHierarchy)
+                        _chunksDictionary[$"{startX} {startY} {startZ}"].SetActive(false);
+                }
             }
+
+            // StartCoroutine(DeleteChunck(startX, startY, startZ));
 
             _isUpdatingWorld = false;
             yield return null;
+        }
 
+        private IEnumerator DeleteChunck(int startX, int startY, int startZ)
+        {
+            yield return new WaitForSeconds(5f);
 
+            // If it is hidden for a long time destroy it
+            if (_chunksDictionary.ContainsKey($"{startX} {startY} {startZ}") == true)
+            {
+                if (_chunksDictionary[$"{startX} {startY} {startZ}"] != null)
+                {
+                    if (_chunksDictionary[$"{startX} {startY} {startZ}"].activeInHierarchy == false)
+                    {
+                        Destroy(_chunksDictionary[$"{startX} {startY} {startZ}"].gameObject);
+                        _chunksDictionary[$"{startX} {startY} {startZ}"] = null;
+                    }
+                }
+            }
+            yield return null;
         }
         #endregion
 
