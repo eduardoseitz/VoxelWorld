@@ -9,13 +9,13 @@
 		-Quit world
 
 -Basic player controller+
-	-Setup third person controller+
+	-Setup first person controller+
 	-Spawn player at world origin+
 
--World generating
-	-Detect chunks in player sight radius
-	-Generate new chunks as player moves
-	-Delete old chunks outside player radius
+-World generating+
+	-Detect chunks in player sight radius+
+	-Generate new chunks as player moves+
+	-Delete old chunks outside player radius+
 
 // Bugs
 -Generating more than 1 chunk in y axis gives errors

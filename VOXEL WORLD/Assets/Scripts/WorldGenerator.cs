@@ -127,7 +127,7 @@ namespace DevPenguin.VOXELWORLD
         {
             // Debug
             float _startTime = Time.realtimeSinceStartup;
-            float _uiDelay = 0.01f;
+            float _uiDelay = 0;
             int _numberOfSteps = ((int)worldSize.z * (int)worldSize.x * (int)worldSize.y) * ((int)worldSize.z * (int)worldSize.x * (int)worldSize.y) / 2;
             float _currentStep = 0f;
             float _currentProgress = 1f;
@@ -158,7 +158,10 @@ namespace DevPenguin.VOXELWORLD
                         CanvasManager.instance.loadingInfoText.text = "Generating chunks...\n" + Mathf.Clamp(_currentProgress, 0, 100).ToString("00") + "%";
                         yield return new WaitForSeconds(_uiDelay);
 
+                        _isUpdatingWorld = true;
                         StartCoroutine(GenerateBlocksData(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z));
+                        while (_isUpdatingWorld)
+                            yield return null;
                     }
                 }
             }
@@ -180,10 +183,14 @@ namespace DevPenguin.VOXELWORLD
                         CanvasManager.instance.loadingInfoText.text = "Building world...\n " + Mathf.Clamp(_currentProgress, 0, 100).ToString("00") + "%";
                         yield return new WaitForSeconds(_uiDelay);
 
+                        _isUpdatingWorld = true;
                         StartCoroutine(GenerateChunk(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z));
+                        while (_isUpdatingWorld)
+                            yield return null;
                     }
                 }
             }
+
             // Unhide chunks withing player view
             for (int z = -(int)drawDistance.z; z < drawDistance.z; z++)
             {
@@ -191,23 +198,33 @@ namespace DevPenguin.VOXELWORLD
                 {
                     for (int y = 0; y < drawDistance.y; y++)
                     {
+                        _isUpdatingWorld = true;
                         StartCoroutine(GenerateChunk(x * (int)chunkSize.x, y * (int)chunkSize.y, z * (int)chunkSize.z));
+                        while (_isUpdatingWorld)
+                            yield return null;
                     }
                 }
             }
 
-            // Destroy template quad
-            //Destroy(_quadObject);
+            if (isWorldDynamic == false)
+            {
+                // Destroy template quad since the world will not be updated anymore
+                Destroy(_quadObject);
 
+                // Enable free camera
+                GameManager.instance.freeCamera.enabled = true;
+            }
+            else 
+            {
+                // Setup player
+                int _topGrassLayer = noiseGenerator.GetTerrainHeightNoise(0, 0, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
+                int _topStoneLayer = noiseGenerator.GetTerrainHeightNoise(0 + 5, 0 + 5, underSurfaceTerrain.smoothness, underSurfaceTerrain.octaves, underSurfaceTerrain.persistance, underSurfaceTerrain.groundHeight) - 5;
+                GameManager.instance.SetupPlayer(new Vector3(0, Mathf.Max(_topGrassLayer, _topStoneLayer), 0), Quaternion.identity);
+                CanvasManager.instance.hudPanel.SetActive(true);
+            }
             // Update UI
             CanvasManager.instance.loadingPanel.SetActive(false);
             CanvasManager.instance.backgroundMenuPanel.SetActive(false);
-            CanvasManager.instance.hudPanel.SetActive(true);
-
-            // Setup player
-            int _topGrassLayer = noiseGenerator.GetTerrainHeightNoise(0, 0, surfaceTerrain.smoothness, surfaceTerrain.octaves, surfaceTerrain.persistance, surfaceTerrain.groundHeight);
-            int _topStoneLayer = noiseGenerator.GetTerrainHeightNoise(0 + 5, 0 + 5, underSurfaceTerrain.smoothness, underSurfaceTerrain.octaves, underSurfaceTerrain.persistance, underSurfaceTerrain.groundHeight) - 5;
-            GameManager.instance.SetupPlayer(new Vector3(0, Mathf.Max(_topGrassLayer, _topStoneLayer), 0), Quaternion.identity);
 
             // Debug
             string _debugMessage = $"Generated world with {_chunksDictionary.Count} chunks with {_blocksDictionary.Count} blocks in {(Time.realtimeSinceStartup - _startTime).ToString("00.00")} seconds";
@@ -258,9 +275,9 @@ namespace DevPenguin.VOXELWORLD
                         float _startTime = Time.realtimeSinceStartup;
 
                         // Generate new blocks needed
-                        for (int z = -(int)drawDistance.z; z < (int)drawDistance.z; z++)
+                        for (int z = -(int)drawDistance.z - 1; z < (int)drawDistance.z + 1; z++)
                         {
-                            for (int x = -(int)drawDistance.x; x < (int)drawDistance.x; x++)
+                            for (int x = -(int)drawDistance.x - 1; x < (int)drawDistance.x + 1; x++)
                             {
                                 for (int y = 0; y < drawDistance.y; y++)
                                 {
@@ -703,25 +720,29 @@ namespace DevPenguin.VOXELWORLD
                 {
                     CreateQuad(CubeSide.Bottom, _blocksDictionary[$"{x} {y} {z}"].blockType);
                 }
-                // Generate the front of the cube
-                if (z + 2 > (chunkSize.z * worldSize.z) || _blocksDictionary[$"{x} {y} {z + 1}"].blockType == -1)
-                {
-                    CreateQuad(CubeSide.Front, _blocksDictionary[$"{x} {y} {z}"].blockType);
-                }
                 // Generate the back of the cube
-                if (z - 1 < -chunkSize.z * worldSize.z || _blocksDictionary[$"{x} {y} {z - 1}"].blockType == -1)
+                if ((!isWorldDynamic && z - 1 < -chunkSize.z * worldSize.z) || _blocksDictionary[$"{x} {y} {z - 1}"].blockType == -1)
                 {
                     CreateQuad(CubeSide.Back, _blocksDictionary[$"{x} {y} {z}"].blockType);
                 }
+                // Generate the left side of the cube
+                if ((!isWorldDynamic && x - 1 < -chunkSize.x * worldSize.z) || _blocksDictionary[$"{x - 1} {y} {z}"].blockType == -1)
+                {
+                    CreateQuad(CubeSide.Left, _blocksDictionary[$"{x} {y} {z}"].blockType);
+                }
+                //if (_blocksDictionary.ContainsKey($"{x + 1} {y} {z}"))
+                //    Debug.Log($"There is no block behind for some reason at block: {x + 1} {y} {z}");
                 // Generate the right side of the cube
-                if (x + 2 > (chunkSize.x * worldSize.x) || _blocksDictionary[$"{x + 1} {y} {z}"].blockType == -1)
+                if ((!isWorldDynamic && x + 1 > (chunkSize.x * worldSize.x - 1)) || _blocksDictionary[$"{x + 1} {y} {z}"].blockType == -1)
                 {
                     CreateQuad(CubeSide.Right, _blocksDictionary[$"{x} {y} {z}"].blockType);
                 }
-                // Generate the left side of the cube
-                if (x - 1 < -chunkSize.x * worldSize.z || _blocksDictionary[$"{x - 1} {y} {z}"].blockType == -1)
+                //if (_blocksDictionary.ContainsKey($"{x} {y} {z - 1}"))
+                //    Debug.Log($"There is no block behind for some reason at block: {x} {y} {z + 1}");
+                // Generate the front of the cube
+                if ((!isWorldDynamic && z + 1 > (chunkSize.z * worldSize.z - 1)) || _blocksDictionary[$"{x} {y} {z + 1}"].blockType == -1)
                 {
-                    CreateQuad(CubeSide.Left, _blocksDictionary[$"{x} {y} {z}"].blockType);
+                    CreateQuad(CubeSide.Front, _blocksDictionary[$"{x} {y} {z}"].blockType);
                 }
             }
             catch

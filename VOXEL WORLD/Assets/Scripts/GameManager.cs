@@ -9,6 +9,7 @@ namespace DevPenguin.VOXELWORLD
     {
         public static GameManager instance;
         public GameObject player;
+        public CameraController freeCamera;
 
         [SerializeField] Vector3 playerSpawnOffset = new Vector3(0, 3, 0);
 
