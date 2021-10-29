@@ -755,7 +755,7 @@ MonoBehaviour:
   terrainSeed: 221855
   shouldRandomizeSeed: 1
   chunkSize: {x: 16, y: 64, z: 16}
-  worldSize: {x: 4, y: 1, z: 4}
+  worldSize: {x: 2, y: 1, z: 2}
   isWorldDynamic: 1
   drawDistance: {x: 2, y: 1, z: 2}
   distanceBeforeUpdate: 4
@@ -3554,11 +3554,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 8018109198748064197, guid: abd4f8321f33ba849a95cb3394f1326b,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8018109198748091877, guid: abd4f8321f33ba849a95cb3394f1326b,
         type: 3}
       propertyPath: m_RootOrder
@@ -3613,11 +3608,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8018109198753102501, guid: abd4f8321f33ba849a95cb3394f1326b,
-        type: 3}
-      propertyPath: m_Constraints
-      value: 80
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: abd4f8321f33ba849a95cb3394f1326b, type: 3}

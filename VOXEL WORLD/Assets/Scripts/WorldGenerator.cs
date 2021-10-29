@@ -122,12 +122,11 @@ namespace DevPenguin.VOXELWORLD
         #region Helper Methods
 
         #region World and Chunks
-
         public IEnumerator GenerateNewWorld()
         {
             // Debug
             float _startTime = Time.realtimeSinceStartup;
-            float _uiDelay = 0;
+            float _uiDelay = 0.01f;
             int _numberOfSteps = ((int)worldSize.z * (int)worldSize.x * (int)worldSize.y) * ((int)worldSize.z * (int)worldSize.x * (int)worldSize.y) / 2;
             float _currentStep = 0f;
             float _currentProgress = 1f;
@@ -346,6 +345,26 @@ namespace DevPenguin.VOXELWORLD
             }
         }
 
+        public void UpdateChunck(Vector3 block, Vector3 chunck)
+        {
+            if (_blocksDictionary.ContainsKey($"{(int)block.x} {(int)block.y} {(int)block.z}"))
+            {
+                // Update block type
+                _blocksDictionary[$"{(int)block.x} {(int)block.y} {(int)block.z}"].blockType = -1;
+
+                if (_chunksDictionary.ContainsKey($"{(int)chunck.x} {(int)chunck.y} {(int)chunck.z}"))
+                {
+                    // Destroy old chunck mesh
+                    GameObject _chunck;
+                    _chunksDictionary.TryRemove($"{(int)chunck.x} {(int)chunck.y} {(int)chunck.z}", out _chunck);
+                    DestroyImmediate(_chunck);
+
+                    // Create new chunck mesh
+                    GenerateChunk((int)chunck.x, (int)chunck.y, (int)chunck.z);
+                }
+            }
+        }
+
         private IEnumerator GenerateBlocksData(int startX, int startY, int startZ)
         {
             // Debug.Log($"Generating block data for chunk X:{startX} Y:{startY} Z:{startZ}");
@@ -519,7 +538,7 @@ namespace DevPenguin.VOXELWORLD
 
         private IEnumerator GenerateChunk(int startX, int startY, int startZ)
         {
-            // Debug.Log($"Generating mesh for chunk X:{startX} Y:{startY} Z:{startZ}");
+            Debug.Log($"Generating mesh for chunk X:{startX} Y:{startY} Z:{startZ}");
 
             // If chunk mesh exists then unhide it
             if (_chunksDictionary.ContainsKey($"{startX} {startY} {startZ}") == true)
