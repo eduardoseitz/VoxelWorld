@@ -39,3 +39,4 @@ sysinfo.txt
 *.unitypackage
 /VOXEL WORLD/Logs
 /VOXEL WORLD/Logs
+*.log
